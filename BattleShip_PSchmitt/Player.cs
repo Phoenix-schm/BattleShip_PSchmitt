@@ -76,15 +76,30 @@ namespace BattleShip_PSchmitt
 
                 if (playerInput != null && playerInput != "")
                 {
-                    foreach (Battleship ship in player._playerShipList)
+                    for (int index = 1; index < player._playerShipList.Count + 1; index++)
                     {
-                        if (playerInput.ToLower() == ship.name.ToLower())
+                        if (playerInput.ToLower() == player._playerShipList[index - 1].name.ToLower())
                         {
                             isValid = true;
-                            chosenShip = ship;
+                            chosenShip = player._playerShipList[index - 1];
                             break;
                         }
+                        else if (playerInput == index.ToString())
+                        {
+                            isValid = true;
+                            chosenShip = player._playerShipList[index - 1];
+                        }
                     }
+
+                    if (isValid)
+                    {
+                        if (chosenShip.eachIndexSpace.Count > 0)                    // if the ship has been chosen previously
+                        {
+                            isValid = false;
+                            Console.WriteLine("You've already picked that ship before.");
+                        }
+                    }
+
                     if (chosenShip == null)
                     {
                         Console.WriteLine("That isn't a ship you can choose.");
@@ -135,6 +150,7 @@ namespace BattleShip_PSchmitt
                 {
                     Console.WriteLine((i + 1) + ") " + directionsList[i]);
                 }
+                Console.WriteLine();
                 Console.Write("Choose a direction to place the ship: ");
                 userInput = Console.ReadLine();
                 if (userInput != null)
@@ -147,7 +163,7 @@ namespace BattleShip_PSchmitt
                             chosenDirection = index - 1;
                             break;
                         }
-                        else if (userInput == (index).ToString())
+                        else if (userInput == index.ToString())
                         {
                             isValid = true;
                             chosenDirection = index - 1;

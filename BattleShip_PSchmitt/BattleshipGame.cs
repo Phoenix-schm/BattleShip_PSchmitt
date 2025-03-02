@@ -110,23 +110,35 @@
                     Console.WriteLine("Current Player Grid:");
                     player.DisplayOceanGrid(currentOceanGrid);
 
-                    Console.WriteLine("You have " + shipList.Count + " ships left to place.");
-                    foreach (Battleship displayShip in shipList)
+                    Console.WriteLine("You have " + (shipList.Count - i) + " ships left to place.");
+                    for (int index = 0; index < shipList.Count; index++)
                     {
-                        Console.WriteLine($"{displayShip.name}");
+                        if (shipList[index].eachIndexSpace.Count > 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            Console.WriteLine(index + 1 + ") " +  shipList[index].name + " = " + shipList[index].shipLength + " spaces");
+                        }
+                        else
+                        {
+                            Console.WriteLine(index + 1 + ") " +  shipList[index].name + " = " + shipList[index].shipLength + " spaces");
+                        }
+                        Console.ResetColor();
                     }
                     Console.WriteLine();
 
                     Battleship chosenShip = Player.ChooseShipToPlace(player);
                     int chosenDirection = Player.ChooseDirectionToPlaceShip(directionalPlacement);
-                    int y_Coordinate = Player.CheckInputAxisIsValid("Choose an y coordinate to place the ship.");
-                    int x_Coordinate = Player.CheckInputAxisIsValid("Choose an x coodrinate to place the ship.");
-
-                    currentOceanGrid = player.PlaceShipsOnOceanGrid(currentOceanGrid, chosenShip, chosenDirection, [y_Coordinate, x_Coordinate], ref isValid);
-                    if (isValid)
+                    int userY = Player.CheckInputAxisIsValid("Choose an y coordinate to place the ship");
+                    int userX = Player.CheckInputAxisIsValid("Choose an x coodrinate to place the ship");
+                    if (chosenDirection == 0 || chosenDirection == 1)
                     {
-                        shipList.Remove(chosenShip);
+                        currentOceanGrid = player.Vetical_PlaceShipsOnGrid(currentOceanGrid, chosenShip, chosenDirection, [userX, userY], ref isValid);
                     }
+                    else if (chosenDirection == 2 || chosenDirection == 3)
+                    {
+                        currentOceanGrid = player.Horizontal_PlaceShipsOnOceanGrid(currentOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
+                    }
+
                 } while (!isValid);
             }
             return currentOceanGrid;

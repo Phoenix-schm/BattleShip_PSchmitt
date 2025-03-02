@@ -2,14 +2,6 @@
 using System.Collections.Generic;
 namespace BattleShip_PSchmitt
 {
-    public enum BattleshipList
-    {
-        Destroyer = 2,
-        Submarine = 3,
-        Cruiser = 3,
-        Battleship = 4,
-        Carrier = 5
-    }
     class Battleship
     {
         private int _shipLength;
