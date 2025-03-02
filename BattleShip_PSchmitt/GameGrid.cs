@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security;
 namespace BattleShip_PSchmitt
 {
     internal class GameGrid : Battleship
@@ -17,11 +18,11 @@ namespace BattleShip_PSchmitt
         /// and its string name</returns>
         public List<Battleship> CreateShips()
         {
-            Battleship destroyerShip = new Battleship((int)BattleshipList.Destroyer, destroyerSpaces, BattleshipList.Destroyer.ToString());
-            Battleship submarineShip = new Battleship((int)BattleshipList.Submarine, submarineSpaces, BattleshipList.Submarine.ToString());
-            Battleship cruiserShip = new Battleship((int)BattleshipList.Cruiser, cruiserSpaces, BattleshipList.Cruiser.ToString());
-            Battleship battleShip = new Battleship((int)BattleshipList.Battleship, battleshipSpaces, BattleshipList.Battleship.ToString());
-            Battleship carrierShip = new Battleship((int)BattleshipList.Carrier, carrierSpaces, BattleshipList.Carrier.ToString());
+            Battleship destroyerShip = new Battleship((int)BattleshipList.Destroyer, destroyerSpaces, BattleshipList.Destroyer.ToString(), 'D');
+            Battleship submarineShip = new Battleship((int)BattleshipList.Submarine, submarineSpaces, BattleshipList.Submarine.ToString(), 'C');
+            Battleship cruiserShip = new Battleship((int)BattleshipList.Cruiser, cruiserSpaces, BattleshipList.Cruiser.ToString(), 'B');
+            Battleship battleShip = new Battleship((int)BattleshipList.Battleship, battleshipSpaces, BattleshipList.Battleship.ToString(), 'A');
+            Battleship carrierShip = new Battleship((int)BattleshipList.Carrier, carrierSpaces, BattleshipList.Carrier.ToString(), 'S');
 
             return  [destroyerShip, submarineShip, cruiserShip, battleShip, carrierShip ];
         }
@@ -50,10 +51,10 @@ namespace BattleShip_PSchmitt
         /// <param name="displayGrid">Grid to be displayed</param>
         public void DisplayOceanGrid(char[,] displayGrid)
         {
+            string[] numberedY_axis = NumberedGridAxis();
             string numberedX_axis = string.Join(" ", NumberedGridAxis());
             Console.WriteLine("  " + numberedX_axis);                                          // Displays the numbers of the x axis
 
-            string[] numberedY_axis = NumberedGridAxis();
             for(int y_axis = 0; y_axis < displayGrid.GetLength(0); y_axis++)
             {
                 Console.Write(numberedY_axis[y_axis] + " ");                              // Displays the numbers of each y axis
@@ -66,7 +67,7 @@ namespace BattleShip_PSchmitt
                     }
                     else
                     {
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
+                        Console.Write("$" + "  ");
                     }
                 }
                 Console.ResetColor();
@@ -106,7 +107,14 @@ namespace BattleShip_PSchmitt
         {
             return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10" ];
         }
-
+        public void DisplayPlayerGrids(Player player)
+        {
+            Console.WriteLine("       -Target Grid-       ");
+            player.DisplayTargetGrid(player._playerTargetGrid);
+            Console.WriteLine();
+            Console.WriteLine("        -Ocean Grid-          ");
+            player.DisplayOceanGrid(player._playerOceanGrid);
+        }
         public static char[,] FlipGameGridXYAxis(char[,] normalGrid)
         {
             char[,] flippedGrid = new char[normalGrid.GetLength(0), normalGrid.GetLength(1)];
@@ -120,9 +128,92 @@ namespace BattleShip_PSchmitt
             return flippedGrid;
         }
 
-        public char[,] PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip)
+        public char[,] PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int[] userCoordinate, ref bool canShipBePlaced)
         {
+            canShipBePlaced = CheckCanShipBePlaced(currentOceanGrid, chosenShip, direction, userCoordinate);
+            int userY = userCoordinate[0];
+            int userX = userCoordinate[1];
+
+            if (direction == 0 || direction == 1)
+            {
+                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
+                userX = userCoordinate[0];
+                userY = userCoordinate[1];
+            }
+
+            if (canShipBePlaced && (direction == 0 || direction == 3))
+            {
+                for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, userX++)
+                {
+                    currentOceanGrid[userY, userX] = chosenShip._display;
+                }
+            }
+            else if (canShipBePlaced && (direction == 1 || direction == 2))
+            {
+                for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, userX--)
+                {
+                    currentOceanGrid[userY, userX] = chosenShip._display;
+                }
+            }
+            else
+            {
+                Console.WriteLine("That was not a valid coordinate");
+            }
+
+            if (direction == 0 || direction == 1)
+            {
+                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
+            }
             return currentOceanGrid;
+        }
+        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip,int direction, int[] index)
+        {
+            bool isValidIndex = false;
+            int userY = index[0];
+            int userX = index[1];
+            int canShipFitHere = 0;
+
+            if (direction == 0 || direction == 1)
+            {
+                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
+                userX = index[0];
+                userX = index[1];
+            }
+
+            if (direction == 0 || direction == 3)
+            {
+                while(userX != currentOceanGrid.GetLength(1) && currentOceanGrid[userY, userX] == '~')
+                {
+                    if (canShipFitHere < chosenShip.shipLength)
+                    {
+                        canShipFitHere++;
+                    }
+                    else if (canShipFitHere == chosenShip.shipLength)
+                    {
+                        isValidIndex = true;
+                        break;
+                    }
+                    userX++;
+                }
+            }
+            else if (direction == 1 ||  direction == 2)
+            {
+                while (userX !< currentOceanGrid.GetLowerBound(1) && currentOceanGrid[userY, userX] == '~')
+                {
+                    if (canShipFitHere < chosenShip.shipLength)
+                    {
+                        canShipFitHere++;
+                    }
+                    else if (canShipFitHere == chosenShip.shipLength)
+                    {
+                        isValidIndex = true;
+                        break;
+                    }
+                    userX--;
+                }
+            }
+
+            return isValidIndex;
         }
 
         public char[,] PlaceShotsOnTargetGrid(char[,] currentTargetGrid, int[] chosenShotIndex)

@@ -7,11 +7,19 @@ namespace BattleShip_PSchmitt
         public char[,] _playerOceanGrid;
         public char[,] _playerTargetGrid;
         public List<Battleship> _playerShipList;
+        public string _name = "";
         public Player()
         {
             _playerShipList = CreateShips();                // Default number of ships. Will act as health
             _playerOceanGrid = CreateDefaultGrid();         // Deafult ocean grid. Will contain ships
             _playerTargetGrid = CreateDefaultGrid();        // Default target grid. Will show shots taken
+        }
+        public Player(string name)
+        {
+            _playerShipList = CreateShips();                // Default number of ships. Will act as health
+            _playerOceanGrid = CreateDefaultGrid();         // Deafult ocean grid. Will contain ships
+            _playerTargetGrid = CreateDefaultGrid();        // Default target grid. Will show shots taken
+            _name = name;
         }
 
         /// <summary>
@@ -61,7 +69,7 @@ namespace BattleShip_PSchmitt
         {
             bool isValid = false;
             Battleship chosenShip = null;
-            while (!isValid)
+            while (!isValid)                                                // Should always break when the ship is no longer null.
             {
                 Console.WriteLine("Which ship qould you like to place?");
                 string? playerInput = Console.ReadLine();
@@ -88,6 +96,67 @@ namespace BattleShip_PSchmitt
                 }
             }
             return chosenShip;
+        }
+
+        public static int CheckInputAxisIsValid(string message)
+        {
+            bool isInputValid = false;
+            int inputIndex = -1;
+            while (!isInputValid)
+            {
+                Console.Write(message + ": ");
+                string? userInput = Console.ReadLine(); 
+                for (int index = 1; index <= 10; index++)
+                {
+                    if (userInput == index.ToString())
+                    {
+                        isInputValid = true;
+                        inputIndex = index;
+                        break;
+                    }
+                }
+                if (!isInputValid)
+                {
+                    Console.WriteLine("Those are invalid coordinates");
+                }
+            }
+            return inputIndex - 1;
+        }
+
+        public static int ChooseDirectionToPlaceShip(string[] directionsList)
+        {
+            bool isValid = false;
+            string? userInput = "";
+            int chosenDirection = -1;
+            while (!isValid)
+            {
+                Console.WriteLine("Directions to place: ");
+                for (int i = 0; i < directionsList.Length; i++)
+                {
+                    Console.WriteLine((i + 1) + ") " + directionsList[i]);
+                }
+                Console.Write("Choose a direction to place the ship: ");
+                userInput = Console.ReadLine();
+                if (userInput != null)
+                {
+                    for (int index = 1;  index < directionsList.Length + 1; index++)
+                    {
+                        if (userInput.ToLower() == directionsList[index - 1].ToLower())
+                        {
+                            isValid = true;
+                            chosenDirection = index - 1;
+                            break;
+                        }
+                        else if (userInput == (index).ToString())
+                        {
+                            isValid = true;
+                            chosenDirection = index - 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            return chosenDirection;
         }
 
         public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)
