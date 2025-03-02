@@ -6,13 +6,18 @@ namespace BattleShip_PSchmitt
     {
         public char[,] _playerOceanGrid;
         public char[,] _playerTargetGrid;
-        public Battleship[] _playerShipList;
+        public List<Battleship> _playerShipList;
         public Player()
         {
-            _playerShipList = new Battleship[5];            // Default number of ships. Will act as health
-            _playerOceanGrid = CreateDefaultGrid();         // Deafult ocean grid, will contain ships
-            _playerTargetGrid = CreateDefaultGrid();        // Default target grid, will show shots 
+            _playerShipList = CreateShips();                // Default number of ships. Will act as health
+            _playerOceanGrid = CreateDefaultGrid();         // Deafult ocean grid. Will contain ships
+            _playerTargetGrid = CreateDefaultGrid();        // Default target grid. Will show shots taken
         }
+
+        /// <summary>
+        /// Used on the Main Menu. Checks if the player input is one of the main menu choices
+        /// </summary>
+        /// <returns></returns>
         public static string CheckMainMenuChoice()
         {
             bool isValidInput = false;
@@ -50,6 +55,45 @@ namespace BattleShip_PSchmitt
                 }
             }
             return choiceString.ToLower();
+        }
+
+        public static Battleship ChooseShipToPlace(Player player)
+        {
+            bool isValid = false;
+            Battleship chosenShip = null;
+            while (!isValid)
+            {
+                Console.WriteLine("Which ship qould you like to place?");
+                string? playerInput = Console.ReadLine();
+
+                if (playerInput != null && playerInput != "")
+                {
+                    foreach (Battleship ship in player._playerShipList)
+                    {
+                        if (playerInput.ToLower() == ship.name.ToLower())
+                        {
+                            isValid = true;
+                            chosenShip = ship;
+                            break;
+                        }
+                    }
+                    if (chosenShip == null)
+                    {
+                        Console.WriteLine("That isn't a ship you can choose.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Cannot input nothing");
+                }
+            }
+            return chosenShip;
+        }
+
+        public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)
+        {
+            shipList.Remove(chosenShip);
+            return shipList;
         }
     }
 }

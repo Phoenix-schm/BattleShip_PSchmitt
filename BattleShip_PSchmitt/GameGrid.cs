@@ -4,7 +4,6 @@ namespace BattleShip_PSchmitt
 {
     internal class GameGrid : Battleship
     {
-        private int[,] _gameGrid = new int[,] { };
         protected List<int[]> destroyerSpaces = [];
         protected List<int[]> submarineSpaces = [];
         protected List<int[]> cruiserSpaces = [];
@@ -16,8 +15,8 @@ namespace BattleShip_PSchmitt
         /// </summary>
         /// <returns>An array of each batteship: amount of int spaces it takes up, an empty List of spaces it takes on a grid,
         /// and its string name</returns>
-        public Battleship[] CreateShips()
-        { 
+        public List<Battleship> CreateShips()
+        {
             Battleship destroyerShip = new Battleship((int)BattleshipList.Destroyer, destroyerSpaces, BattleshipList.Destroyer.ToString());
             Battleship submarineShip = new Battleship((int)BattleshipList.Submarine, submarineSpaces, BattleshipList.Submarine.ToString());
             Battleship cruiserShip = new Battleship((int)BattleshipList.Cruiser, cruiserSpaces, BattleshipList.Cruiser.ToString());
@@ -121,6 +120,14 @@ namespace BattleShip_PSchmitt
             return flippedGrid;
         }
 
+        public char[,] PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip)
+        {
+            return currentOceanGrid;
+        }
 
+        public char[,] PlaceShotsOnTargetGrid(char[,] currentTargetGrid, int[] chosenShotIndex)
+        {
+            return currentTargetGrid;
+        }
     }
 }

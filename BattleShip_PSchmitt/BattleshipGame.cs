@@ -73,6 +73,12 @@
             Console.WriteLine("Howdy Player! ");
             player._playerOceanGrid[0, 0] = 'H';                // test
             player.DisplayOceanGrid(player._playerOceanGrid);
+            Battleship ship = Player.ChooseShipToPlace(player);
+            Console.WriteLine(ship.name);
+        }
+        static void DisplayRules()
+        {
+
         }
     }
 }

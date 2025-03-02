@@ -46,8 +46,5 @@ namespace BattleShip_PSchmitt
             _takeUpSpaces.Remove([y, x]);
             return _takeUpSpaces;
         }
-
-
-
     }
 }
