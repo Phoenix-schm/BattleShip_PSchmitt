@@ -5,7 +5,7 @@
         public enum MainMenuChoices
         {
             Invalid,
-            Plaver_Vs_CPU,
+            Player_Vs_CPU,
             Player_Vs_Player,
             Quit
         }
@@ -35,16 +35,20 @@
             { 
                 Console.WriteLine("Choose your game:");
                 DisplayMainMenuChoices();
+                string playerInput = Player.CheckMainMenuChoice();
+
+                switch(playerInput)
+                {
+                    case "quit":
+                        isPlaying = false; 
+                        break;
+                    case "player vs cpu":
+                        PlayPlayerVsCPU();
+                        break;
+                    case "player vs player":
+                        break;
+                }
             }
-
-
-
-
-
-            List<int[]> ints = new List<int[]>();
-            Battleship smallBattleship = new Battleship((int)BattleshipList.Destroyer, ints, BattleshipList.Destroyer.ToString());
-            Console.WriteLine(smallBattleship.name);
-
         }
         static void DisplayMainMenuChoices()
         {
@@ -60,6 +64,15 @@
                     Console.WriteLine((int)choice + ") " + choiceString);
                 }
             }
+        }
+        static void PlayPlayerVsCPU()
+        {
+            Player player = new Player();
+            Player cpu = new Player();
+
+            Console.WriteLine("Howdy Player! ");
+            player._playerOceanGrid[0, 0] = 'H';                // test
+            player.DisplayOceanGrid(player._playerOceanGrid);
         }
     }
 }

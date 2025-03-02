@@ -24,7 +24,6 @@ namespace BattleShip_PSchmitt
         {
             get { return _takeUpSpaces; }
         }
-
         public Battleship()
         {
             _shipLength = 0;
@@ -36,7 +35,6 @@ namespace BattleShip_PSchmitt
             name = shipName;
             _takeUpSpaces = spaces;
         }
-
         public List<int[]> AddTakeUpSpace(int y, int x)
         {
             _takeUpSpaces.Add([y, x]);
