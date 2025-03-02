@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class Program
+    class BattleshipGame
     {
         public enum MainMenuChoices
         {
@@ -20,6 +20,7 @@
                 "|____/ \\__,_|\\__|\\__|_|\\___||___/_| |_|_| .__/ ",
                 "                                        |_|    \r\n",
             };
+            bool isPlaying = true;
 
             foreach (string row in titleScreen)
             {
@@ -28,9 +29,22 @@
             Console.WriteLine("Press any key to start...");
             Console.ReadKey();
             Console.WriteLine();
+
             //start game here
-            Console.WriteLine("Choose your game:");
-            DisplayMainMenuChoices();
+            while (isPlaying)
+            { 
+                Console.WriteLine("Choose your game:");
+                DisplayMainMenuChoices();
+            }
+
+
+
+
+
+            List<int[]> ints = new List<int[]>();
+            Battleship smallBattleship = new Battleship((int)BattleshipList.Destroyer, ints, BattleshipList.Destroyer.ToString());
+            Console.WriteLine(smallBattleship.name);
+
         }
         static void DisplayMainMenuChoices()
         {
