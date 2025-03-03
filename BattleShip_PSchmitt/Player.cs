@@ -266,6 +266,34 @@ namespace BattleShip_PSchmitt
             return playerGrid;
         }
 
+        public static int[] RandomNumberList(int maxIndexOfList, int maxNumberInList, Random rand)
+        {
+            int[] randomNumList = new int[maxIndexOfList];
+            int index = 0;
+            int useZeroOnce = 0;
+
+            while (index < randomNumList.Length)
+            {
+                int newNum = rand.Next(0, maxNumberInList);
+                if (newNum == 0 && useZeroOnce == 0)
+                {
+                    randomNumList[index] = newNum;
+                    useZeroOnce++;
+                    index++;
+                }
+                else if (randomNumList.Contains(newNum))
+                {
+                    continue;
+                }
+                else
+                {
+                    randomNumList[index] = newNum;
+                    index++;
+                }
+            }
+            return randomNumList;
+        }
+
         public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)
         {
             shipList.Remove(chosenShip);

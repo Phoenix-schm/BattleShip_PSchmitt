@@ -83,8 +83,8 @@
             Random rand = new Random();
 
             Console.WriteLine("Howdy Player! Time to make your grid");
-            cpu._playerOceanGrid = CPU.CreateCPUOceanGrid(cpu, rand);
-           // player._playerOceanGrid = CreateOceanGrid(ref player);
+            cpu._playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
+            player._playerOceanGrid = CreateOceanGrid(player);
 
             //player._playerShipList = player.CreateShips();
 
@@ -97,7 +97,7 @@
         /// </summary>
         /// <param name="player">Current player placing onto the grid.</param>
         /// <returns>Returns the updated grid.</returns>
-        static char[,] CreateOceanGrid(ref Player player)
+        static char[,] CreateOceanGrid(Player player)
         {
             char[,] playerOceanGrid = player._playerOceanGrid;
             List<Battleship> playerShipList = player._playerShipList;
