@@ -136,7 +136,7 @@ namespace BattleShip_PSchmitt
             }
             return flippedGrid;
         }
-        public char[,] Vetical_PlaceShipsOnGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int[] coordinates, ref bool canShipBePlaced)
+        public char[,] Vetical_PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int[] coordinates, ref bool canShipBePlaced)
         {
             currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
             canShipBePlaced = CheckCanShipBePlaced(currentOceanGrid, chosenShip, direction, coordinates);

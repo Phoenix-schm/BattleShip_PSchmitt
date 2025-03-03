@@ -80,13 +80,15 @@
         {
             Player player = new Player();
             Player cpu = new Player();
+            Random rand = new Random();
 
             Console.WriteLine("Howdy Player! Time to make your grid");
-            player._playerOceanGrid = CreateOceanGrid(ref player);
+            cpu._playerOceanGrid = CPU.CreateCPUOceanGrid(cpu, rand);
+           // player._playerOceanGrid = CreateOceanGrid(ref player);
 
             //player._playerShipList = player.CreateShips();
 
-            player.DisplayOceanGrid(player._playerOceanGrid);
+            cpu.DisplayOceanGrid(cpu._playerOceanGrid);
 
         }
 
@@ -148,7 +150,7 @@
                     int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
                     if (chosenDirection == 0 || chosenDirection == 1)
                     {
-                        playerOceanGrid = player.Vetical_PlaceShipsOnGrid(playerOceanGrid, chosenShip, chosenDirection, [userX, userY], ref isValid);
+                        playerOceanGrid = player.Vetical_PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userX, userY], ref isValid);
                     }
                     else if (chosenDirection == 2 || chosenDirection == 3)
                     {
