@@ -31,12 +31,12 @@ namespace BattleShip_PSchmitt
             bool isValidInput = false;
             string choiceString = "Invalid";
 
-            while(!isValidInput)
+            while (!isValidInput)
             {
                 string? playerInput = Console.ReadLine();
                 if (playerInput != null && playerInput != "")
                 {
-                    foreach(BattleshipGame.MainMenuChoices choice in Enum.GetValues(typeof(BattleshipGame.MainMenuChoices)))
+                    foreach (BattleshipGame.MainMenuChoices choice in Enum.GetValues(typeof(BattleshipGame.MainMenuChoices)))
                     {
                         choiceString = choice.ToString().Replace("_", " ");
                         int choiceInt = (int)choice;
@@ -56,38 +56,50 @@ namespace BattleShip_PSchmitt
                             break;
                         }
                     }
+                    if (!isValidInput)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("That was not a valid input");
+                    }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Cannot input nothing");
                 }
+                Console.ResetColor();
             }
             return choiceString.ToLower();
         }
 
+        /// <summary>
+        /// Prompts the player for a ship
+        /// </summary>
+        /// <param name="player">The player placing the ship.</param>
+        /// <returns>Battleship that is being placed onto the grid.</returns>
         public static Battleship ChooseShipToPlace(Player player)
         {
             bool isValid = false;
             Battleship chosenShip = null;
             while (!isValid)                                                // Should always break when the ship is no longer null.
             {
-                Console.WriteLine("Which ship qould you like to place?");
+                Console.Write("Choose a ship to place: ");
                 string? playerInput = Console.ReadLine();
 
-                if (playerInput != null && playerInput != "")
+                if (playerInput != null && playerInput != "")               
                 {
-                    for (int index = 1; index < player._playerShipList.Count + 1; index++)
+                    for (int index = 1; index < player._playerShipList.Count + 1; index++)              // Going through the list of ships
                     {
-                        if (playerInput.ToLower() == player._playerShipList[index - 1].name.ToLower())
+                        if (playerInput.ToLower() == player._playerShipList[index - 1].name.ToLower())  // if player picked the correct string name
                         {
                             isValid = true;
-                            chosenShip = player._playerShipList[index - 1];
+                            chosenShip = player._playerShipList[index - 1];                             // minus 1 index for off-by-one
                             break;
                         }
-                        else if (playerInput == index.ToString())
+                        else if (playerInput == index.ToString())                                       // if the player picked the correct index
                         {
                             isValid = true;
-                            chosenShip = player._playerShipList[index - 1];
+                            chosenShip = player._playerShipList[index - 1];                             // minus 1 index for obo
                         }
                     }
 
@@ -95,6 +107,7 @@ namespace BattleShip_PSchmitt
                     {
                         if (chosenShip.eachIndexSpace.Count > 0)                    // if the ship has been chosen previously
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             isValid = false;
                             Console.WriteLine("You've already picked that ship before.");
                         }
@@ -102,42 +115,66 @@ namespace BattleShip_PSchmitt
 
                     if (chosenShip == null)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("That isn't a ship you can choose.");
                     }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Cannot input nothing");
                 }
+                Console.ResetColor();
             }
             return chosenShip;
         }
 
-        public static int CheckInputAxisIsValid(string message)
+        /// <summary>
+        /// Checks that the player is inputting a possible number on the grid
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static int CheckInputNumIsOnGrid(string message)
         {
             bool isInputValid = false;
             int inputIndex = -1;
             while (!isInputValid)
             {
                 Console.Write(message + ": ");
-                string? userInput = Console.ReadLine(); 
-                for (int index = 1; index <= 10; index++)
+                string? userInput = Console.ReadLine();
+
+                if (userInput != null && userInput != string.Empty)
                 {
-                    if (userInput == index.ToString())
+                    for (int index = 1; index <= 10; index++)           // going through the numbers 1 - 10
                     {
-                        isInputValid = true;
-                        inputIndex = index;
-                        break;
+                        if (userInput == index.ToString())
+                        {
+                            isInputValid = true;
+                            inputIndex = index;
+                            break;
+                        }
+                    }
+                    if (!isInputValid)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Those are not valid coordinates");
                     }
                 }
-                if (!isInputValid)
+                else
                 {
-                    Console.WriteLine("Those are invalid coordinates");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Cannot input nothing");
                 }
+                Console.ResetColor();
             }
-            return inputIndex - 1;
+            return inputIndex - 1;                                      // minus one to deal with off-by-one
         }
 
+        /// <summary>
+        /// checks if player input is a valid direction
+        /// </summary>
+        /// <param name="directionsList"></param>
+        /// <returns></returns>
         public static int ChooseDirectionToPlaceShip(string[] directionsList)
         {
             bool isValid = false;
@@ -145,17 +182,11 @@ namespace BattleShip_PSchmitt
             int chosenDirection = -1;
             while (!isValid)
             {
-                Console.WriteLine("Directions to place: ");
-                for (int i = 0; i < directionsList.Length; i++)
-                {
-                    Console.WriteLine((i + 1) + ") " + directionsList[i]);
-                }
-                Console.WriteLine();
                 Console.Write("Choose a direction to place the ship: ");
                 userInput = Console.ReadLine();
                 if (userInput != null)
                 {
-                    for (int index = 1;  index < directionsList.Length + 1; index++)
+                    for (int index = 1; index < directionsList.Length + 1; index++)
                     {
                         if (userInput.ToLower() == directionsList[index - 1].ToLower())
                         {
@@ -170,9 +201,69 @@ namespace BattleShip_PSchmitt
                             break;
                         }
                     }
+                    if (!isValid)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid direction.");
+                    }
                 }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Cannot input nothing.");
+                }
+                Console.ResetColor();
             }
             return chosenDirection;
+        }
+
+        /// <summary>
+        /// Checks if the player wishes to undo a chosenShip placement on the board.
+        /// </summary>
+        /// <param name="chosenShip"></param>
+        /// <param name="index"></param>
+        /// <param name="playerGrid"></param>
+        /// <returns></returns>
+        public static char[,] CheckRedoGrid(ref Battleship chosenShip, ref int index, char[,] playerGrid)
+        {
+            bool isValid = false;
+            string? userInput = "";
+            Console.WriteLine("You have placed " + chosenShip.name + " onto the grid.");
+            Console.WriteLine("Are you happy with this placement?");
+            Console.WriteLine("1) Yes");
+            Console.WriteLine("2) No");
+
+            while (!isValid)
+            {
+                userInput = Console.ReadLine();
+
+                if (userInput.ToLower() == "no" || userInput == "2")
+                {
+                    isValid = true;
+                    index--;
+                    for (int i = chosenShip.eachIndexSpace.Count - 1; i >= 0; i--)
+                    {
+                        int[] thing = chosenShip.eachIndexSpace[i];
+                        int y = thing[1];
+                        int x = thing[0];
+                        playerGrid[y, x] = '~';
+                    }
+                    chosenShip.eachIndexSpace.Clear();
+                    Console.Clear();
+                }
+                else if (userInput.ToLower() == "yes" || userInput == "1")
+                {
+                    isValid = true;
+                    Console.Clear();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("That wasn't a valid input");
+                    Console.ResetColor();
+                }
+            }
+            return playerGrid;
         }
 
         public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)

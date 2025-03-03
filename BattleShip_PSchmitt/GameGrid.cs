@@ -104,10 +104,18 @@ namespace BattleShip_PSchmitt
             }
             Console.WriteLine();
         }
+        /// <summary>
+        /// The numbered axis of the grid. To be used for both grids y and x axis'
+        /// </summary>
+        /// <returns>a list of numbers from 01 - 10</returns>
         public static string[] NumberedGridAxis()
         {
             return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10" ];
         }
+        /// <summary>
+        /// Displays the player grids.
+        /// </summary>
+        /// <param name="player"></param>
         public void DisplayPlayerGrids(Player player)
         {
             Console.WriteLine("       -Target Grid-       ");
@@ -151,10 +159,6 @@ namespace BattleShip_PSchmitt
                     chosenShip.eachIndexSpace.Add([y_coord, x_coord]);
                 }
             }
-            else
-            {
-                Console.WriteLine("That waasn't a valid coordinate.");
-            }
 
             return currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
         }
@@ -181,10 +185,6 @@ namespace BattleShip_PSchmitt
                     chosenShip.eachIndexSpace.Add([y_coord, x_coord]);
                 }
             }
-            else
-            {
-                Console.WriteLine("That was not a valid coordinate");
-            }
 
             return currentOceanGrid;
         }
@@ -202,7 +202,7 @@ namespace BattleShip_PSchmitt
                     {
                         canShipFitHere++;
                     }
-                    else if (canShipFitHere == chosenShip.shipLength)
+                    if (canShipFitHere == chosenShip.shipLength)
                     {
                         isValidIndex = true;
                         break;
@@ -218,7 +218,7 @@ namespace BattleShip_PSchmitt
                     {
                         canShipFitHere++;
                     }
-                    else if (canShipFitHere == chosenShip.shipLength)
+                    if (canShipFitHere == chosenShip.shipLength)
                     {
                         isValidIndex = true;
                         break;

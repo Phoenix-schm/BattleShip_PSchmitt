@@ -43,6 +43,7 @@
                         isPlaying = false; 
                         break;
                     case "player vs cpu":
+                        Console.Clear();
                         PlayPlayerVsCPU();
                         break;
                     case "player vs player":
@@ -53,6 +54,9 @@
                 }
             }
         }
+        /// <summary>
+        /// Displays enum MainMenuChoices with their associated number
+        /// </summary>
         static void DisplayMainMenuChoices()
         {
             foreach(MainMenuChoices choice in Enum.GetValues(typeof(MainMenuChoices)))
@@ -78,70 +82,106 @@
             Player cpu = new Player();
 
             Console.WriteLine("Howdy Player! Time to make your grid");
-            player._playerOceanGrid = CreateOceanGrid(player, player._playerOceanGrid, player._playerShipList);
+            player._playerOceanGrid = CreateOceanGrid(ref player);
 
-            player._playerShipList = player.CreateShips();
+            //player._playerShipList = player.CreateShips();
 
             player.DisplayOceanGrid(player._playerOceanGrid);
 
         }
 
         /// <summary>
-        /// Displays the list of ships
+        /// Has player place all battleships onto the grid
         /// </summary>
-        //static void DisplayShipList(Battleship[] shipList)
-        //{
-        //    Console.WriteLine("Your choice of battleships: ");
-        //    foreach(Battleship ship in shipList)
-        //    {
-        //        Console.WriteLine((int)ship + ") " + ship.ToString());
-        //    }
-        //}
-
-        static char[,] CreateOceanGrid(Player player, char[,] currentOceanGrid, List<Battleship> shipList)
+        /// <param name="player">Current player placing onto the grid.</param>
+        /// <returns>Returns the updated grid.</returns>
+        static char[,] CreateOceanGrid(ref Player player)
         {
-            string[] directionalPlacement = { "Vertical Up", "Vertical Down", "Horizontal Left", "Horizontal Right" };
+            char[,] playerOceanGrid = player._playerOceanGrid;
+            List<Battleship> playerShipList = player._playerShipList;
+            Battleship chosenShip = null;
 
+            string[] directionList = { "Up", "Down", "Left", "Right" };
             bool isValid = false;
-            for (int i = 0; i < shipList.Count; i++)
+            int doneOnce = 0;
+
+            for (int shipCountIndex = 0; shipCountIndex < playerShipList.Count; shipCountIndex++)                      // Going through the number of ships in the ship list
             {
                 do
                 {
-                    Console.WriteLine("Current Player Grid:");
-                    player.DisplayOceanGrid(currentOceanGrid);
-
-                    Console.WriteLine("You have " + (shipList.Count - i) + " ships left to place.");
-                    for (int index = 0; index < shipList.Count; index++)
+                    if (doneOnce == 1 && !isValid)                              // If the previous coordinates weren't valid
                     {
-                        if (shipList[index].eachIndexSpace.Count > 0)
-                        {
-                            Console.ForegroundColor = ConsoleColor.DarkGray;
-                            Console.WriteLine(index + 1 + ") " +  shipList[index].name + " = " + shipList[index].shipLength + " spaces");
-                        }
-                        else
-                        {
-                            Console.WriteLine(index + 1 + ") " +  shipList[index].name + " = " + shipList[index].shipLength + " spaces");
-                        }
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("That was not a valid coordinate");
                         Console.ResetColor();
+                        Console.WriteLine("Current Player Grid:");
+                        player.DisplayOceanGrid(playerOceanGrid);
                     }
+                    else                                                        // Shows the grid at least once
+                    {
+                        Console.WriteLine("Current Player Grid:");
+                        player.DisplayOceanGrid(playerOceanGrid);
+                    }
+
+                    if (doneOnce == 1 && isValid)                         // If the player correctly placed the ship
+                    {
+                        playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid);
+                        Console.WriteLine("Current Player Grid:");
+                        player.DisplayOceanGrid(playerOceanGrid);
+                    }
+
+                    Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
+                    DisplayShipsForPlacement(playerShipList);
                     Console.WriteLine();
 
-                    Battleship chosenShip = Player.ChooseShipToPlace(player);
-                    int chosenDirection = Player.ChooseDirectionToPlaceShip(directionalPlacement);
-                    int userY = Player.CheckInputAxisIsValid("Choose an y coordinate to place the ship");
-                    int userX = Player.CheckInputAxisIsValid("Choose an x coodrinate to place the ship");
+                    chosenShip = Player.ChooseShipToPlace(player);
+
+                    Console.WriteLine("Placement Directions: ");
+                    for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
+                    {
+                        Console.WriteLine((directionIndex + 1) + ") " + directionList[directionIndex]);
+                    }
+                    Console.WriteLine();
+                    int chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
+
+                    int userY = Player.CheckInputNumIsOnGrid("Choose an y coordinate to place the ship");
+                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
                     if (chosenDirection == 0 || chosenDirection == 1)
                     {
-                        currentOceanGrid = player.Vetical_PlaceShipsOnGrid(currentOceanGrid, chosenShip, chosenDirection, [userX, userY], ref isValid);
+                        playerOceanGrid = player.Vetical_PlaceShipsOnGrid(playerOceanGrid, chosenShip, chosenDirection, [userX, userY], ref isValid);
                     }
                     else if (chosenDirection == 2 || chosenDirection == 3)
                     {
-                        currentOceanGrid = player.Horizontal_PlaceShipsOnOceanGrid(currentOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
+                        playerOceanGrid = player.Horizontal_PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
                     }
 
+                    doneOnce = 1;
+                    Console.Clear();
                 } while (!isValid);
             }
-            return currentOceanGrid;
+            return playerOceanGrid;
+        }
+
+        /// <summary>
+        /// Displays each ship with their associated number and take up of spaces.
+        /// Displays as grey if the ship has been updated
+        /// </summary>
+        /// <param name="shipList"></param>
+        static void DisplayShipsForPlacement(List<Battleship> shipList)
+        {
+            for (int index = 0; index < shipList.Count; index++)            // going through each ship in the list
+            {
+                if (shipList[index].eachIndexSpace.Count > 0)               // if the ship has already been placed onto the grid
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].shipLength + " spaces");
+                }
+                else
+                {
+                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].shipLength + " spaces");
+                }
+                Console.ResetColor();
+            }
         }
         static void DisplayRules()
         {
