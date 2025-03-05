@@ -23,6 +23,23 @@ namespace BattleShip_PSchmitt
         }
 
         /// <summary>
+        /// Creation of each battleship
+        /// </summary>
+        /// <returns>An array of each batteship: amount of int spaces it takes up, an empty List of spaces it takes on a grid,
+        /// and its string name</returns>
+        public List<Battleship> CreateShips()
+        {
+            Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'D');
+            Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 'C');
+            Battleship cruiserShip = new Battleship(3, spaces: [], "Cruiser", 'B');
+            Battleship battleShip = new Battleship(4, spaces: [], "Battleship", 'A');
+            Battleship carrierShip = new Battleship(5, spaces: [], "Carrier", 'S');
+
+            return [destroyerShip, submarineShip, cruiserShip, battleShip, carrierShip];
+        }
+
+
+        /// <summary>
         /// Used on the Main Menu. Checks if the player input is one of the main menu choices
         /// </summary>
         /// <returns></returns>
@@ -86,7 +103,7 @@ namespace BattleShip_PSchmitt
                 Console.Write("Choose a ship to place: ");
                 string? playerInput = Console.ReadLine();
 
-                if (playerInput != null && playerInput != "")               
+                if (playerInput != null && playerInput != "")
                 {
                     for (int index = 1; index < player._playerShipList.Count + 1; index++)              // Going through the list of ships
                     {
@@ -243,9 +260,9 @@ namespace BattleShip_PSchmitt
                     index--;
                     for (int i = chosenShip.eachIndexSpace.Count - 1; i >= 0; i--)
                     {
-                        int[] thing = chosenShip.eachIndexSpace[i];
-                        int y = thing[1];
-                        int x = thing[0];
+                        int[] shipSpaces = chosenShip.eachIndexSpace[i];
+                        int y = shipSpaces[0];
+                        int x = shipSpaces[1];
                         playerGrid[y, x] = '~';
                     }
                     chosenShip.eachIndexSpace.Clear();

@@ -7,6 +7,7 @@
             Invalid,
             Player_Vs_CPU,
             Player_Vs_Player,
+            Tutorial,
             Quit
         }
         static void Main(string[] args)
@@ -32,21 +33,23 @@
             //start game here
             bool isPlaying = true;
             while (isPlaying)
-            { 
+            {
                 Console.WriteLine("Choose your game:");
                 DisplayMainMenuChoices();
                 string playerInput = Player.CheckMainMenuChoice();
 
-                switch(playerInput)                                         // Player choice of which to play
+                switch (playerInput)                                         // Player choice of which to play
                 {
                     case "quit":
-                        isPlaying = false; 
+                        isPlaying = false;
                         break;
                     case "player vs cpu":
                         Console.Clear();
                         PlayPlayerVsCPU();
                         break;
                     case "player vs player":
+                        break;
+                    case "tutorial":
                         break;
                     default:
                         Console.WriteLine("This shouldn't be accessible.");
@@ -59,7 +62,7 @@
         /// </summary>
         static void DisplayMainMenuChoices()
         {
-            foreach(MainMenuChoices choice in Enum.GetValues(typeof(MainMenuChoices)))
+            foreach (MainMenuChoices choice in Enum.GetValues(typeof(MainMenuChoices)))
             {
                 string choiceString = choice.ToString().Replace("_", " ");
                 if (choiceString == "Invalid")
@@ -86,9 +89,15 @@
             cpu._playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
             player._playerOceanGrid = CreateOceanGrid(player);
 
-            //player._playerShipList = player.CreateShips();
+            Console.WriteLine("Now for battle!");
+            GameGrid.DisplayOceanGrid(cpu._playerOceanGrid);
+            GameGrid.DisplayOceanGrid(player._playerTargetGrid);
+            //while (player._playerShipList.Count > 0 && cpu._playerShipList.Count > 0)
+            //{
 
-            cpu.DisplayOceanGrid(cpu._playerOceanGrid);
+            //}
+
+            GameGrid.DisplayOceanGrid(player._playerOceanGrid);
 
         }
 
@@ -107,7 +116,7 @@
             bool isValid = false;
             int doneOnce = 0;
 
-            for (int shipCountIndex = 0; shipCountIndex < playerShipList.Count; shipCountIndex++)                      // Going through the number of ships in the ship list
+            for (int shipCountIndex = 0; shipCountIndex < playerShipList.Count; shipCountIndex++)     // Going through the number of ships in the ship list
             {
                 do
                 {
@@ -117,19 +126,19 @@
                         Console.WriteLine("That was not a valid coordinate");
                         Console.ResetColor();
                         Console.WriteLine("Current Player Grid:");
-                        player.DisplayOceanGrid(playerOceanGrid);
+                        GameGrid.DisplayOceanGrid(playerOceanGrid);
                     }
                     else                                                        // Shows the grid at least once
                     {
                         Console.WriteLine("Current Player Grid:");
-                        player.DisplayOceanGrid(playerOceanGrid);
+                        GameGrid.DisplayOceanGrid(playerOceanGrid);
                     }
 
-                    if (doneOnce == 1 && isValid)                         // If the player correctly placed the ship
+                    if (doneOnce == 1 && isValid)                         // If the player correctly placed the ship, check if they want to undo
                     {
                         playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid);
                         Console.WriteLine("Current Player Grid:");
-                        player.DisplayOceanGrid(playerOceanGrid);
+                        GameGrid.DisplayOceanGrid(playerOceanGrid);
                     }
 
                     Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
@@ -146,23 +155,32 @@
                     Console.WriteLine();
                     int chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
 
-                    int userY = Player.CheckInputNumIsOnGrid("Choose an y coordinate to place the ship");
+                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
                     int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
-                    if (chosenDirection == 0 || chosenDirection == 1)
-                    {
-                        playerOceanGrid = player.Vetical_PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userX, userY], ref isValid);
-                    }
-                    else if (chosenDirection == 2 || chosenDirection == 3)
-                    {
-                        playerOceanGrid = player.Horizontal_PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
-                    }
+                    playerOceanGrid = Player.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
 
                     doneOnce = 1;
                     Console.Clear();
-                } while (!isValid);
+                    Console.WriteLine("\x1b[3J");                   // Fully clears the console. Somehow. Without it, the console only clears what is directly seen
+                } while (!isValid);                                 //      and the player can scroll up to see previous outputs
             }
             return playerOceanGrid;
         }
+
+        //static char[,] PlayBattleShipAttack(Player player)
+        //{
+        //    char[,] playerTargetGrid = player._playerTargetGrid;
+        //    char[,] playerOceanGrid = player._playerOceanGrid;
+        //    List<Battleship> shipList = player._playerShipList;
+
+        //    bool isValid = false;
+        //    while (!isValid)
+        //    {
+        //        player.DisplayPlayerGrids(player);
+        //        int y = Player.CheckInputNumIsOnGrid("Choose a y coordinate to attack");
+        //        int x = Player.CheckInputNumIsOnGrid("Choose an x coordinate to attack");
+        //    }
+        //}
 
         /// <summary>
         /// Displays each ship with their associated number and take up of spaces.
@@ -187,6 +205,8 @@
         }
         static void DisplayRules()
         {
+            Player tutorial = new Player();
+            Console.WriteLine("The rules of battleship are simple");
 
         }
     }

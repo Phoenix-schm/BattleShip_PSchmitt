@@ -10,8 +10,8 @@ namespace BattleShip_PSchmitt
         public char _display = ' ';
         public int shipLength
         {
-            get{ return _shipLength; }
-            set{ _shipLength = Math.Max(0, value); }
+            get { return _shipLength; }
+            set { _shipLength = Math.Max(0, value); }
         }
         public List<int[]> eachIndexSpace
         {
