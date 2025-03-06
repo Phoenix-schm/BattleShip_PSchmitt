@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security;
 namespace BattleShip_PSchmitt
 {
-    internal class GameGrid : Battleship
+    internal class GameGrid
     {
-
         /// <summary>
         /// Creates the default version of the battleship grid filled with '~'
         /// </summary>
@@ -22,38 +20,6 @@ namespace BattleShip_PSchmitt
                 }
             }
             return grid;
-        }
-        /// <summary>
-        /// Displays the inputted grid with numbered axis'. Currently only displays '~'
-        /// Meant for showing player ships
-        /// </summary>
-        /// <param name="displayGrid">Grid to be displayed</param>
-        public static void DisplayOceanGrid(char[,] displayGrid)
-        {
-            string[] numberedY_axis = NumberedGridAxis();
-            string numberedX_axis = string.Join(" ", NumberedGridAxis());
-            Console.WriteLine("  " + numberedX_axis);                                          // Displays the numbers of the x axis
-
-            for (int y_axis = 0; y_axis < displayGrid.GetLength(0); y_axis++)
-            {
-                Console.Write(numberedY_axis[y_axis] + " ");                              // Displays the numbers of each y axis
-                for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
-                {
-                    if (displayGrid[y_axis, x_axis] == '~')                             // Displays blue '~'
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write("$" + "  ");
-                    }
-                }
-                Console.ResetColor();
-                Console.WriteLine();
-            }
-            Console.WriteLine();
         }
 
         /// <summary>
@@ -108,173 +74,16 @@ namespace BattleShip_PSchmitt
         public void DisplayPlayerGrids(Player player)
         {
             Console.WriteLine("       -Target Grid-       ");
-            GameGrid.DisplayTargetGrid(player._playerTargetGrid);
+            DisplayTargetGrid(player.playerTargetGrid);
             Console.WriteLine();
             Console.WriteLine("        -Ocean Grid-          ");
-            GameGrid.DisplayOceanGrid(player._playerOceanGrid);
-        }
-        /// <summary>
-        /// Flips the x axis to the y axis and vice versa. For vertical outputs
-        /// </summary>
-        /// <param name="normalGrid">The grid that is being flipped</param>
-        /// <returns>flipped grid.</returns>
-        public static char[,] FlipGameGridXYAxis(char[,] normalGrid)
-        {
-            char[,] flippedGrid = new char[normalGrid.GetLength(0), normalGrid.GetLength(1)];
-            for (int x_axis = 0; x_axis < normalGrid.GetLength(1); x_axis++)
-            {
-                for (int y_axis = 0; y_axis < normalGrid.GetLength(0); y_axis++)
-                {
-                    flippedGrid[y_axis, x_axis] = normalGrid[x_axis, y_axis];
-                }
-            }
-            return flippedGrid;
-        }
-        /// <summary>
-        /// Places ships vertically onto the ocean grid.
-        /// </summary>
-        /// <param name="currentOceanGrid">The current modified grid being modified.</param>
-        /// <param name="chosenShip">The ship being placed onto the board.</param>
-        /// <param name="direction">Whether the ship will be placed forwards or backwards.</param>
-        /// <param name="coordinates">The coordinates the the ship will be placed at.</param>
-        /// <param name="canShipBePlaced">The check if the ship can be placed at the user coordinates.</param>
-        /// <returns>Modified grid </returns>
-        //public char[,] Vetical_PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int[] coordinates, ref bool canShipBePlaced)
-        //{
-        //    currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
-        //    canShipBePlaced = CheckCanShipBePlaced(currentOceanGrid, chosenShip, direction, coordinates);
-        //    int y_coord = coordinates[0];
-        //    int x_coord = coordinates[1];
-
-        //    if (canShipBePlaced && direction == 1)                                                      // Placing ship from coordinates upwards
-        //    {
-        //        for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, x_coord++)
-        //        {
-        //            currentOceanGrid[y_coord, x_coord] = chosenShip._display;
-        //            chosenShip.eachIndexSpace.Add([y_coord, x_coord]);                                  // Adds coordinates to the chosenShips index list
-        //        }
-        //    }
-        //    else if (canShipBePlaced && direction == 0)                                                 // Placing ship from coordinates downwards
-        //    {
-        //        for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, x_coord--)
-        //        {
-        //            currentOceanGrid[y_coord, x_coord] = chosenShip._display;
-        //            chosenShip.eachIndexSpace.Add([y_coord, x_coord]);                                  // Adds coordinates to the chosenShip index list
-        //        }
-        //    }
-
-        //    return FlipGameGridXYAxis(currentOceanGrid);                                                // Flips grid back to normal
-        //}
-
-        /// <summary>
-        /// Horizontal placement of ships onto the ocean grid.
-        /// </summary>
-        /// <param name="currentOceanGrid">The current modified grid being modified.</param>
-        /// <param name="chosenShip">The ship being placed onto the board.</param>
-        /// <param name="direction">Whether the ship will be placed forwards or backwards.</param>
-        /// <param name="coordinates">The coordinates the the ship will be placed at.</param>
-        /// <param name="canShipBePlaced">The check if the ship can be placed at the user coordinates.</param>
-        /// <returns>Modified ocean grid.</returns>
-        public static char[,] PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int[] coordinates, ref bool canShipBePlaced)
-        {
-            int y_coord = coordinates[0];
-            int x_coord = coordinates[1];
-            if (direction == 0 || direction == 1)
-            {
-                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
-                y_coord = coordinates[1];
-                x_coord = coordinates[0];
-            }
-
-            canShipBePlaced = CheckCanShipBePlaced(currentOceanGrid, chosenShip, direction, y_coord, x_coord);   // Whether the ship can be placed at the user coordinates
-
-            if (canShipBePlaced)                                                          // If the ship can be placed forwards.
-            {
-                currentOceanGrid = PlaceShipOnOceanGrid(currentOceanGrid, chosenShip, direction, y_coord, x_coord);
-            }
-
-            if (direction == 0 || direction == 1)
-            {
-                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
-            }
-
-            return currentOceanGrid;
-        }
-        public static char[,] PlaceShipOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int y, int x)
-        {
-            if (direction == 1 || direction == 3)
-            {
-                for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, x++)
-                {
-                    currentOceanGrid[y, x] = chosenShip._display;
-                    chosenShip.eachIndexSpace.Add([y, x]);                                      // Adds coordinates to chosenShip index list
-                }
-            }
-            else if(direction == 0 || direction == 2)
-            {
-                for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, x--)
-                {
-                    currentOceanGrid[y, x] = chosenShip._display;
-                    chosenShip.eachIndexSpace.Add([y, x]);                                      // Adds coordinates to chosenShip index list
-                }
-            }
-            return currentOceanGrid;
-        }
-
-        /// <summary>
-        /// Checks if the chosenShip can be placed at the user coordinates.
-        /// </summary>
-        /// <param name="currentOceanGrid">The current modified grid being checked</param>
-        /// <param name="chosenShip">The current ship being placed onto the board</param>
-        /// <param name="direction">The direction the ship is being placed.</param>
-        /// <param name="index">The user [y,x] coordinates that are being checked.</param>
-        /// <returns>Returns a bool of whether the chosenShip can be placed at coordinates.</returns>
-        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, int direction, int y, int x)
-        {
-            bool isValidIndex = false;
-            int userY = y;
-            int userX = x;
-            int canShipFitHere = 0;
-            if (direction == 1 || direction == 3)
-            {
-                while (userX != currentOceanGrid.GetLength(1) && currentOceanGrid[userY, userX] == '~')
-                {
-                    if (canShipFitHere < chosenShip.shipLength)
-                    {
-                        canShipFitHere++;
-                    }
-                    if (canShipFitHere == chosenShip.shipLength)
-                    {
-                        isValidIndex = true;
-                        break;
-                    }
-                    userX++;
-                }
-            }
-            else if (direction == 0 || direction == 2)
-            {
-                while (userX != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[userY, userX] == '~')
-                {
-                    if (canShipFitHere < chosenShip.shipLength)
-                    {
-                        canShipFitHere++;
-                    }
-                    if (canShipFitHere == chosenShip.shipLength)
-                    {
-                        isValidIndex = true;
-                        break;
-                    }
-                    userX--;
-                }
-            }
-
-            return isValidIndex;
+            OceanGrid.DisplayOceanGrid(player.playerOceanGrid);
         }
 
         public static char[,] PlaceShotsOnTargetGrid(Player currentPlayer, Player opponentPlayer, int chosenShot_y, int chosenShot_x)
         {
-            char[,] playerTargetGrid = currentPlayer._playerTargetGrid;
-            char[,] opponentOceanGrid = opponentPlayer._playerTargetGrid;
+            char[,] playerTargetGrid = currentPlayer.playerTargetGrid;
+            char[,] opponentOceanGrid = opponentPlayer.playerTargetGrid;
 
             if (opponentOceanGrid[chosenShot_y, chosenShot_x] != '~')
             {

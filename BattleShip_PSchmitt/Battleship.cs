@@ -7,7 +7,14 @@ namespace BattleShip_PSchmitt
         private int _shipLength;
         private List<int[]> _eachIndexSpace = [];
         public string name = "";
-        public char _display = ' ';
+        private char _display;
+        public bool stillOnGameBoard
+        {
+            get 
+            {
+                return _eachIndexSpace.Count > 0;
+            }
+        }
         public int shipLength
         {
             get { return _shipLength; }
@@ -17,28 +24,21 @@ namespace BattleShip_PSchmitt
         {
             get { return _eachIndexSpace; }
         }
+        public char display
+        {
+            get { return _display; }
+        }
         public Battleship()
         {
             _shipLength = 0;
             name = "ship";
         }
-        public Battleship(int length, List<int[]> spaces, string shipName, char display)
+        public Battleship(int length, List<int[]> spaces, string shipName, char displayOnGrid)
         {
             _shipLength = length;
             name = shipName;
             _eachIndexSpace = spaces;
-            _display = display;
-        }
-        public List<int[]> AddTakeUpSpace(int y, int x)
-        {
-            _eachIndexSpace.Add([y, x]);
-            return _eachIndexSpace;
-        }
-
-        public List<int[]> RemoveTakeUpSpace(int y, int x)
-        {
-            _eachIndexSpace.Remove([y, x]);
-            return _eachIndexSpace;
+            _display = displayOnGrid;
         }
     }
 }

@@ -2,24 +2,32 @@
 using System.Collections.Generic;
 namespace BattleShip_PSchmitt
 {
-    class Player : GameGrid
+    class Player
     {
-        public char[,] _playerOceanGrid;
-        public char[,] _playerTargetGrid;
-        public List<Battleship> _playerShipList;
-        public string _name = "";
+        public char[,] playerOceanGrid;
+        public char[,] playerTargetGrid;
+        public List<Battleship> playerShipList;
+        public string name = "";
+        public bool isAlive
+        {
+            get
+            {
+                return playerShipList.Count > 0;
+            }
+        }
+
         public Player()
         {
-            _playerShipList = CreateShips();                // Default number of ships. Will act as health
-            _playerOceanGrid = CreateDefaultGrid();         // Deafult ocean grid. Will contain ships
-            _playerTargetGrid = CreateDefaultGrid();        // Default target grid. Will show shots taken
+            playerShipList = CreateShips();                        // Default number of ships. Will act as health
+            playerOceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
+            playerTargetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
         }
-        public Player(string name)
+        public Player(string playerName)
         {
-            _playerShipList = CreateShips();                // Default number of ships. Will act as health
-            _playerOceanGrid = CreateDefaultGrid();         // Deafult ocean grid. Will contain ships
-            _playerTargetGrid = CreateDefaultGrid();        // Default target grid. Will show shots taken
-            _name = name;
+            playerShipList = CreateShips();                        // Default number of ships. Will act as health
+            playerOceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
+            playerTargetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
+            name = playerName;
         }
 
         /// <summary>
@@ -27,13 +35,13 @@ namespace BattleShip_PSchmitt
         /// </summary>
         /// <returns>An array of each batteship: amount of int spaces it takes up, an empty List of spaces it takes on a grid,
         /// and its string name</returns>
-        public List<Battleship> CreateShips()
+        public static List<Battleship> CreateShips()
         {
-            Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'D');
-            Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 'C');
-            Battleship cruiserShip = new Battleship(3, spaces: [], "Cruiser", 'B');
-            Battleship battleShip = new Battleship(4, spaces: [], "Battleship", 'A');
-            Battleship carrierShip = new Battleship(5, spaces: [], "Carrier", 'S');
+            Battleship destroyerShip = new(2, spaces: [], "Destroyer", 'd');
+            Battleship submarineShip = new(3, spaces: [], "Submarine", 's');
+            Battleship cruiserShip = new(3, spaces: [], "Cruiser", 'c');
+            Battleship battleShip = new(4, spaces: [], "Battleship", 'B');
+            Battleship carrierShip = new(5, spaces: [], "Carrier", 'C');
 
             return [destroyerShip, submarineShip, cruiserShip, battleShip, carrierShip];
         }
@@ -53,7 +61,7 @@ namespace BattleShip_PSchmitt
                 string? playerInput = Console.ReadLine();
                 if (playerInput != null && playerInput != "")
                 {
-                    foreach (BattleshipGame.MainMenuChoices choice in Enum.GetValues(typeof(BattleshipGame.MainMenuChoices)))
+                    foreach (BattleshipGame.MainMenuChoices choice in Enum.GetValues(typeof(BattleshipGame.MainMenuChoices)))   // Going through each Main Menu choice
                     {
                         choiceString = choice.ToString().Replace("_", " ");
                         int choiceInt = (int)choice;
@@ -62,13 +70,8 @@ namespace BattleShip_PSchmitt
                         {
                             continue;
                         }
-                        else if (playerInput.ToLower() == choiceString.ToLower())
-                        {
-                            isValidInput = true;
-                            break;
-                        }
-                        else if (playerInput == choiceInt.ToString())
-                        {
+                        else if (playerInput.ToLower() == choiceString.ToLower() || playerInput == choiceInt.ToString())        // If playerinput is one of the main menu
+                        {                                                                                                       //      string or ints
                             isValidInput = true;
                             break;
                         }
@@ -76,13 +79,13 @@ namespace BattleShip_PSchmitt
                     if (!isValidInput)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("That was not a valid input");
+                        Console.WriteLine("That was not a valid menu choice.");
                     }
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing");
+                    Console.WriteLine("Cannot input nothing.");
                 }
                 Console.ResetColor();
             }
@@ -105,18 +108,13 @@ namespace BattleShip_PSchmitt
 
                 if (playerInput != null && playerInput != "")
                 {
-                    for (int index = 1; index < player._playerShipList.Count + 1; index++)              // Going through the list of ships
+                    for (int index = 1; index < player.playerShipList.Count + 1; index++)              // Going through the list of ships
                     {
-                        if (playerInput.ToLower() == player._playerShipList[index - 1].name.ToLower())  // if player picked the correct string name
+                        if (playerInput.ToLower() == player.playerShipList[index - 1].name.ToLower() || playerInput == index.ToString())  // if player picked the correct string name
                         {
                             isValid = true;
-                            chosenShip = player._playerShipList[index - 1];                             // minus 1 index for off-by-one
+                            chosenShip = player.playerShipList[index - 1];                             // minus 1 index for off-by-one
                             break;
-                        }
-                        else if (playerInput == index.ToString())                                       // if the player picked the correct index
-                        {
-                            isValid = true;
-                            chosenShip = player._playerShipList[index - 1];                             // minus 1 index for obo
                         }
                     }
 
@@ -133,7 +131,7 @@ namespace BattleShip_PSchmitt
                     if (chosenShip == null)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("That isn't a ship you can choose.");
+                        Console.WriteLine("That isn't a listed ship.");
                     }
                 }
                 else
@@ -174,13 +172,13 @@ namespace BattleShip_PSchmitt
                     if (!isInputValid)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Those are not valid coordinates");
+                        Console.WriteLine("Those are not valid coordinates.");
                     }
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing");
+                    Console.WriteLine("Cannot input nothing.");
                 }
                 Console.ResetColor();
             }
@@ -205,13 +203,7 @@ namespace BattleShip_PSchmitt
                 {
                     for (int index = 1; index < directionsList.Length + 1; index++)
                     {
-                        if (userInput.ToLower() == directionsList[index - 1].ToLower())
-                        {
-                            isValid = true;
-                            chosenDirection = index - 1;
-                            break;
-                        }
-                        else if (userInput == index.ToString())
+                        if (userInput.ToLower() == directionsList[index - 1].ToLower() || userInput == index.ToString())
                         {
                             isValid = true;
                             chosenDirection = index - 1;
@@ -235,13 +227,13 @@ namespace BattleShip_PSchmitt
         }
 
         /// <summary>
-        /// Checks if the player wishes to undo a chosenShip placement on the board.
+        /// Checks if the player wishes to undo a chosenShip placement on the OceanGrid.
         /// </summary>
         /// <param name="chosenShip"></param>
         /// <param name="index"></param>
-        /// <param name="playerGrid"></param>
+        /// <param name="oceanGrid"></param>
         /// <returns></returns>
-        public static char[,] CheckRedoGrid(ref Battleship chosenShip, ref int index, char[,] playerGrid)
+        public static char[,] CheckRedoGrid(ref Battleship chosenShip, ref int index, char[,] oceanGrid)
         {
             bool isValid = false;
             string? userInput = "";
@@ -263,7 +255,7 @@ namespace BattleShip_PSchmitt
                         int[] shipSpaces = chosenShip.eachIndexSpace[i];
                         int y = shipSpaces[0];
                         int x = shipSpaces[1];
-                        playerGrid[y, x] = '~';
+                        oceanGrid[y, x] = '~';
                     }
                     chosenShip.eachIndexSpace.Clear();
                     Console.Clear();
@@ -276,44 +268,19 @@ namespace BattleShip_PSchmitt
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("That wasn't a valid input");
+                    Console.WriteLine("That wasn't a valid input.");
                     Console.ResetColor();
                 }
             }
-            return playerGrid;
-        }
-
-        public static int[] RandomNumberList(int maxIndexOfList, int maxNumberInList, Random rand)
-        {
-            int[] randomNumList = new int[maxIndexOfList];
-            int index = 0;
-            int useZeroOnce = 0;
-
-            while (index < randomNumList.Length)
-            {
-                int newNum = rand.Next(0, maxNumberInList);
-                if (newNum == 0 && useZeroOnce == 0)
-                {
-                    randomNumList[index] = newNum;
-                    useZeroOnce++;
-                    index++;
-                }
-                else if (randomNumList.Contains(newNum))
-                {
-                    continue;
-                }
-                else
-                {
-                    randomNumList[index] = newNum;
-                    index++;
-                }
-            }
-            return randomNumList;
+            return oceanGrid;
         }
 
         public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)
         {
-            shipList.Remove(chosenShip);
+            if (!chosenShip.stillOnGameBoard)
+            {
+                shipList.Remove(chosenShip);
+            }
             return shipList;
         }
     }

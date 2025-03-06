@@ -86,19 +86,18 @@
             Random rand = new Random();
 
             Console.WriteLine("Howdy Player! Time to make your grid");
-            cpu._playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
-            player._playerOceanGrid = CreateOceanGrid(player);
+            cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
+            player.playerOceanGrid = CreateOceanGrid(player);
 
             Console.WriteLine("Now for battle!");
-            GameGrid.DisplayOceanGrid(cpu._playerOceanGrid);
-            GameGrid.DisplayOceanGrid(player._playerTargetGrid);
+            OceanGrid.DisplayOceanGrid(cpu.playerOceanGrid);
+            OceanGrid.DisplayOceanGrid(player.playerTargetGrid);
             //while (player._playerShipList.Count > 0 && cpu._playerShipList.Count > 0)
             //{
 
             //}
 
-            GameGrid.DisplayOceanGrid(player._playerOceanGrid);
-
+            OceanGrid.DisplayOceanGrid(player.playerOceanGrid);
         }
 
         /// <summary>
@@ -108,8 +107,8 @@
         /// <returns>Returns the updated grid.</returns>
         static char[,] CreateOceanGrid(Player player)
         {
-            char[,] playerOceanGrid = player._playerOceanGrid;
-            List<Battleship> playerShipList = player._playerShipList;
+            char[,] playerOceanGrid = player.playerOceanGrid;
+            List<Battleship> playerShipList = player.playerShipList;
             Battleship chosenShip = null;
 
             string[] directionList = { "Up", "Down", "Left", "Right" };
@@ -126,19 +125,19 @@
                         Console.WriteLine("That was not a valid coordinate");
                         Console.ResetColor();
                         Console.WriteLine("Current Player Grid:");
-                        GameGrid.DisplayOceanGrid(playerOceanGrid);
+                        OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
                     else                                                        // Shows the grid at least once
                     {
                         Console.WriteLine("Current Player Grid:");
-                        GameGrid.DisplayOceanGrid(playerOceanGrid);
+                        OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
 
                     if (doneOnce == 1 && isValid)                         // If the player correctly placed the ship, check if they want to undo
                     {
                         playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid);
                         Console.WriteLine("Current Player Grid:");
-                        GameGrid.DisplayOceanGrid(playerOceanGrid);
+                        OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
 
                     Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
@@ -147,7 +146,10 @@
 
                     chosenShip = Player.ChooseShipToPlace(player);
 
-                    Console.WriteLine("Placement Directions: ");
+                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
+                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
+
+                    Console.WriteLine("Placement Directions: ");                                                // Display the different directions the ship can be placed
                     for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
                     {
                         Console.WriteLine((directionIndex + 1) + ") " + directionList[directionIndex]);
@@ -155,9 +157,7 @@
                     Console.WriteLine();
                     int chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
 
-                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
-                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
-                    playerOceanGrid = Player.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
+                    playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
 
                     doneOnce = 1;
                     Console.Clear();
