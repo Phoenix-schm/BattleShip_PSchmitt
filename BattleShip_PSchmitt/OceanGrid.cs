@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class OceanGrid : GameGrid
+    internal class OceanGrid
     {
         /// <summary>
         /// Displays the inputted grid with numbered axis'. Currently only displays '~'
@@ -24,10 +24,15 @@
                         Console.ForegroundColor = ConsoleColor.DarkBlue;
                         Console.Write(displayGrid[y_axis, x_axis] + "  ");
                     }
-                    else
+                    else if (displayGrid[y_axis,x_axis] != 'H')                         // If its a ship that has not been hit
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write("$" + "  ");
+                        Console.Write("S" + "  ");
+                    }
+                    else                                                                // If the ship has been hit
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("S" + "  ");
                     }
                 }
                 Console.ResetColor();
@@ -85,7 +90,6 @@
             {
                 currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
             }
-
             return currentOceanGrid;
         }
         public static char[,] PlaceShipOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int y, int x)

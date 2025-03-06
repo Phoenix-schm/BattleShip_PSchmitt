@@ -10,20 +10,38 @@
 
             for (int index = 0; index < playerShipList.Count; index++)
             {
-                int x;
-                int y;
                 Battleship chosenShip = playerShipList[index];    // chooses a ship
-                int direction;
                 do
                 {
-                    y = rand.Next(0, oceanGrid.GetLength(0));
-                    x = rand.Next(0, oceanGrid.GetLength(1));
-                    direction = rand.Next(0, 4);
+                    int y = rand.Next(0, oceanGrid.GetLength(0));
+                    int x = rand.Next(0, oceanGrid.GetLength(1));
+                    int direction = rand.Next(0, 4);
                     oceanGrid = OceanGrid.PlaceShipsOnOceanGrid(oceanGrid, chosenShip, direction, [y, x], ref isValid);
 
                 } while (!isValid);
             }
             return oceanGrid;
+        }
+
+        public static void RandomAxisChoice(Player cpu, Player player, Random rand)
+        {
+            char[,] targetGrid = cpu.playerTargetGrid;
+            bool isValid = false;
+
+            while (!isValid)
+            {
+                int y = rand.Next(0, targetGrid.GetLength(0));
+                int x = rand.Next(0, targetGrid.GetLength(1));
+
+                if (targetGrid[y, x] == 'M' || targetGrid[y,x] == 'H')
+                {
+                    continue;
+                }
+                else if (targetGrid[y,x] == '~')
+                {
+                    TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
+                }
+            }
         }
     }
 }

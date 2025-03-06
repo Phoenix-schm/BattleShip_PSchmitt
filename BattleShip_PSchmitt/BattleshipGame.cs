@@ -81,8 +81,8 @@
         /// </summary>
         static void PlayPlayerVsCPU()
         {
-            Player player = new Player();
-            Player cpu = new Player();
+            Player player = new Player("Player");
+            Player cpu = new Player("CPU");
             Random rand = new Random();
 
             Console.WriteLine("Howdy Player! Time to make your grid");
@@ -90,14 +90,14 @@
             player.playerOceanGrid = CreateOceanGrid(player);
 
             Console.WriteLine("Now for battle!");
-            OceanGrid.DisplayOceanGrid(cpu.playerOceanGrid);
-            OceanGrid.DisplayOceanGrid(player.playerTargetGrid);
-            //while (player._playerShipList.Count > 0 && cpu._playerShipList.Count > 0)
+            GameGrid.DisplayPlayerGrids(player);
+            GameGrid.DisplayPlayerGrids(cpu);
+            //while (player.isAlive && cpu.isAlive)
             //{
 
             //}
 
-            OceanGrid.DisplayOceanGrid(player.playerOceanGrid);
+
         }
 
         /// <summary>
@@ -146,10 +146,7 @@
 
                     chosenShip = Player.ChooseShipToPlace(player);
 
-                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
-                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
-
-                    Console.WriteLine("Placement Directions: ");                                                // Display the different directions the ship can be placed
+                    Console.WriteLine("Placement Directions: ");
                     for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
                     {
                         Console.WriteLine((directionIndex + 1) + ") " + directionList[directionIndex]);
@@ -157,6 +154,8 @@
                     Console.WriteLine();
                     int chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
 
+                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
+                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
                     playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
 
                     doneOnce = 1;
