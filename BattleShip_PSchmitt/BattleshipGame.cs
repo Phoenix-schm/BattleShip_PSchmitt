@@ -87,8 +87,8 @@
 
             Console.WriteLine("Howdy Player! Time to make your grid");
             cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
-            // player.playerOceanGrid = CreateOceanGrid(player);
-            player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
+            player.playerOceanGrid = CreateOceanGrid(player);
+            //player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
 
             Console.WriteLine("Now for battle!");
             GameGrid.DisplayPlayerGrids(player);
@@ -117,6 +117,7 @@
             char[,] playerOceanGrid = player.playerOceanGrid;
             List<Battleship> playerShipList = player.playerShipList;
             Battleship chosenShip = null;
+            int chosenDirection = -1;
 
             string[] directionList = { "Up", "Down", "Left", "Right" };
             bool isValidCoordinates = false;
@@ -142,7 +143,7 @@
 
                     if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
-                        playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid);
+                        playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
@@ -162,7 +163,7 @@
                         Console.WriteLine((directionIndex + 1) + ") " + directionList[directionIndex]);
                     }
                     Console.WriteLine();
-                    int chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
+                    chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
 
                     playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 

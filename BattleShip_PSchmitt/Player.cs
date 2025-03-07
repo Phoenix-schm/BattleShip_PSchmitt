@@ -252,7 +252,7 @@ namespace BattleShip_PSchmitt
         /// <param name="index"></param>
         /// <param name="playerGrid"></param>
         /// <returns></returns>
-        public static char[,] CheckRedoGrid(ref Battleship chosenShip, ref int index, char[,] playerGrid)
+        public static char[,] CheckRedoGrid(ref Battleship chosenShip, ref int index, char[,] playerGrid, int direction)
         {
             bool isValid = false;
             string? userInput = "";
@@ -272,6 +272,11 @@ namespace BattleShip_PSchmitt
                     for (int i = chosenShip.eachIndexSpace.Count - 1; i >= 0; i--)
                     {
                         int[] shipSpaces = chosenShip.eachIndexSpace[i];
+                        if (direction == 0 || direction == 1)
+                        {
+                            Array.Reverse(shipSpaces);
+                        }
+                        
                         int y = shipSpaces[0];
                         int x = shipSpaces[1];
                         playerGrid[y, x] = '~';

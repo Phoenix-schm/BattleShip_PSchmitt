@@ -68,25 +68,12 @@
         {
             Battleship hitShip = null;
 
-            if (oceanGrid[y,x] == 'd')
+            foreach (Battleship ship in shipList)
             {
-                hitShip = shipList[0];
-            }
-            else if (oceanGrid[y, x] == 's')
-            {
-                hitShip = shipList[1];
-            }
-            else if (oceanGrid[y, x] == 'c')
-            {
-                hitShip = shipList[2];
-            }
-            else if (oceanGrid[y, x] == 'B')
-            {
-                hitShip = shipList[3];
-            }
-            else if (oceanGrid[y,x] == 'C')
-            {
-                hitShip = shipList[4];
+                if (oceanGrid[y,x] == ship.display)
+                {
+                    hitShip = ship;
+                }
             }
 
             return hitShip;
