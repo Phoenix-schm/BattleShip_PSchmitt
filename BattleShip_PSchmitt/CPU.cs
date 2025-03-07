@@ -23,7 +23,7 @@
             return oceanGrid;
         }
 
-        public static void RandomAxisChoice(Player cpu, Player player, Random rand)
+        public static void ChooseRandomShot(Player cpu, Player player, Random rand)
         {
             char[,] targetGrid = cpu.playerTargetGrid;
             bool isValid = false;
@@ -40,6 +40,7 @@
                 else if (targetGrid[y,x] == '~')
                 {
                     TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
+                    isValid = true;
                 }
             }
         }

@@ -40,5 +40,10 @@ namespace BattleShip_PSchmitt
             _eachIndexSpace = spaces;
             _display = displayOnGrid;
         }
+
+        public void RemoveShip(int y, int x)
+        {
+
+        }
     }
 }

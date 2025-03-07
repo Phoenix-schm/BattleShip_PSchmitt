@@ -8,6 +8,13 @@ namespace BattleShip_PSchmitt
         public char[,] playerTargetGrid;
         public List<Battleship> playerShipList;
         public string name = "";
+        public bool isAlive
+        {
+            get
+            {
+                return playerShipList.Count > 0;
+            }
+        }
 
         public Player()
         {
@@ -21,6 +28,14 @@ namespace BattleShip_PSchmitt
             playerOceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
             playerTargetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
             name = playerName;
+        }
+        public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)
+        {
+            if (!chosenShip.stillOnGameBoard)
+            {
+                shipList.Remove(chosenShip);
+            }
+            return shipList;
         }
 
         /// <summary>
@@ -277,15 +292,6 @@ namespace BattleShip_PSchmitt
                 }
             }
             return playerGrid;
-        }
-
-        public static List<Battleship> RemoveShipFromList(List<Battleship> shipList, Battleship chosenShip)
-        {
-            if (!chosenShip.stillOnGameBoard)
-            {
-                shipList.Remove(chosenShip);
-            }
-            return shipList;
         }
     }
 }

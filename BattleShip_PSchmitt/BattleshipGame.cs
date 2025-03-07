@@ -45,7 +45,7 @@
                         break;
                     case "player vs cpu":
                         Console.Clear();
-                        PlayPlayerVsCPU();
+                        Play_PlayerVsCPU();
                         break;
                     case "player vs player":
                         break;
@@ -79,7 +79,7 @@
         /// <summary>
         /// Running through the game of player vs computer. First to sink all battleships wins
         /// </summary>
-        static void PlayPlayerVsCPU()
+        static void Play_PlayerVsCPU()
         {
             Player player = new Player("Player");
             Player cpu = new Player("CPU");
@@ -87,15 +87,22 @@
 
             Console.WriteLine("Howdy Player! Time to make your grid");
             cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
-            player.playerOceanGrid = CreateOceanGrid(player);
+            // player.playerOceanGrid = CreateOceanGrid(player);
+            player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
 
             Console.WriteLine("Now for battle!");
             GameGrid.DisplayPlayerGrids(player);
             GameGrid.DisplayPlayerGrids(cpu);
-            //while (player.isAlive && cpu.isAlive)
-            //{
+            while (player.isAlive && cpu.isAlive)
+            {
+                int yCoord = Player.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
+                int xCoord = Player.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
 
-            //}
+                TargetGrid.PlaceShotsOnTargetGrid(player, cpu, yCoord, xCoord);
+                GameGrid.DisplayPlayerGrids(player);
+
+                CPU.ChooseRandomShot(cpu, player, rand);
+            }
 
 
         }
@@ -112,14 +119,14 @@
             Battleship chosenShip = null;
 
             string[] directionList = { "Up", "Down", "Left", "Right" };
-            bool isValid = false;
+            bool isValidCoordinates = false;
             int doneOnce = 0;
 
             for (int shipCountIndex = 0; shipCountIndex < playerShipList.Count; shipCountIndex++)     // Going through the number of ships in the ship list
             {
                 do
                 {
-                    if (doneOnce == 1 && !isValid)                              // If the previous coordinates weren't valid
+                    if (doneOnce == 1 && !isValidCoordinates)                               // If the previous coordinates weren't valid
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("That was not a valid coordinate");
@@ -127,13 +134,13 @@
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
-                    else                                                        // Shows the grid at least once
+                    else                                                                    // Shows the grid at least once
                     {
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
 
-                    if (doneOnce == 1 && isValid)                         // If the player correctly placed the ship, check if they want to undo
+                    if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
                         playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid);
                         Console.WriteLine("Current Player Grid:");
@@ -146,6 +153,9 @@
 
                     chosenShip = Player.ChooseShipToPlace(player);
 
+                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
+                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");   
+
                     Console.WriteLine("Placement Directions: ");
                     for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
                     {
@@ -154,32 +164,15 @@
                     Console.WriteLine();
                     int chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
 
-                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
-                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
-                    playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValid);
+                    playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
                     doneOnce = 1;
                     Console.Clear();
                     Console.WriteLine("\x1b[3J");                   // Fully clears the console. Somehow. Without it, the console only clears what is directly seen
-                } while (!isValid);                                 //      and the player can scroll up to see previous outputs
+                } while (!isValidCoordinates);                      //      and the player can scroll up to see previous outputs
             }
             return playerOceanGrid;
         }
-
-        //static char[,] PlayBattleShipAttack(Player player)
-        //{
-        //    char[,] playerTargetGrid = player._playerTargetGrid;
-        //    char[,] playerOceanGrid = player._playerOceanGrid;
-        //    List<Battleship> shipList = player._playerShipList;
-
-        //    bool isValid = false;
-        //    while (!isValid)
-        //    {
-        //        player.DisplayPlayerGrids(player);
-        //        int y = Player.CheckInputNumIsOnGrid("Choose a y coordinate to attack");
-        //        int x = Player.CheckInputNumIsOnGrid("Choose an x coordinate to attack");
-        //    }
-        //}
 
         /// <summary>
         /// Displays each ship with their associated number and take up of spaces.

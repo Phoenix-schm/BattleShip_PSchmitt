@@ -40,14 +40,19 @@
             }
             Console.WriteLine();
         }
-        public static char[,] PlaceShotsOnTargetGrid(Player currentPlayer, Player opponentPlayer, int chosenShot_y, int chosenShot_x)
+        public static void PlaceShotsOnTargetGrid(Player currentPlayer, Player opponentPlayer, int chosenShot_y, int chosenShot_x)
         {
             char[,] playerTargetGrid = currentPlayer.playerTargetGrid;
-            char[,] opponentOceanGrid = opponentPlayer.playerTargetGrid;
+            char[,] opponentOceanGrid = opponentPlayer.playerOceanGrid;
+            List<Battleship> opponentShips = opponentPlayer.playerShipList;
             string opponentName = opponentPlayer.name;
 
             if (opponentOceanGrid[chosenShot_y, chosenShot_x] != '~')
             {
+
+                Battleship hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);
+                hitShip.eachIndexSpace.RemoveAt(0);
+
                 Console.WriteLine(opponentName + ": Ack! It's a hit.");
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'H';
@@ -57,7 +62,34 @@
                 Console.WriteLine(opponentName + ": That's a miss.");
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'M';
             }
-            return playerTargetGrid;
+        }
+
+        public static Battleship ReturnHitShip(int y, int x, char[,] oceanGrid, List<Battleship> shipList)
+        {
+            Battleship hitShip = null;
+
+            if (oceanGrid[y,x] == 'd')
+            {
+                hitShip = shipList[0];
+            }
+            else if (oceanGrid[y, x] == 's')
+            {
+                hitShip = shipList[1];
+            }
+            else if (oceanGrid[y, x] == 'c')
+            {
+                hitShip = shipList[2];
+            }
+            else if (oceanGrid[y, x] == 'B')
+            {
+                hitShip = shipList[3];
+            }
+            else if (oceanGrid[y,x] == 'C')
+            {
+                hitShip = shipList[4];
+            }
+
+            return hitShip;
         }
     }
 }
