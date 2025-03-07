@@ -8,23 +8,23 @@ namespace BattleShip_PSchmitt
         private List<int[]> _eachIndexSpace = [];
         public string name = "";
         private char _display;
-        public bool stillOnGameBoard
+        public bool StillOnGameBoard
         {
             get 
             {
                 return _eachIndexSpace.Count > 0;
             }
         }
-        public int shipLength
+        public int ShipLength
         {
             get { return _shipLength; }
             set { _shipLength = Math.Max(0, value); }
         }
-        public List<int[]> eachIndexSpace
+        public List<int[]> EachIndexSpace
         {
             get { return _eachIndexSpace; }
         }
-        public char display
+        public char Display
         {
             get { return _display; }
         }
@@ -39,11 +39,6 @@ namespace BattleShip_PSchmitt
             name = shipName;
             _eachIndexSpace = spaces;
             _display = displayOnGrid;
-        }
-
-        public void RemoveShip(int y, int x)
-        {
-
         }
     }
 }

@@ -87,13 +87,13 @@
 
             Console.WriteLine("Howdy Player! Time to make your grid");
             cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
-            player.playerOceanGrid = CreateOceanGrid(player);
-            //player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
+            //player.playerOceanGrid = CreateOceanGrid(player);
+            player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
 
             Console.WriteLine("Now for battle!");
             GameGrid.DisplayPlayerGrids(player);
             GameGrid.DisplayPlayerGrids(cpu);
-            while (player.isAlive && cpu.isAlive)
+            while (player.IsAlive && cpu.IsAlive)
             {
                 int yCoord = Player.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
                 int xCoord = Player.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
@@ -184,14 +184,14 @@
         {
             for (int index = 0; index < shipList.Count; index++)            // going through each ship in the list
             {
-                if (shipList[index].eachIndexSpace.Count > 0)               // if the ship has already been placed onto the grid
+                if (shipList[index].EachIndexSpace.Count > 0)               // if the ship has already been placed onto the grid
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].shipLength + " spaces");
+                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].ShipLength + " spaces");
                 }
                 else
                 {
-                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].shipLength + " spaces");
+                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].ShipLength + " spaces");
                 }
                 Console.ResetColor();
             }

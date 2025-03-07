@@ -1,7 +1,13 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class TargetGrid
+    class TargetGrid
     {
+        public static Dictionary<char, ConsoleColor> targetGridColors = new Dictionary<char, ConsoleColor>()
+        {
+            {'~', ConsoleColor.DarkBlue },
+            {'M', ConsoleColor.White },
+            {'H', ConsoleColor.DarkRed }
+        };
         /// <summary>
         /// Displays the inputted grid with numbered axis'.
         /// Meant for showing player shots
@@ -12,28 +18,15 @@
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
             string numberedX_axis = string.Join(" ", numberedAxis);
-            Console.WriteLine("  " + numberedX_axis);                                          // Displays the numbers of the x axis
+            Console.WriteLine("  " + numberedX_axis);                                           // Displays the numbers of the x axis
 
             for (int y_axis = 0; y_axis < displayGrid.GetLength(0); y_axis++)
             {
-                Console.Write(numberedAxis[y_axis] + " ");                              // Displays the numbers of each y axis
+                Console.Write(numberedAxis[y_axis] + " ");                                      // Displays the numbers of each y axis
                 for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
                 {
-                    if (displayGrid[y_axis, x_axis] == '~')                             // Displays blue '~'
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
-                    }
-                    else if (displayGrid[y_axis, x_axis] == 'H')
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
-                    }
-                    else if (displayGrid[y_axis, x_axis] == 'M')
-                    {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
-                    }
+                    Console.ForegroundColor = targetGridColors[displayGrid[y_axis, x_axis]];
+                    Console.Write(displayGrid[y_axis, x_axis] + "  ");
                 }
                 Console.ResetColor();
                 Console.WriteLine();
@@ -47,21 +40,27 @@
             List<Battleship> opponentShips = opponentPlayer.playerShipList;
             string opponentName = opponentPlayer.name;
 
-            if (opponentOceanGrid[chosenShot_y, chosenShot_x] != '~')
-            {
+            Battleship hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);
 
-                Battleship hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);
-                hitShip.eachIndexSpace.RemoveAt(0);
+            if (hitShip != null)
+            {
+                hitShip.EachIndexSpace.RemoveAt(0);
 
                 Console.WriteLine(opponentName + ": Ack! It's a hit.");
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'H';
+
+                if (!hitShip.StillOnGameBoard)
+                {
+                    opponentShips.Remove(hitShip);
+                }
             }
             else
             {
                 Console.WriteLine(opponentName + ": That's a miss.");
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'M';
             }
+
         }
 
         public static Battleship ReturnHitShip(int y, int x, char[,] oceanGrid, List<Battleship> shipList)
@@ -70,7 +69,7 @@
 
             foreach (Battleship ship in shipList)
             {
-                if (oceanGrid[y,x] == ship.display)
+                if (oceanGrid[y,x] == ship.Display)
                 {
                     hitShip = ship;
                 }

@@ -2,6 +2,16 @@
 {
     internal class OceanGrid
     {
+        public static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
+        {
+            {'~', ConsoleColor.DarkBlue },
+            {'d', ConsoleColor.Green },
+            {'s', ConsoleColor.Green },
+            {'c', ConsoleColor.Green },
+            {'B', ConsoleColor.Green },
+            {'C', ConsoleColor.Green },
+            {'H', ConsoleColor.DarkRed }
+        };
         /// <summary>
         /// Displays the inputted grid with numbered axis'. Currently only displays '~'
         /// Meant for showing player ships
@@ -16,23 +26,17 @@
 
             for (int y_axis = 0; y_axis < displayGrid.GetLength(0); y_axis++)
             {
-                Console.Write(numberedAxis[y_axis] + " ");                                // Displays the numbers of each y axis
+                Console.Write(numberedAxis[y_axis] + " ");                                  // Displays the numbers of each y axis
                 for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
                 {
-                    if (displayGrid[y_axis, x_axis] == '~')                                 // Displays blue '~'
+                    Console.ForegroundColor = oceanGridColors[displayGrid[y_axis, x_axis]];
+                    if (displayGrid[y_axis, x_axis] != '~' && displayGrid[y_axis, x_axis] != 'H')
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                        Console.Write('S' + "  ");
+                    }
+                    else
+                    {
                         Console.Write(displayGrid[y_axis, x_axis] + "  ");
-                    }
-                    else if (displayGrid[y_axis,x_axis] != 'H')                         // If its a ship that has not been hit
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write("S" + "  ");
-                    }
-                    else                                                                // If the ship has been hit
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("S" + "  ");
                     }
                 }
                 Console.ResetColor();
@@ -96,18 +100,18 @@
         {
             if (direction == 1 || direction == 3)                                               // Going forwards
             {
-                for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, x++)
+                for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x++)
                 {
-                    currentOceanGrid[y, x] = chosenShip.display;
-                    chosenShip.eachIndexSpace.Add([y, x]);                                      // Adds coordinates to chosenShip index list
+                    currentOceanGrid[y, x] = chosenShip.Display;
+                    chosenShip.EachIndexSpace.Add([y, x]);                                      // Adds coordinates to chosenShip index list
                 }
             }
             else if (direction == 0 || direction == 2)                                          // Going backwards
             {
-                for (int shipLength = 0; shipLength < chosenShip.shipLength; shipLength++, x--)
+                for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x--)
                 {
-                    currentOceanGrid[y, x] = chosenShip.display;
-                    chosenShip.eachIndexSpace.Add([y, x]);                                      // Adds coordinates to chosenShip index list
+                    currentOceanGrid[y, x] = chosenShip.Display;
+                    chosenShip.EachIndexSpace.Add([y, x]);                                      // Adds coordinates to chosenShip index list
                 }
             }
             return currentOceanGrid;
@@ -131,11 +135,11 @@
             {
                 while (userX != currentOceanGrid.GetLength(1) && currentOceanGrid[userY, userX] == '~')
                 {
-                    if (canShipFitHere < chosenShip.shipLength)
+                    if (canShipFitHere < chosenShip.ShipLength)
                     {
                         canShipFitHere++;
                     }
-                    if (canShipFitHere == chosenShip.shipLength)
+                    if (canShipFitHere == chosenShip.ShipLength)
                     {
                         isValidIndex = true;
                         break;
@@ -147,11 +151,11 @@
             {
                 while (userX != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[userY, userX] == '~')
                 {
-                    if (canShipFitHere < chosenShip.shipLength)
+                    if (canShipFitHere < chosenShip.ShipLength)
                     {
                         canShipFitHere++;
                     }
-                    if (canShipFitHere == chosenShip.shipLength)
+                    if (canShipFitHere == chosenShip.ShipLength)
                     {
                         isValidIndex = true;
                         break;
