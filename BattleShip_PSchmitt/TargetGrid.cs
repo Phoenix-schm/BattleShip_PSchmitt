@@ -40,7 +40,7 @@
             List<Battleship> opponentShips = opponentPlayer.playerShipList;
             string opponentName = opponentPlayer.name;
 
-            Battleship hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);
+            Battleship? hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);
 
             if (hitShip != null)
             {
@@ -50,7 +50,7 @@
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'H';
 
-                if (!hitShip.StillOnGameBoard)
+                if (!hitShip.IsStillFloating)
                 {
                     opponentShips.Remove(hitShip);
                 }

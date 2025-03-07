@@ -8,7 +8,7 @@ namespace BattleShip_PSchmitt
         private List<int[]> _eachIndexSpace = [];
         public string name = "";
         private char _display;
-        public bool StillOnGameBoard
+        public bool IsStillFloating
         {
             get 
             {

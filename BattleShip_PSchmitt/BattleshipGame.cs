@@ -2,16 +2,9 @@
 {
     class BattleshipGame
     {
-        public enum MainMenuChoices
-        {
-            Invalid,
-            Player_Vs_CPU,
-            Player_Vs_Player,
-            Tutorial,
-            Quit
-        }
         static void Main(string[] args)
         {
+            string[] mainMenuChoices = { "Invalid", "Player_Vs_CPU", "Player_Vs_Player", "Tutorial", "Quit" };
             string[] titleScreen =
             {
                 " ____        _   _   _           _     _       ",
@@ -35,8 +28,8 @@
             while (isPlaying)
             {
                 Console.WriteLine("Choose your game:");
-                DisplayMainMenuChoices();
-                string playerInput = Player.CheckMainMenuChoice();
+                DisplayMainMenuChoices(mainMenuChoices);
+                string playerInput = PlayerInput.CheckMainMenuChoice(mainMenuChoices);
 
                 switch (playerInput)                                         // Player choice of which to play
                 {
@@ -60,18 +53,18 @@
         /// <summary>
         /// Displays enum MainMenuChoices with their associated number
         /// </summary>
-        static void DisplayMainMenuChoices()
+        static void DisplayMainMenuChoices(string[] mainMenuChoices)
         {
-            foreach (MainMenuChoices choice in Enum.GetValues(typeof(MainMenuChoices)))
+            for (int index = 0;  index < mainMenuChoices.Length; index++)
             {
-                string choiceString = choice.ToString().Replace("_", " ");
+                string choiceString = mainMenuChoices[index].ToString().Replace("_", " ");
                 if (choiceString == "Invalid")
                 {
                     continue;
                 }
                 else
                 {
-                    Console.WriteLine((int)choice + ") " + choiceString);
+                    Console.WriteLine(index + ") " + choiceString);
                 }
             }
         }
@@ -95,16 +88,42 @@
             GameGrid.DisplayPlayerGrids(cpu);
             while (player.IsAlive && cpu.IsAlive)
             {
-                int yCoord = Player.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
-                int xCoord = Player.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
+                bool isValidCoordinates = false;
+                int yCoord = -1;
+                int xCoord = -1;
+                while (!isValidCoordinates)
+                {
+                    yCoord = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
+                    xCoord = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
 
-                TargetGrid.PlaceShotsOnTargetGrid(player, cpu, yCoord, xCoord);
+                    if (player.playerTargetGrid[yCoord, xCoord] == 'M' || player.playerTargetGrid[yCoord, xCoord] == 'H')
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("You've already hit that coordinate");
+                        Console.ResetColor();
+                        continue;
+                    }
+                    else
+                    {
+                        isValidCoordinates = true;
+                    }
+                }
+
                 GameGrid.DisplayPlayerGrids(player);
-
+                TargetGrid.PlaceShotsOnTargetGrid(player, cpu, yCoord, xCoord);
                 CPU.ChooseRandomShot(cpu, player, rand);
             }
 
+            if (player.IsAlive)
+            {
+                Console.WriteLine("Congrats " +  player.name + " you are victorious");
+            }
+            else
+            {
+                Console.WriteLine("Congrats " + cpu.name + " you are victorious");
+            }
 
+            Console.WriteLine("Would you like to try again?");
         }
 
         /// <summary>
@@ -143,7 +162,7 @@
 
                     if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
-                        playerOceanGrid = Player.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
+                        playerOceanGrid = PlayerInput.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
@@ -152,10 +171,10 @@
                     DisplayShipsForPlacement(playerShipList);
                     Console.WriteLine();
 
-                    chosenShip = Player.ChooseShipToPlace(player);
+                    chosenShip = PlayerInput.ChooseShipToPlace(player);
 
-                    int userY = Player.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
-                    int userX = Player.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");   
+                    int userY = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
+                    int userX = PlayerInput.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");   
 
                     Console.WriteLine("Placement Directions: ");
                     for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
@@ -163,7 +182,7 @@
                         Console.WriteLine((directionIndex + 1) + ") " + directionList[directionIndex]);
                     }
                     Console.WriteLine();
-                    chosenDirection = Player.ChooseDirectionToPlaceShip(directionList);
+                    chosenDirection = PlayerInput.ChooseDirectionToPlaceShip(directionList);
 
                     playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
