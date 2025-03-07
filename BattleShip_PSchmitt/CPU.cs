@@ -2,7 +2,6 @@
 {
     class CPU : Player
     {
-        public int[] previousShot;
         /// <summary>
         /// Creates an Ocean grid with random ship placements
         /// </summary>
@@ -36,10 +35,11 @@
         /// <param name="cpu"></param>
         /// <param name="player"></param>
         /// <param name="rand"></param>
-        public static void ChooseRandomShot(CPU cpu, Player player, Random rand)
+        public static string ChooseRandomShot(CPU cpu, Player player, Random rand)
         {
             char[,] targetGrid = cpu.playerTargetGrid;
             bool isValid = false;
+            string message = "";
 
             while (!isValid)
             {
@@ -52,11 +52,12 @@
                 }
                 else if (targetGrid[y,x] == '~')
                 {
-                    TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
+                    message = TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
                     cpu.previousShot = [y, x];
                     isValid = true;
                 }
             }
+            return message;
         }
     }
 }

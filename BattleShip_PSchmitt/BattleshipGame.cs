@@ -1,10 +1,13 @@
-﻿namespace BattleShip_PSchmitt
+﻿using System.Diagnostics;
+using System.Numerics;
+
+namespace BattleShip_PSchmitt
 {
     class BattleshipGame
     {
         static void Main(string[] args)
         {
-            string[] mainMenuChoices = { "Invalid", "Player_Vs_CPU", "Player_Vs_Player", "Tutorial", "Quit" };
+            string[] mainMenuChoices = { "Invalid", "Player Vs CPU", "Player Vs Player", "Tutorial", "Quit" };
             string[] titleScreen =
             {
                 " ____        _   _   _           _     _       ",
@@ -61,14 +64,14 @@
         {
             for (int index = 0;  index < mainMenuChoices.Length; index++)
             {
-                string choiceString = mainMenuChoices[index].Replace("_", " ");
-                if (choiceString == "Invalid")
+                ;
+                if (mainMenuChoices[index] == "Invalid")
                 {
                     continue;
                 }
                 else
                 {
-                    Console.WriteLine(index + ") " + choiceString);
+                    Console.WriteLine(index + ") " + mainMenuChoices[index]);
                 }
             }
         }
@@ -78,46 +81,36 @@
         /// </summary>
         static bool Play_PlayerVsCPU()
         {
+            // Initialize player variables
             Player player = new Player("Player");
             CPU cpu = new CPU();
+            cpu.name = "CPU";
+
             Random rand = new Random();
             int shotsTaken = 0;
+            int roundNumber = 1;
 
             Console.WriteLine("Howdy Player! Time to make your grid");
-            cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
             //player.playerOceanGrid = CreateOceanGrid(player);
             player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
+            cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
 
             Console.WriteLine("Now for battle!");
             GameGrid.DisplayPlayerGrids(cpu);
-            bool isValidCoordinates = false;
+            string cpuMessage = "";
+            string playerMessage = "";
 
-            while (player.IsAlive && cpu.IsAlive)
+            while (player.IsAlive && cpu.IsAlive)                                                   // While both players have all their ships on the board.
             {
+                Console.WriteLine("Round "+ roundNumber++ + ": ");
                 GameGrid.DisplayPlayerGrids(player);
-                int yCoord;
-                int xCoord;
-                do
-                {
-                    yCoord = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
-                    xCoord = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
+                DisplayPreviousShot(player, playerMessage, ConsoleColor.Cyan);
+                DisplayPreviousShot(cpu, cpuMessage, ConsoleColor.Red);
 
-                    if (player.playerTargetGrid[yCoord, xCoord] == 'M' || player.playerTargetGrid[yCoord, xCoord] == 'H')
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine("You've already hit that coordinate");
-                        Console.ResetColor();
-                        continue;
-                    }
-                    else
-                    {
-                        isValidCoordinates = true;
-                    }
-                } while (!isValidCoordinates);
+                int[] userCoordinates = TargetGrid.ReturnValidUserCoordinates(player);
 
-                //GameGrid.DisplayPlayerGrids(player);
-                TargetGrid.PlaceShotsOnTargetGrid(player, cpu, yCoord, xCoord);             // Player shoots
-                CPU.ChooseRandomShot(cpu, player, rand);                                    // CPU shoots
+                playerMessage = TargetGrid.PlaceShotsOnTargetGrid(player, cpu, userCoordinates[0], userCoordinates[1]);     // Player shoots, returns the shot message
+                cpuMessage = CPU.ChooseRandomShot(cpu, player, rand);                                                       // CPU shoots, returns the shot message
 
                 shotsTaken++;
                 Console.Clear();
@@ -126,7 +119,7 @@
 
             if (player.IsAlive)
             {
-                Console.WriteLine("Congrats " + player.name + " you are victorious");
+                Console.WriteLine("Congrats " + player.name + " you are victorious!");
                 Console.WriteLine("You shot: " + shotsTaken + " times.");
             }
             else
@@ -135,8 +128,13 @@
             }
 
             return PlayerInput.PlayAgainInput();
-
         }
+
+        //static bool Play_PlayerVsPlayer()
+        //{
+        //    Player player1 = new Player("Player1");
+        //    Player player2 = new Player("Player2");
+        //}
 
         /// <summary>
         /// Has player place all battleships onto the grid
@@ -227,6 +225,20 @@
                 Console.ResetColor();
             }
         }
+        static void DisplayPreviousShot(Player displayPlayer, string targetMessage, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            if (displayPlayer.previousShot != null)
+            {
+                Console.WriteLine(displayPlayer.name + " Turn:");
+                Console.WriteLine("----------------------");
+                Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + "," + (displayPlayer.previousShot[1] + 1) + ".");
+                Console.WriteLine(targetMessage);
+                Console.WriteLine();
+            }
+            Console.ResetColor();
+        }
+
         static void DisplayRules()
         {
             Player tutorial = new Player();

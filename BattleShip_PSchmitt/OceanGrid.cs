@@ -42,7 +42,7 @@
                 Console.ResetColor();
                 Console.WriteLine();
             }
-            Console.WriteLine();
+            //Console.WriteLine();
         }
 
         /// <summary>

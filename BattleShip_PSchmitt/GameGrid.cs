@@ -30,12 +30,13 @@ namespace BattleShip_PSchmitt
         /// <param name="player"></param>
         public static void DisplayPlayerGrids(Player player)
         {
-            Console.WriteLine(player.name + "Grids");
+            Console.WriteLine(player.name + " Grids");
             Console.WriteLine("       -Target Grid-       ");
             TargetGrid.DisplayTargetGrid(player.playerTargetGrid);
-            Console.WriteLine();
+            //Console.WriteLine();
             Console.WriteLine("        -Ocean Grid-          ");
             OceanGrid.DisplayOceanGrid(player.playerOceanGrid);
+            Console.WriteLine();
         }
     }
 }

@@ -9,7 +9,7 @@
         public static string CheckMainMenuChoice(string[] mainMenuChoices)
         {
             bool isValidChoice = false;
-            string choiceString = "Invalid";
+            string choice = "Invalid";
 
             while (!isValidChoice)
             {
@@ -18,13 +18,13 @@
                 {
                     for (int index = 0;  index < mainMenuChoices.Length; index++)
                     {
-                        choiceString = mainMenuChoices[index].Replace("_", " ");
+                        choice = mainMenuChoices[index];
 
-                        if (choiceString == "Invalid")
+                        if (choice == "Invalid")
                         {
                             continue;
                         }
-                        else if (playerInput.ToLower() == choiceString.ToLower() || playerInput == index.ToString())        // If playerinput is one of the main menu
+                        else if (playerInput.ToLower() == choice.ToLower() || playerInput == index.ToString())        // If playerinput is one of the main menu
                         {                                                                                                   //      string or ints
                             isValidChoice = true;
                             break;
@@ -43,7 +43,7 @@
                 }
                 Console.ResetColor();
             }
-            return choiceString.ToLower();
+            return choice.ToLower();
         }
 
         /// <summary>

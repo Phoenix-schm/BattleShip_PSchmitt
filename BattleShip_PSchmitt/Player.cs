@@ -8,6 +8,7 @@ namespace BattleShip_PSchmitt
         public char[,] playerTargetGrid;
         public List<Battleship> playerShipList;
         public string name = "";
+        public int[] previousShot;
         public bool IsAlive
         {
             get
