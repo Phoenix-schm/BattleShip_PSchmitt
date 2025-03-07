@@ -18,14 +18,14 @@
                 {
                     for (int index = 0;  index < mainMenuChoices.Length; index++)
                     {
-                        choiceString = mainMenuChoices[index].ToString().Replace("_", " ");
+                        choiceString = mainMenuChoices[index].Replace("_", " ");
 
                         if (choiceString == "Invalid")
                         {
                             continue;
                         }
                         else if (playerInput.ToLower() == choiceString.ToLower() || playerInput == index.ToString())        // If playerinput is one of the main menu
-                        {                                                                                                       //      string or ints
+                        {                                                                                                   //      string or ints
                             isValidChoice = true;
                             break;
                         }
@@ -234,6 +234,40 @@
                 }
             }
             return playerGrid;
+        }
+
+        public static bool PlayAgainInput()
+        {
+            Console.WriteLine("Would you like to try again?");
+            Console.WriteLine("1) Yes");
+            Console.WriteLine("2) No");
+            bool isValidInput = false;
+            string? userInput = "";
+            bool outputValue = false;
+
+            while (!isValidInput)
+            {
+                userInput = Console.ReadLine();
+
+                if (userInput.ToLower() == "yes" || userInput == "1")
+                {
+                    isValidInput = true;
+                    outputValue = true;
+                }
+                else if (userInput.ToLower() == "no" || userInput == "2")
+                {
+                    isValidInput = true;
+                    outputValue = false;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("That is not a valid input.");
+                    Console.ResetColor();
+                }
+            }
+            return outputValue;
+
         }
     }
 }

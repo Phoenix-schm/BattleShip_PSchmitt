@@ -24,21 +24,25 @@
             //Console.Clear();
 
             //start game here
-            bool isPlaying = true;
-            while (isPlaying)
+            bool isPlayingBattleship = true;
+            while (isPlayingBattleship)
             {
                 Console.WriteLine("Choose your game:");
                 DisplayMainMenuChoices(mainMenuChoices);
                 string playerInput = PlayerInput.CheckMainMenuChoice(mainMenuChoices);
+                bool isPlayingShortGame = true;
 
                 switch (playerInput)                                         // Player choice of which to play
                 {
                     case "quit":
-                        isPlaying = false;
+                        isPlayingBattleship = false;
                         break;
                     case "player vs cpu":
-                        Console.Clear();
-                        Play_PlayerVsCPU();
+                        while (isPlayingShortGame)
+                        {
+                            Console.Clear();
+                            isPlayingShortGame = Play_PlayerVsCPU();
+                        }
                         break;
                     case "player vs player":
                         break;
@@ -57,7 +61,7 @@
         {
             for (int index = 0;  index < mainMenuChoices.Length; index++)
             {
-                string choiceString = mainMenuChoices[index].ToString().Replace("_", " ");
+                string choiceString = mainMenuChoices[index].Replace("_", " ");
                 if (choiceString == "Invalid")
                 {
                     continue;
@@ -72,11 +76,12 @@
         /// <summary>
         /// Running through the game of player vs computer. First to sink all battleships wins
         /// </summary>
-        static void Play_PlayerVsCPU()
+        static bool Play_PlayerVsCPU()
         {
             Player player = new Player("Player");
-            Player cpu = new Player("CPU");
+            CPU cpu = new CPU();
             Random rand = new Random();
+            int shotsTaken = 0;
 
             Console.WriteLine("Howdy Player! Time to make your grid");
             cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
@@ -84,14 +89,15 @@
             player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
 
             Console.WriteLine("Now for battle!");
-            GameGrid.DisplayPlayerGrids(player);
             GameGrid.DisplayPlayerGrids(cpu);
+            bool isValidCoordinates = false;
+
             while (player.IsAlive && cpu.IsAlive)
             {
-                bool isValidCoordinates = false;
-                int yCoord = -1;
-                int xCoord = -1;
-                while (!isValidCoordinates)
+                GameGrid.DisplayPlayerGrids(player);
+                int yCoord;
+                int xCoord;
+                do
                 {
                     yCoord = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
                     xCoord = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
@@ -107,23 +113,29 @@
                     {
                         isValidCoordinates = true;
                     }
-                }
+                } while (!isValidCoordinates);
 
-                GameGrid.DisplayPlayerGrids(player);
-                TargetGrid.PlaceShotsOnTargetGrid(player, cpu, yCoord, xCoord);
-                CPU.ChooseRandomShot(cpu, player, rand);
+                //GameGrid.DisplayPlayerGrids(player);
+                TargetGrid.PlaceShotsOnTargetGrid(player, cpu, yCoord, xCoord);             // Player shoots
+                CPU.ChooseRandomShot(cpu, player, rand);                                    // CPU shoots
+
+                shotsTaken++;
+                Console.Clear();
+                Console.WriteLine("\x1b[3J");
             }
 
             if (player.IsAlive)
             {
-                Console.WriteLine("Congrats " +  player.name + " you are victorious");
+                Console.WriteLine("Congrats " + player.name + " you are victorious");
+                Console.WriteLine("You shot: " + shotsTaken + " times.");
             }
             else
             {
                 Console.WriteLine("Congrats " + cpu.name + " you are victorious");
             }
 
-            Console.WriteLine("Would you like to try again?");
+            return PlayerInput.PlayAgainInput();
+
         }
 
         /// <summary>

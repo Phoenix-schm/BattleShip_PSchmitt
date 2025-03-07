@@ -40,6 +40,7 @@
             List<Battleship> opponentShips = opponentPlayer.playerShipList;
             string opponentName = opponentPlayer.name;
 
+            Console.WriteLine(currentPlayer.name + " shoots coordinate " + chosenShot_x + "," + chosenShot_y + ".");
             Battleship? hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);
 
             if (hitShip != null)
@@ -50,8 +51,9 @@
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'H';
 
-                if (!hitShip.IsStillFloating)
+                if (!hitShip.IsStillFloating)                               // if the ship has been sunk.
                 {
+                    Console.WriteLine("You sunk my battleship!");
                     opponentShips.Remove(hitShip);
                 }
             }

@@ -2,11 +2,18 @@
 {
     class CPU : Player
     {
+        public int[] previousShot;
+        /// <summary>
+        /// Creates an Ocean grid with random ship placements
+        /// </summary>
+        /// <param name="player">The player having their grid created</param>
+        /// <param name="rand">Random generator</param>
+        /// <returns>The new ocean grid</returns>
         public static char[,] CreateCPUoceanGrid(Player player, Random rand)
         {
             char[,] oceanGrid = player.playerOceanGrid;
             List<Battleship> playerShipList = player.playerShipList;
-            bool isValid = false;
+            bool isValidCoordinates = false;
 
             for (int index = 0; index < playerShipList.Count; index++)
             {
@@ -16,14 +23,20 @@
                     int y = rand.Next(0, oceanGrid.GetLength(0));
                     int x = rand.Next(0, oceanGrid.GetLength(1));
                     int direction = rand.Next(0, 4);
-                    oceanGrid = OceanGrid.PlaceShipsOnOceanGrid(oceanGrid, chosenShip, direction, [y, x], ref isValid);
+                    oceanGrid = OceanGrid.PlaceShipsOnOceanGrid(oceanGrid, chosenShip, direction, [y, x], ref isValidCoordinates);
 
-                } while (!isValid);
+                } while (!isValidCoordinates);
             }
             return oceanGrid;
         }
 
-        public static void ChooseRandomShot(Player cpu, Player player, Random rand)
+        /// <summary>
+        /// Randomaly shoots somewhere on the target grid.
+        /// </summary>
+        /// <param name="cpu"></param>
+        /// <param name="player"></param>
+        /// <param name="rand"></param>
+        public static void ChooseRandomShot(CPU cpu, Player player, Random rand)
         {
             char[,] targetGrid = cpu.playerTargetGrid;
             bool isValid = false;
@@ -40,6 +53,7 @@
                 else if (targetGrid[y,x] == '~')
                 {
                     TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
+                    cpu.previousShot = [y, x];
                     isValid = true;
                 }
             }
