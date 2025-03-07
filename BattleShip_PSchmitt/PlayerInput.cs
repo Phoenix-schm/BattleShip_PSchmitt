@@ -16,7 +16,7 @@
                 string? playerInput = Console.ReadLine();
                 if (playerInput != null && playerInput != "")
                 {
-                    for (int index = 0;  index < mainMenuChoices.Length; index++)
+                    for (int index = 0; index < mainMenuChoices.Length; index++)
                     {
                         choice = mainMenuChoices[index];
 
@@ -74,7 +74,7 @@
 
                     if (isValidShip)
                     {
-                        if (chosenShip.EachIndexSpace.Count > 0)                            // if the ship has been chosen previously
+                        if (chosenShip.EachIndexOnOceanGrid.Count > 0)                            // if the ship has been chosen previously
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             isValidShip = false;
@@ -182,14 +182,14 @@
         }
 
         /// <summary>
-        /// Checks if the player wishes to undo a chosenShip placement on the board.
+        /// Checks if the player wishes to undo a chosenShip placement on the player Ocean Grid.
         /// </summary>
-        /// <param name="chosenShip"></param>
-        /// <param name="totalShipIndex">Adjusts whether there is another ship to be added to the board.</param>
-        /// <param name="playerGrid"></param>
-        /// <param name="direction"></param>
+        /// <param name="chosenShip">The ship potentially being undone</param>
+        /// <param name="totalShipIndex">Adjusts if the player wishes to undo a ship.</param>
+        /// <param name="playerOceanGrid">The grid being updated.</param>
+        /// <param name="direction">Adjusts the coordinate index based on vertical or horizontal</param>
         /// <returns></returns>
-        public static char[,] CheckRedoGrid(ref Battleship chosenShip, ref int totalShipIndex, char[,] playerGrid, int direction)
+        public static char[,] CheckRedoGridInput(ref Battleship chosenShip, ref int totalShipIndex, char[,] playerOceanGrid, int direction)
         {
             bool isValidChoice = false;
             string? userInput = "";
@@ -206,9 +206,9 @@
                 {
                     isValidChoice = true;
                     totalShipIndex--;
-                    for (int index = chosenShip.EachIndexSpace.Count - 1; index >= 0; index--)
+                    for (int index = chosenShip.EachIndexOnOceanGrid.Count - 1; index >= 0; index--)
                     {
-                        int[] shipSpaces = chosenShip.EachIndexSpace[index];
+                        int[] shipSpaces = chosenShip.EachIndexOnOceanGrid[index];
                         if (direction == 0 || direction == 1)
                         {
                             Array.Reverse(shipSpaces);
@@ -216,9 +216,9 @@
 
                         int y = shipSpaces[0];
                         int x = shipSpaces[1];
-                        playerGrid[y, x] = '~';
+                        playerOceanGrid[y, x] = '~';
                     }
-                    chosenShip.EachIndexSpace.Clear();
+                    chosenShip.EachIndexOnOceanGrid.Clear();
                     Console.Clear();
                 }
                 else if (userInput.ToLower() == "yes" || userInput == "1")
@@ -233,16 +233,20 @@
                     Console.ResetColor();
                 }
             }
-            return playerGrid;
+            return playerOceanGrid;
         }
-
+        /// <summary>
+        /// Asks the player if they'd like to play again.
+        /// </summary>
+        /// <returns>Returns true if they want to redo. Returns false if they want to quit.</returns>
         public static bool PlayAgainInput()
         {
             Console.WriteLine("Would you like to try again?");
             Console.WriteLine("1) Yes");
             Console.WriteLine("2) No");
+
             bool isValidInput = false;
-            string? userInput = "";
+            string? userInput;
             bool outputValue = false;
 
             while (!isValidInput)
@@ -267,7 +271,17 @@
                 }
             }
             return outputValue;
-
         }
+
+        public static void WhoGoesFirstInput(Player player1, Player player2)
+        {
+            bool isValidName = false;
+            string? userinput;
+        }
+
+        //public static void GiveYourselfAName(Player player)
+        //{
+        //    Console.WriteLine("")
+        //}
     }
 }

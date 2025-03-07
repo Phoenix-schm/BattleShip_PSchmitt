@@ -25,17 +25,16 @@ namespace BattleShip_PSchmitt
         }
 
         /// <summary>
-        /// Displays the player grids.
+        /// Displays the inputed player grids.
         /// </summary>
-        /// <param name="player"></param>
-        public static void DisplayPlayerGrids(Player player)
+        /// <param name="currentPlayer">The current player being displayed.</param>
+        public static void DisplayPlayerGrids(Player currentPlayer)
         {
-            Console.WriteLine(player.name + " Grids");
+            Console.WriteLine(currentPlayer.name + " Grids");
             Console.WriteLine("       -Target Grid-       ");
-            TargetGrid.DisplayTargetGrid(player.playerTargetGrid);
-            //Console.WriteLine();
+            TargetGrid.DisplayTargetGrid(currentPlayer.playerTargetGrid);
             Console.WriteLine("        -Ocean Grid-          ");
-            OceanGrid.DisplayOceanGrid(player.playerOceanGrid);
+            OceanGrid.DisplayOceanGrid(currentPlayer.playerOceanGrid);
             Console.WriteLine();
         }
     }

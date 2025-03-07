@@ -32,9 +32,10 @@
         /// <summary>
         /// Randomaly shoots somewhere on the target grid.
         /// </summary>
-        /// <param name="cpu"></param>
-        /// <param name="player"></param>
-        /// <param name="rand"></param>
+        /// <param name="cpu">The computer player.</param>
+        /// <param name="player">The human player.</param>
+        /// <param name="rand">Random variable</param>
+        /// <returns>The "shoot" message that will be displayed, whether the cpu successfully shot a player ship.</returns>
         public static string ChooseRandomShot(CPU cpu, Player player, Random rand)
         {
             char[,] targetGrid = cpu.playerTargetGrid;
@@ -46,11 +47,11 @@
                 int y = rand.Next(0, targetGrid.GetLength(0));
                 int x = rand.Next(0, targetGrid.GetLength(1));
 
-                if (targetGrid[y, x] == 'M' || targetGrid[y,x] == 'H')
+                if (targetGrid[y, x] == 'M' || targetGrid[y, x] == 'H')      // If it's already hit that spot
                 {
                     continue;
                 }
-                else if (targetGrid[y,x] == '~')
+                else
                 {
                     message = TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
                     cpu.previousShot = [y, x];

@@ -48,6 +48,7 @@ namespace BattleShip_PSchmitt
                         }
                         break;
                     case "player vs player":
+                        Play_PlayerVsPlayer();
                         break;
                     case "tutorial":
                         break;
@@ -62,9 +63,8 @@ namespace BattleShip_PSchmitt
         /// </summary>
         static void DisplayMainMenuChoices(string[] mainMenuChoices)
         {
-            for (int index = 0;  index < mainMenuChoices.Length; index++)
+            for (int index = 0; index < mainMenuChoices.Length; index++)
             {
-                ;
                 if (mainMenuChoices[index] == "Invalid")
                 {
                     continue;
@@ -77,7 +77,7 @@ namespace BattleShip_PSchmitt
         }
 
         /// <summary>
-        /// Running through the game of player vs computer. First to sink all battleships wins
+        /// Running through the game of player vs computer. First to sink all opponent battleships wins
         /// </summary>
         static bool Play_PlayerVsCPU()
         {
@@ -88,7 +88,6 @@ namespace BattleShip_PSchmitt
 
             Random rand = new Random();
             int shotsTaken = 0;
-            int roundNumber = 1;
 
             Console.WriteLine("Howdy Player! Time to make your grid");
             //player.playerOceanGrid = CreateOceanGrid(player);
@@ -96,13 +95,12 @@ namespace BattleShip_PSchmitt
             cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
 
             Console.WriteLine("Now for battle!");
-            GameGrid.DisplayPlayerGrids(cpu);
+            //GameGrid.DisplayPlayerGrids(cpu);
             string cpuMessage = "";
             string playerMessage = "";
 
             while (player.IsAlive && cpu.IsAlive)                                                   // While both players have all their ships on the board.
             {
-                Console.WriteLine("Round "+ roundNumber++ + ": ");
                 GameGrid.DisplayPlayerGrids(player);
                 DisplayPreviousShot(player, playerMessage, ConsoleColor.Cyan);
                 DisplayPreviousShot(cpu, cpuMessage, ConsoleColor.Red);
@@ -110,9 +108,13 @@ namespace BattleShip_PSchmitt
                 int[] userCoordinates = TargetGrid.ReturnValidUserCoordinates(player);
 
                 playerMessage = TargetGrid.PlaceShotsOnTargetGrid(player, cpu, userCoordinates[0], userCoordinates[1]);     // Player shoots, returns the shot message
-                cpuMessage = CPU.ChooseRandomShot(cpu, player, rand);                                                       // CPU shoots, returns the shot message
-
                 shotsTaken++;
+
+                if (cpu.IsAlive)
+                {
+                    cpuMessage = CPU.ChooseRandomShot(cpu, player, rand);                                                   // CPU shoots, returns the shot message
+                }
+
                 Console.Clear();
                 Console.WriteLine("\x1b[3J");
             }
@@ -130,11 +132,22 @@ namespace BattleShip_PSchmitt
             return PlayerInput.PlayAgainInput();
         }
 
-        //static bool Play_PlayerVsPlayer()
-        //{
-        //    Player player1 = new Player("Player1");
-        //    Player player2 = new Player("Player2");
-        //}
+        static void Play_PlayerVsPlayer()
+        {
+            Player player1 = new Player("Player 1");
+            Player player2 = new Player("Player 2");
+
+            Random random = new Random();
+            int shotsTaken = 0;
+
+            Console.WriteLine("Alright " + player1.name + ", make your grid.");
+            player1.playerOceanGrid = CreateOceanGrid(player1);
+            Console.WriteLine(player2.name + " it's your turn to make a grid.");
+            player2.playerOceanGrid = CreateOceanGrid(player2);
+
+            Console.WriteLine("Time to choose who goes first.");
+            Console.Write("Write the name of the player that goes first: ");
+        }
 
         /// <summary>
         /// Has player place all battleships onto the grid
@@ -145,7 +158,7 @@ namespace BattleShip_PSchmitt
         {
             char[,] playerOceanGrid = player.playerOceanGrid;
             List<Battleship> playerShipList = player.playerShipList;
-            Battleship chosenShip = null;
+            Battleship? chosenShip = null;
             int chosenDirection = -1;
 
             string[] directionList = { "Up", "Down", "Left", "Right" };
@@ -172,7 +185,7 @@ namespace BattleShip_PSchmitt
 
                     if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
-                        playerOceanGrid = PlayerInput.CheckRedoGrid(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
+                        playerOceanGrid = PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(playerOceanGrid);
                     }
@@ -184,7 +197,7 @@ namespace BattleShip_PSchmitt
                     chosenShip = PlayerInput.ChooseShipToPlace(player);
 
                     int userY = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
-                    int userX = PlayerInput.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");   
+                    int userX = PlayerInput.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
 
                     Console.WriteLine("Placement Directions: ");
                     for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
@@ -198,8 +211,8 @@ namespace BattleShip_PSchmitt
 
                     doneOnce = 1;
                     Console.Clear();
-                    Console.WriteLine("\x1b[3J");                   // Fully clears the console. Somehow. Without it, the console only clears what is directly seen
-                } while (!isValidCoordinates);                      //      and the player can scroll up to see previous outputs
+                    Console.WriteLine("\x1b[3J");                   // Fully clears the console.
+                } while (!isValidCoordinates);
             }
             return playerOceanGrid;
         }
@@ -213,7 +226,7 @@ namespace BattleShip_PSchmitt
         {
             for (int index = 0; index < shipList.Count; index++)            // going through each ship in the list
             {
-                if (shipList[index].EachIndexSpace.Count > 0)               // if the ship has already been placed onto the grid
+                if (shipList[index].EachIndexOnOceanGrid.Count > 0)         // if the ship has already been placed onto the grid
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].ShipLength + " spaces");

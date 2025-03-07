@@ -4,11 +4,24 @@ namespace BattleShip_PSchmitt
 {
     class Player
     {
+        public static Dictionary<string, ConsoleColor> playerColorList = new Dictionary<string, ConsoleColor>
+        {
+            {"Invalid", ConsoleColor.Black },
+            {"Default", ConsoleColor.Gray },
+            {"Red", ConsoleColor.Red },
+            {"Magenta", ConsoleColor.Magenta },
+            {"Cyan", ConsoleColor.Cyan },
+            {"Dark Cyan", ConsoleColor.DarkCyan },
+            {"Dark Green", ConsoleColor.DarkGreen },
+            {"Yellow", ConsoleColor.Yellow }
+        };
         public char[,] playerOceanGrid;
         public char[,] playerTargetGrid;
         public List<Battleship> playerShipList;
         public string name = "";
-        public int[] previousShot;
+        public int[]? previousShot;
+        public ConsoleColor playerColor;
+        public int goesFirst = 0;
         public bool IsAlive
         {
             get
@@ -36,7 +49,7 @@ namespace BattleShip_PSchmitt
         /// </summary>
         /// <returns>An array of each batteship: amount of int spaces it takes up, an empty List of spaces it takes on a grid,
         /// and its string name</returns>
-        public List<Battleship> CreateShips()
+        public static List<Battleship> CreateShips()
         {
             Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'd');
             Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 's');

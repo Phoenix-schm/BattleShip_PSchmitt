@@ -10,7 +10,7 @@ namespace BattleShip_PSchmitt
         private char _display;
         public bool IsStillFloating
         {
-            get 
+            get
             {
                 return _eachIndexSpace.Count > 0;
             }
@@ -20,7 +20,7 @@ namespace BattleShip_PSchmitt
             get { return _shipLength; }
             set { _shipLength = Math.Max(0, value); }
         }
-        public List<int[]> EachIndexSpace
+        public List<int[]> EachIndexOnOceanGrid
         {
             get { return _eachIndexSpace; }
         }
