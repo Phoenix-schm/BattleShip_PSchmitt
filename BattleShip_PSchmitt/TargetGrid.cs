@@ -49,7 +49,7 @@ namespace BattleShip_PSchmitt
             char[,] opponentOceanGrid = opponentPlayer.playerOceanGrid;
             List<Battleship> opponentShips = opponentPlayer.playerShipList;
             string opponentName = opponentPlayer.name;
-            string message;
+            string shotMessage;                                             // The message displayed to the player after a turn
 
             Battleship? hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);  // Whether there is a ship being hit.
             currentPlayer.previousShot = [chosenShot_y, chosenShot_x];                                          // Initializes the players shot for display purposes
@@ -58,23 +58,23 @@ namespace BattleShip_PSchmitt
             {
                 hitShip.EachIndexOnOceanGrid.RemoveAt(0);                   // Removes an index position in the ships list of positions (doesn't matter which one)
 
-                message = opponentName + ": Ack! It's a hit.";
+                shotMessage = opponentName + ": Ack! It's a hit.";
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'H';
 
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if all the ships index positions have been removed).
                 {
-                    message += "\n" + opponentPlayer.name + ": You sunk my battleship!";
+                    shotMessage += "\n" + opponentPlayer.name + ": You sunk my battleship!";
                     opponentShips.Remove(hitShip);
                 }
             }
             else
             {
-                message = opponentName + ": That's a miss.";
+                shotMessage = opponentName + ": That's a miss.";
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'M';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'M';
             }
-            return message;
+            return shotMessage;
         }
 
         /// <summary>

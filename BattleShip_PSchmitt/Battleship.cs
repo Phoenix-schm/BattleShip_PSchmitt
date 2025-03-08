@@ -8,6 +8,13 @@ namespace BattleShip_PSchmitt
         private List<int[]> _eachIndexSpace = [];
         public string name = "";
         private char _display;
+        public bool IsHit   // use for CPU ai. if there's a ship that's been hit and is still floating, then zone in on it
+        {
+            get
+            {
+                return _eachIndexSpace.Count < _shipLength && IsStillFloating;
+            }
+        }
         public bool IsStillFloating
         {
             get
