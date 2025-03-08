@@ -273,10 +273,39 @@
             return outputValue;
         }
 
-        public static void WhoGoesFirstInput(Player player1, Player player2)
+        public static void ChooseWhoGoesFirstInput(Player player1, Player player2)
         {
             bool isValidName = false;
             string? userinput;
+
+            while (!isValidName)
+            {
+                userinput = Console.ReadLine();
+                if (userinput != null)
+                {
+                    if (userinput.ToLower() == player1.name.ToLower())
+                    {
+                        isValidName = true;
+                        player1.goesFirst = 1;
+                    }
+                    else if (userinput.ToLower() == player2.name.ToLower())
+                    {
+                        isValidName = true;
+                        player2.goesFirst = 1;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("That is not a player name.");
+                    }
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Cannot input nothing.");
+                }
+                Console.ResetColor();
+            }
         }
 
         //public static void GiveYourselfAName(Player player)

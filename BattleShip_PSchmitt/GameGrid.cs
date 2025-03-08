@@ -30,6 +30,7 @@ namespace BattleShip_PSchmitt
         /// <param name="currentPlayer">The current player being displayed.</param>
         public static void DisplayPlayerGrids(Player currentPlayer)
         {
+            Console.ResetColor();
             Console.WriteLine(currentPlayer.name + " Grids");
             Console.WriteLine("       -Target Grid-       ");
             TargetGrid.DisplayTargetGrid(currentPlayer.playerTargetGrid);

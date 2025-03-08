@@ -33,7 +33,7 @@ namespace BattleShip_PSchmitt
                 Console.WriteLine("Choose your game:");
                 DisplayMainMenuChoices(mainMenuChoices);
                 string playerInput = PlayerInput.CheckMainMenuChoice(mainMenuChoices);
-                bool isPlayingShortGame = true;
+                bool isPlayingRound = true;
 
                 switch (playerInput)                                         // Player choice of which to play
                 {
@@ -41,14 +41,18 @@ namespace BattleShip_PSchmitt
                         isPlayingBattleship = false;
                         break;
                     case "player vs cpu":
-                        while (isPlayingShortGame)
+                        while (isPlayingRound)
                         {
                             Console.Clear();
-                            isPlayingShortGame = Play_PlayerVsCPU();
+                            isPlayingRound = Play_PlayerVsCPU();
                         }
                         break;
                     case "player vs player":
-                        Play_PlayerVsPlayer();
+                        while (isPlayingRound)
+                        {
+                            Console.Clear();
+                            isPlayingRound = Play_PlayerVsPlayer();
+                        }
                         break;
                     case "tutorial":
                         break;
@@ -102,8 +106,8 @@ namespace BattleShip_PSchmitt
             while (player.IsAlive && cpu.IsAlive)                                                   // While both players have all their ships on the board.
             {
                 GameGrid.DisplayPlayerGrids(player);
-                DisplayPreviousShot(player, playerMessage, ConsoleColor.Cyan);
-                DisplayPreviousShot(cpu, cpuMessage, ConsoleColor.Red);
+                DisplayShotTakenMessage(player, playerMessage, ConsoleColor.Cyan);
+                DisplayShotTakenMessage(cpu, cpuMessage, ConsoleColor.Red);
 
                 int[] userCoordinates = TargetGrid.ReturnValidUserCoordinates(player);
 
@@ -132,21 +136,97 @@ namespace BattleShip_PSchmitt
             return PlayerInput.PlayAgainInput();
         }
 
-        static void Play_PlayerVsPlayer()
+        static bool Play_PlayerVsPlayer()
         {
             Player player1 = new Player("Player 1");
             Player player2 = new Player("Player 2");
 
             Random random = new Random();
-            int shotsTaken = 0;
 
+            // Initialize Player grids, one at a time.
             Console.WriteLine("Alright " + player1.name + ", make your grid.");
-            player1.playerOceanGrid = CreateOceanGrid(player1);
+            //player1.playerOceanGrid = CreateOceanGrid(player1);
+            player1.playerOceanGrid = CPU.CreateCPUoceanGrid(player1, random);
+
             Console.WriteLine(player2.name + " it's your turn to make a grid.");
-            player2.playerOceanGrid = CreateOceanGrid(player2);
+            //player2.playerOceanGrid = CreateOceanGrid(player2);
+            player2.playerOceanGrid = CPU.CreateCPUoceanGrid(player2, random);
 
             Console.WriteLine("Time to choose who goes first.");
             Console.Write("Write the name of the player that goes first: ");
+            PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
+
+            Player firstPlayer;
+            Player secondPlayer;
+            if (player1.goesFirst == 1)
+            {
+                firstPlayer = player1;
+                secondPlayer = player2;
+            }
+            else
+            {
+                firstPlayer = player2;
+                secondPlayer = player1;
+            }
+
+            int firstShotsTaken = 0;
+            int secondShotsTaken = 0;
+            string firstPlayerMessage;
+            string secondPlayerMessage = "";
+            int[] userCoordinates;
+
+            while(player1.IsAlive && player2.IsAlive)
+            {
+                GameGrid.DisplayPlayerGrids(firstPlayer);
+                DisplayShotTakenMessage(secondPlayer, secondPlayerMessage, ConsoleColor.Red);       // Displays the shot message of the previous secondPlayer shot
+
+                userCoordinates = TargetGrid.ReturnValidUserCoordinates(firstPlayer);
+                firstPlayerMessage = TargetGrid.PlaceShotsOnTargetGrid(firstPlayer, secondPlayer, userCoordinates[0], userCoordinates[1]);
+                Console.Clear();
+                Console.WriteLine("\x1b[3J");
+
+                GameGrid.DisplayPlayerGrids(firstPlayer);
+                DisplayShotTakenMessage(firstPlayer, firstPlayerMessage, ConsoleColor.Cyan);        // Displays the shot message of the current firstPlayer shot
+                firstShotsTaken++;
+
+                if (secondPlayer.IsAlive)
+                {
+                    DisplayMessageAndClear("Press any key to continue...");
+                    DisplayMessageAndClear("Switch Player! Press any key to continue...");
+
+                    GameGrid.DisplayPlayerGrids(secondPlayer);
+                    DisplayShotTakenMessage(firstPlayer, firstPlayerMessage, ConsoleColor.Red);     // Displays the shot message of the previous firstPlayer shot
+
+                    userCoordinates = TargetGrid.ReturnValidUserCoordinates(secondPlayer);
+                    secondPlayerMessage = TargetGrid.PlaceShotsOnTargetGrid(secondPlayer, firstPlayer, userCoordinates[0], userCoordinates[1]);
+                    Console.Clear();
+                    Console.WriteLine("\x1b[3J");
+
+                    GameGrid.DisplayPlayerGrids(secondPlayer);
+                    DisplayShotTakenMessage(secondPlayer, secondPlayerMessage, ConsoleColor.Cyan);  // Displays the shot message of the current secondPlayer shot
+                    secondShotsTaken++;
+                }
+
+                if (firstPlayer.IsAlive && secondPlayer.IsAlive)
+                {
+                    DisplayMessageAndClear("Press any key to continue...");
+                    DisplayMessageAndClear("Switch Player! Press any key to continue...");
+                }
+            }
+
+            if (firstPlayer.IsAlive)
+            {
+                Console.WriteLine("Congratulations " + firstPlayer.name + " you beat " + secondPlayer.name + ".");
+                Console.WriteLine(firstPlayer.name + " finished the game with " + firstShotsTaken + " shots.");
+            }
+            else
+            {
+                Console.WriteLine("Congratulations " + secondPlayer.name + " you beat " + firstPlayer.name + ".");
+                Console.WriteLine(secondPlayer.name + " finished the game with " + secondShotsTaken + " shots.");
+            }
+
+            DisplayMessageAndClear("Press any key to continue...");
+            return PlayerInput.PlayAgainInput();
         }
 
         /// <summary>
@@ -238,11 +318,11 @@ namespace BattleShip_PSchmitt
                 Console.ResetColor();
             }
         }
-        static void DisplayPreviousShot(Player displayPlayer, string targetMessage, ConsoleColor color)
+        static void DisplayShotTakenMessage(Player displayPlayer, string targetMessage, ConsoleColor color)
         {
-            Console.ForegroundColor = color;
             if (displayPlayer.previousShot != null)
             {
+                Console.ForegroundColor = color;
                 Console.WriteLine(displayPlayer.name + " Turn:");
                 Console.WriteLine("----------------------");
                 Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + "," + (displayPlayer.previousShot[1] + 1) + ".");
@@ -250,6 +330,14 @@ namespace BattleShip_PSchmitt
                 Console.WriteLine();
             }
             Console.ResetColor();
+        }
+
+        static void DisplayMessageAndClear(string message)
+        {
+            Console.Write(message);
+            Console.ReadKey();
+            Console.Clear();
+            Console.WriteLine("\x1b[3J");
         }
 
         static void DisplayRules()
