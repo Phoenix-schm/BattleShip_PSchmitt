@@ -9,7 +9,7 @@ namespace BattleShip_PSchmitt
             {'~', ConsoleColor.DarkBlue},
             {'M', ConsoleColor.White},
             {'H', ConsoleColor.Red},
-            {'N', ConsoleColor.DarkRed}
+            {'N', ConsoleColor.DarkRed}     // Color of a fully sunk ship 
         };
         /// <summary>
         /// Displays the inputted grid with numbered axis'.
@@ -64,17 +64,16 @@ namespace BattleShip_PSchmitt
 
             if (hitShip != null)                                            // if a ship has been hit
             {
-                //hitShip.EachIndexOnOceanGrid.RemoveAt(0);                 // Removes an index position in the ships list of positions (doesn't matter which one)
                 hitShip.ShipLength--;
 
                 shotMessage = opponentName + ": Ack! It's a hit.";
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = hitShip.DisplayWhenHit;
 
-                if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if all the ships index positions have been removed).
+                if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if the ships length is now 0).
                 {
                     shotMessage += "\n" + opponentPlayer.name + ": You sunk my battleship!";
-                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)
+                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)    // Replace ship index positions with the "Sunk Ship" char
                     {
                         int y = hitShip.EachIndexOnOceanGrid[index][0];
                         int x = hitShip.EachIndexOnOceanGrid[index][1];
@@ -90,6 +89,8 @@ namespace BattleShip_PSchmitt
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'M';
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = 'M';
             }
+            Console.Clear();
+            Console.WriteLine("\x1b[3J");
             return shotMessage;
         }
 
@@ -124,18 +125,18 @@ namespace BattleShip_PSchmitt
         public static int[] ReturnValidUserCoordinates(Player currentPlayer, Player opponentPlayer)
         {
             bool isValidCoordinates = false;
-            int yCoord = -1;
-            int xCoord = -1;
+            int y_axis = -1;
+            int x_axis = -1;
             while (!isValidCoordinates)
             {
-                yCoord = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
-                xCoord = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
+                y_axis = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
+                x_axis = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
 
-                if (yCoord == -1 || xCoord == -1)
+                if (y_axis == -1)                                   // Cheat Code
                 {
                     OceanGrid.DisplayOceanGrid(opponentPlayer);
                 }
-                else if (currentPlayer.targetGrid[yCoord, xCoord] == 'M' || currentPlayer.targetGrid[yCoord, xCoord] == 'H')
+                else if (currentPlayer.targetGrid[y_axis, x_axis] == 'M' || currentPlayer.targetGrid[y_axis, x_axis] == 'H')
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine("You've already hit that coordinate.");
@@ -146,18 +147,7 @@ namespace BattleShip_PSchmitt
                     isValidCoordinates = true;
                 }
             }
-            return [yCoord, xCoord];
-        }
-
-        public static char[,] ReplaceCharWithSunkDisplay(char[,] opponentGrid, Battleship hitShip)
-        {
-            for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)
-            {
-                int y = hitShip.EachIndexOnOceanGrid[index][0];
-                int x = hitShip.EachIndexOnOceanGrid[index][1];
-                opponentGrid[y, x] = 'H';
-            }
-            return opponentGrid;
+            return [y_axis, x_axis];
         }
     }
 }

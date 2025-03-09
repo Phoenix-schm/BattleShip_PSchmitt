@@ -5,12 +5,13 @@
         public static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
         {
             {'~', ConsoleColor.DarkBlue},
+            // Non-hit ship spaces          Hit ship spaces
             {'d', ConsoleColor.Green}, {'Z', ConsoleColor.Red},
             {'s', ConsoleColor.Green}, {'Y', ConsoleColor.Red},
             {'c', ConsoleColor.Green}, {'X', ConsoleColor.Red},
             {'B', ConsoleColor.Green}, {'W', ConsoleColor.Red},
             {'C', ConsoleColor.Green}, {'V', ConsoleColor.Red},
-            {'N', ConsoleColor.DarkRed},
+            {'N', ConsoleColor.DarkRed},                            // Color of a fully sunk ship
             {'M', ConsoleColor.White}
         };
         /// <summary>
@@ -33,15 +34,16 @@
                 for (int x_axis = 0; x_axis < playerOceanGrid.GetLength(1); x_axis++)
                 {
                     Console.ForegroundColor = oceanGridColors[playerOceanGrid[y_axis, x_axis]];     // Changes color based on char at [y,x]
-                    if (playerOceanGrid[y_axis, x_axis] == '~')                                     // Displays ocean
+                    char indexOnGrid = playerOceanGrid[y_axis, x_axis];
+                    if (indexOnGrid == '~')                                     // Displays ocean
                     {
-                        Console.Write(playerOceanGrid[y_axis, x_axis] + "  ");
+                        Console.Write(indexOnGrid + "  ");
                     }
-                    else if (IfCharEqualShipNuetralDisplay(playerOceanGrid[y_axis, x_axis], playerShipList))    // Displays unhit ships
+                    else if (IfCharEqualShipNuetralDisplay(indexOnGrid, playerShipList))    // Displays unhit ships
                     {
                         Console.Write('S' + "  ");
-                    }
-                    else if (IfCharEqualShipIsHitDisplay(playerOceanGrid[y_axis, x_axis], playerShipList) || playerOceanGrid[y_axis, x_axis] == 'M') // Displays opponent targets
+                    }                             //        hit ship locatiosn            missed locations      sunk ships
+                    else if (IfCharEqualShipIsHitDisplay(indexOnGrid, playerShipList) || indexOnGrid == 'M' || indexOnGrid == 'N') // Displays opponent targets
                     {
                         Console.Write('*' + "  ");
                     }
@@ -78,11 +80,11 @@
         /// <param name="userCoordinates">The coordinates the the ship will be placed at.</param>
         /// <param name="canShipBePlaced">The check if the ship can be placed at the user coordinates.</param>
         /// <returns>Modified ocean grid.</returns>
-        public static char[,] PlaceShipsOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int[] userCoordinates, ref bool canShipBePlaced)
+        public static char[,] PlaceShipOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, string direction, int[] userCoordinates, ref bool canShipBePlaced)
         {
             int y_axis = userCoordinates[0];
             int x_axis = userCoordinates[1];
-            if (direction == 0 || direction == 1)                           // If ship is being placed vertically
+            if (direction == "up" || direction == "down")                           // If ship is being placed vertically
             {
                 currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
                 y_axis = userCoordinates[1];
@@ -93,10 +95,10 @@
 
             if (canShipBePlaced)
             {
-                currentOceanGrid = PlaceShipOnOceanGrid(currentOceanGrid, chosenShip, direction, y_axis, x_axis);
+                currentOceanGrid = PlaceShipOnOceanGrid_BasedOnDirection(currentOceanGrid, chosenShip, direction, y_axis, x_axis);
             }
 
-            if (direction == 0 || direction == 1)                           // Undoes board flip.
+            if (direction == "up" || direction == "down")                           // Undoes board flip.
             {
                 currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
             }
@@ -111,35 +113,35 @@
         /// <param name="y_axis">The y coordinate the ship is being placed.</param>
         /// <param name="x_axis">The x coordinate the ship is being placed.</param>
         /// <returns>The modified ocean grid with the placed ship.</returns>
-        public static char[,] PlaceShipOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, int direction, int y_axis, int x_axis)
+        public static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, string direction, int y_axis, int x_axis)
         {
-            if (direction == 1 || direction == 3)                                               // Going forwards
+            if (direction == "down" || direction == "right")                                               // Going forwards
             {
                 for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis++)
                 {
                     currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
-                    if (direction == 1)
+                    if (direction == "down")
                     {
-                        chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Adds coordinates to chosenShip index list
+                        chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Inverse to [x,y] to accomodate grid flippage 
                     }
                     else
                     {
-                        chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                  // Adds coordinates to chosenShip index list
+                        chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);
                     }
                 }
             }
-            else if (direction == 0 || direction == 2)                                          // Going backwards
+            else if (direction == "up" || direction == "left")                                          // Going backwards
             {
                 for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis--)
                 {
                     currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
-                    if (direction == 0)
+                    if (direction == "up")
                     {
-                        chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Adds coordinates to chosenShip index list
+                        chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Inverse to [x,y] to accomodate grid flippage
                     }
                     else
                     {
-                        chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                  // Adds coordinates to chosenShip index list
+                        chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);
                     }
                 }
             }
@@ -155,11 +157,11 @@
         /// <param name="y_axis">The y coordinate being checked</param>
         /// <param name="x_axis">The x coordinate being checked.</param>
         /// <returns>Returns a bool of whether the chosenShip can be placed at coordinates.</returns>
-        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, int direction, int y_axis, int x_axis)
+        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, string direction, int y_axis, int x_axis)
         {
             bool isValidIndex = false;
             int canShipFitHere = 0;
-            if (direction == 1 || direction == 3)           // Checking ship placement to the right of coordinate
+            if (direction == "down" || direction == "right")           // Checking ship placement to the right of coordinate
             {
                 while (x_axis != currentOceanGrid.GetLength(1) && currentOceanGrid[y_axis, x_axis] == '~')
                 {
@@ -175,7 +177,7 @@
                     x_axis++;
                 }
             }
-            else if (direction == 0 || direction == 2)      // Checking ship placement to the left of coordinate
+            else if (direction == "up" || direction == "left")      // Checking ship placement to the left of coordinate
             {
                 while (x_axis != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y_axis, x_axis] == '~')
                 {

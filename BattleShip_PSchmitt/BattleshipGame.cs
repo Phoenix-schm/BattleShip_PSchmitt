@@ -36,7 +36,7 @@ namespace BattleShip_PSchmitt
                 string playerInput = PlayerInput.CheckMainMenuChoice(mainMenuChoices);
                 bool isPlayingRound = true;
 
-                switch (playerInput)                                         // Player choice of which to play
+                switch (playerInput)                                         // Player choice of what to play
                 {
                     case "quit":
                         isPlayingBattleship = false;
@@ -61,6 +61,7 @@ namespace BattleShip_PSchmitt
                         Console.WriteLine("This shouldn't be accessible.");
                         break;
                 }
+                Console.Clear();
             }
         }
         /// <summary>
@@ -93,7 +94,6 @@ namespace BattleShip_PSchmitt
             cpu.name = "CPU";
 
             Random rand = new Random();
-            int shotsTaken = 0;
 
             Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
             //CreateOceanGrid(player);
@@ -101,32 +101,19 @@ namespace BattleShip_PSchmitt
             CPU.CreateCPUoceanGrid(cpu, rand);
 
             Console.WriteLine("Now for battle!");
-            //GameGrid.DisplayPlayerGrids(cpu);
-            string cpuMessage = "";
-            string playerMessage = "";
+
+            int shotsTaken = 0;
+            string shotMessage = "";
 
             while (player.IsAlive && cpu.IsAlive)                                                   // While both players have all their ships on the board.
             {
-                GameGrid.DisplayPlayerGrids(player);
-                DisplayShotTakenMessage(cpu, cpuMessage, ConsoleColor.Red);
-
-                int[] userCoordinates = TargetGrid.ReturnValidUserCoordinates(player, cpu);
-                playerMessage = TargetGrid.PlaceShotsOnTargetGrid(player, cpu, userCoordinates[0], userCoordinates[1]);     // Player shoots, returns the shot message
-                Console.Clear();
-                Console.WriteLine("\x1b[3J");
-
-                GameGrid.DisplayPlayerGrids(player);
-                DisplayShotTakenMessage(player, playerMessage, ConsoleColor.Cyan);
-                shotsTaken++;
+                shotMessage = PlayerTurn(player, cpu, ref shotsTaken, shotMessage);
 
                 if (cpu.IsAlive)
                 {
                     DisplayMessageAndClear("Press any key to continue...");
-                    cpuMessage = CPU.ChooseRandomShot(cpu, player, rand);                                                   // CPU shoots, returns the shot message
+                    shotMessage = CPU.ChooseRandomShot(cpu, player, rand);                          // CPU shoots, returns the shot message
                 }
-
-                Console.Clear();
-                Console.WriteLine("\x1b[3J");
             }
 
             if (player.IsAlive)
@@ -157,8 +144,8 @@ namespace BattleShip_PSchmitt
 
             // Initialize Player grids, one at a time.
             Console.WriteLine("Alright " + player1.name + ", make your grid.");
-            // CreateOceanGrid(player1);
-            CPU.CreateCPUoceanGrid(player1, random);
+            CreateOceanGrid(player1);
+            //CPU.CreateCPUoceanGrid(player1, random);
 
             Console.WriteLine(player2.name + " it's your turn to make a grid.");
             // CreateOceanGrid(player2);
@@ -183,42 +170,19 @@ namespace BattleShip_PSchmitt
 
             int firstShotsTaken = 0;
             int secondShotsTaken = 0;
-            string firstPlayerShotMessage;
-            string secondPlayerShotMessage = "";
-            int[] playerCoordinates;
-
+            string shotMessage = "";
             DisplayMessageAndClear("Have " + firstPlayer.name + " take command of the computer. \nPress any key when you're ready to begin...");
 
             while (firstPlayer.IsAlive && secondPlayer.IsAlive)
             {
-                GameGrid.DisplayPlayerGrids(firstPlayer);
-                DisplayShotTakenMessage(secondPlayer, secondPlayerShotMessage, ConsoleColor.Red);       // Displays the shot message of the previous secondPlayer shot
-
-                playerCoordinates = TargetGrid.ReturnValidUserCoordinates(firstPlayer, secondPlayer);
-                firstPlayerShotMessage = TargetGrid.PlaceShotsOnTargetGrid(firstPlayer, secondPlayer, playerCoordinates[0], playerCoordinates[1]);
-                Console.Clear();
-                Console.WriteLine("\x1b[3J");
-
-                GameGrid.DisplayPlayerGrids(firstPlayer);
-                DisplayShotTakenMessage(firstPlayer, firstPlayerShotMessage, ConsoleColor.Cyan);        // Displays the shot message of the current firstPlayer shot
-                firstShotsTaken++;
+                shotMessage = PlayerTurn(firstPlayer, secondPlayer, ref firstShotsTaken, shotMessage);
 
                 if (secondPlayer.IsAlive)
                 {
                     DisplayMessageAndClear("Press any key to continue...");
-                    DisplayMessageAndClear("Switch player to " + secondPlayer.name + ". Press any key when ready to continue...");
-
-                    GameGrid.DisplayPlayerGrids(secondPlayer);
-                    DisplayShotTakenMessage(firstPlayer, firstPlayerShotMessage, ConsoleColor.Red);     // Displays the shot message of the previous firstPlayer shot
-
-                    playerCoordinates = TargetGrid.ReturnValidUserCoordinates(secondPlayer, firstPlayer);
-                    secondPlayerShotMessage = TargetGrid.PlaceShotsOnTargetGrid(secondPlayer, firstPlayer, playerCoordinates[0], playerCoordinates[1]);
-                    Console.Clear();
-                    Console.WriteLine("\x1b[3J");
-
-                    GameGrid.DisplayPlayerGrids(secondPlayer);
-                    DisplayShotTakenMessage(secondPlayer, secondPlayerShotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current secondPlayer shot
-                    secondShotsTaken++;
+                    DisplayMessageAndClear("Switch player to " + secondPlayer.name + ". Press any key when ready to continue...");  // Buffer for switching between players so that
+                                                                                                                                    //      they can't see each others grids 
+                    shotMessage = PlayerTurn(secondPlayer, firstPlayer, ref secondShotsTaken, shotMessage);
                 }
 
                 if (firstPlayer.IsAlive && secondPlayer.IsAlive)
@@ -250,10 +214,9 @@ namespace BattleShip_PSchmitt
         /// <returns>Returns the updated grid.</returns>
         static char[,] CreateOceanGrid(Player player)
         {
-            //char[,] playerOceanGrid = GameGrid.CreateDefaultGrid();
             List<Battleship> playerShipList = player.shipList;
             Battleship? chosenShip = null;
-            int chosenDirection = -1;
+            string chosenDirection;
 
             string[] directionList = { "Up", "Down", "Left", "Right" };
             bool isValidCoordinates = false;
@@ -279,7 +242,7 @@ namespace BattleShip_PSchmitt
 
                     if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
-                        PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, player.oceanGrid, chosenDirection);
+                        PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, player.oceanGrid);
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(player);
                     }
@@ -301,7 +264,7 @@ namespace BattleShip_PSchmitt
                     Console.WriteLine();
                     chosenDirection = PlayerInput.ChooseDirectionToPlaceShip(directionList);
 
-                    OceanGrid.PlaceShipsOnOceanGrid(player.oceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
+                    player.oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player.oceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
                     doneOnce = 1;
                     Console.Clear();
@@ -351,6 +314,30 @@ namespace BattleShip_PSchmitt
                 Console.WriteLine();
             }
             Console.ResetColor();
+        }
+
+        /// <summary>
+        /// The entire encapsulation of a player turn. Display player grids, Display shot message (if there is one), get player coordinates,
+        /// Shoot at player coordinates and create shotMessage, Display modified player grids and shot message
+        /// </summary>
+        /// <param name="currentPlayer">The current player that is playing</param>
+        /// <param name="opponentPlayer">The opposing player</param>
+        /// <param name="shotsTaken">the amount of shots that have been made so far.</param>
+        /// <param name="shotMessage">The current shot message</param>
+        /// <returns></returns>
+        static string PlayerTurn(Player currentPlayer, Player opponentPlayer, ref int shotsTaken, string shotMessage)
+        {
+            GameGrid.DisplayPlayerGrids(currentPlayer);
+            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);     // Displays the shot message of the previous firstPlayer shot
+
+            int[] playerCoordinates = TargetGrid.ReturnValidUserCoordinates(currentPlayer, opponentPlayer);
+            shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
+
+            GameGrid.DisplayPlayerGrids(currentPlayer);
+            DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current secondPlayer shot
+            shotsTaken++;
+
+            return shotMessage;
         }
 
         /// <summary>

@@ -5,14 +5,15 @@
         /// <summary>
         /// Creates an Ocean grid with random ship placements
         /// </summary>
-        /// <param name="autoPlayer">The player having their grid created</param>
+        /// <param name="cpuPlayer">The player having their grid created</param>
         /// <param name="rand">Random generator</param>
         /// <returns>The new ocean grid</returns>
-        public static char[,] CreateCPUoceanGrid(Player autoPlayer, Random rand)
+        public static char[,] CreateCPUoceanGrid(Player cpuPlayer, Random rand)
         {
-            char[,] oceanGrid = autoPlayer.oceanGrid;
-            List<Battleship> playerShipList = autoPlayer.shipList;
+            char[,] oceanGrid = cpuPlayer.oceanGrid;
+            List<Battleship> playerShipList = cpuPlayer.shipList;
             bool isValidCoordinates = false;
+            string[] directionList = { "up", "down", "left", "right" };
 
             for (int index = 0; index < playerShipList.Count; index++)
             {
@@ -21,25 +22,25 @@
                 {
                     int y = rand.Next(0, oceanGrid.GetLength(0));
                     int x = rand.Next(0, oceanGrid.GetLength(1));
-                    int direction = rand.Next(0, 4);
-                    autoPlayer.oceanGrid = OceanGrid.PlaceShipsOnOceanGrid(autoPlayer.oceanGrid, chosenShip, direction, [y, x], ref isValidCoordinates);
+                    int directionChoice = rand.Next(0, 4);
+                    cpuPlayer.oceanGrid = OceanGrid.PlaceShipOnOceanGrid(cpuPlayer.oceanGrid, chosenShip, directionList[directionChoice], [y, x], ref isValidCoordinates);
 
                 } while (!isValidCoordinates);
             }
-            return autoPlayer.oceanGrid;
+            return cpuPlayer.oceanGrid;
         }
 
         /// <summary>
         /// Randomaly shoots somewhere on the target grid.
         /// </summary>
-        /// <param name="cpu">The computer player.</param>
-        /// <param name="player">The human player.</param>
+        /// <param name="cpuPlayer">The computer player.</param>
+        /// <param name="opponentPlayer">The human player.</param>
         /// <param name="rand">Random variable</param>
         /// <returns>The "shoot" message that will be displayed, whether the cpu successfully shot a player ship.</returns>
-        public static string ChooseRandomShot(CPU cpu, Player player, Random rand)
+        public static string ChooseRandomShot(CPU cpuPlayer, Player opponentPlayer, Random rand)
         {
-            char[,] targetGrid = cpu.targetGrid;
-            char[,] opponentOceanGrid = player.oceanGrid;
+            char[,] targetGrid = cpuPlayer.targetGrid;
+            char[,] opponentOceanGrid = opponentPlayer.oceanGrid;
             bool isValid = false;
             string message = "";
 
@@ -54,14 +55,12 @@
                 }
                 else
                 {
-                    message = TargetGrid.PlaceShotsOnTargetGrid(cpu, player, y, x);
-                    cpu.previousShot = [y, x];
+                    message = TargetGrid.PlaceShotsOnTargetGrid(cpuPlayer, opponentPlayer, y, x);
+                    cpuPlayer.previousShot = [y, x];
                     isValid = true;
                 }
             }
             return message;
         }
-
-        //static Battleship? isShipHit()
     }
 }

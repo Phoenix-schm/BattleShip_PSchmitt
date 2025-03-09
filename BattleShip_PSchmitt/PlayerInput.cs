@@ -147,13 +147,13 @@
         /// <summary>
         /// checks if player input is a valid direction
         /// </summary>
-        /// <param name="directionsList"></param>
+        /// <param name="directionList"></param>
         /// <returns></returns>
-        public static int ChooseDirectionToPlaceShip(string[] directionsList)
+        public static string ChooseDirectionToPlaceShip(string[] directionList)
         {
             bool isValidDirection = false;
             string? playerInput = "";
-            int chosenDirection = -1;
+            string chosenDirection = "invalid";
 
             while (!isValidDirection)
             {
@@ -161,13 +161,18 @@
                 playerInput = Console.ReadLine();
                 if (playerInput != null)
                 {
-                    for (int index = 1; index < directionsList.Length + 1; index++)
+                    for (int index = 1; index < directionList.Length + 1; index++)
                     {
-                        if (playerInput.ToLower() == directionsList[index - 1].ToLower() || playerInput == index.ToString()) // if playerInput = direction string or number
+                        if (playerInput.ToLower() == directionList[index - 1].ToLower()) // if playerInput = direction string or number
                         {
                             isValidDirection = true;
-                            chosenDirection = index - 1;
+                            chosenDirection = directionList[index - 1];
                             break;
+                        }
+                        else if (playerInput == index.ToString())
+                        {
+                            isValidDirection = true;
+                            chosenDirection = directionList[index - 1];
                         }
                     }
                     if (!isValidDirection)
@@ -183,7 +188,7 @@
                 }
                 Console.ResetColor();
             }
-            return chosenDirection;
+            return chosenDirection.ToLower();
         }
 
         /// <summary>
@@ -194,7 +199,7 @@
         /// <param name="playerOceanGrid">The grid being updated.</param>
         /// <param name="direction">Adjusts the coordinate index based on vertical or horizontal</param>
         /// <returns></returns>
-        public static char[,] CheckRedoGridInput(ref Battleship chosenShip, ref int totalShipIndex, char[,] playerOceanGrid, int direction)
+        public static char[,] CheckRedoGridInput(ref Battleship chosenShip, ref int totalShipIndex, char[,] playerOceanGrid)
         {
             bool isValidChoice = false;
             string? userInput = "";
@@ -274,6 +279,11 @@
             return outputValue;
         }
 
+        /// <summary>
+        /// Choice of player that goes first.
+        /// </summary>
+        /// <param name="player1"></param>
+        /// <param name="player2"></param>
         public static void ChooseWhoGoesFirstInput(Player player1, Player player2)
         {
             bool isValidName = false;

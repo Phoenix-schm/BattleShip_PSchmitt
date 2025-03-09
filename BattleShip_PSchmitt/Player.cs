@@ -4,23 +4,23 @@ namespace BattleShip_PSchmitt
 {
     class Player
     {
-        public static Dictionary<string, ConsoleColor> playerColorList = new Dictionary<string, ConsoleColor>
-        {
-            {"Invalid", ConsoleColor.Black },
-            {"Default", ConsoleColor.Gray },
-            {"Red", ConsoleColor.Red },
-            {"Magenta", ConsoleColor.Magenta },
-            {"Cyan", ConsoleColor.Cyan },
-            {"Dark Cyan", ConsoleColor.DarkCyan },
-            {"Dark Green", ConsoleColor.DarkGreen },
-            {"Yellow", ConsoleColor.Yellow }
-        };
+        //public static Dictionary<string, ConsoleColor> playerColorList = new Dictionary<string, ConsoleColor>
+        //{
+        //    {"Invalid", ConsoleColor.Black },
+        //    {"Default", ConsoleColor.Gray },
+        //    {"Red", ConsoleColor.Red },
+        //    {"Magenta", ConsoleColor.Magenta },
+        //    {"Cyan", ConsoleColor.Cyan },
+        //    {"Dark Cyan", ConsoleColor.DarkCyan },
+        //    {"Dark Green", ConsoleColor.DarkGreen },
+        //    {"Yellow", ConsoleColor.Yellow }
+        //};
         public char[,] oceanGrid;
         public char[,] targetGrid;
         public List<Battleship> shipList;
         public string name = "";
         public int[]? previousShot;
-        public ConsoleColor playerColor;
+        //public ConsoleColor playerColor;
         public int goesFirst = 0;
         public bool IsAlive
         {
