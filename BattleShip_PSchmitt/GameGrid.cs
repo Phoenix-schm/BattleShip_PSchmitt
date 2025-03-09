@@ -35,7 +35,7 @@ namespace BattleShip_PSchmitt
             Console.WriteLine("       -Target Grid-       ");
             TargetGrid.DisplayTargetGrid(currentPlayer.playerTargetGrid);
             Console.WriteLine("        -Ocean Grid-          ");
-            OceanGrid.DisplayOceanGrid(currentPlayer.playerOceanGrid);
+            OceanGrid.DisplayOceanGrid(currentPlayer.playerOceanGrid, currentPlayer);
             Console.WriteLine();
         }
     }

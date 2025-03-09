@@ -56,11 +56,12 @@ namespace BattleShip_PSchmitt
 
             if (hitShip != null)                                            // if a ship has been hit
             {
-                hitShip.EachIndexOnOceanGrid.RemoveAt(0);                   // Removes an index position in the ships list of positions (doesn't matter which one)
+                //hitShip.EachIndexOnOceanGrid.RemoveAt(0);                   // Removes an index position in the ships list of positions (doesn't matter which one)
+                hitShip.ShipLength--;
 
                 shotMessage = opponentName + ": Ack! It's a hit.";
                 playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
-                opponentOceanGrid[chosenShot_y, chosenShot_x] = 'H';
+                opponentOceanGrid[chosenShot_y, chosenShot_x] = hitShip.DisplayWhenHit;
 
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if all the ships index positions have been removed).
                 {
@@ -92,7 +93,7 @@ namespace BattleShip_PSchmitt
 
             foreach (Battleship ship in _opponentShipList)
             {
-                if (_opponentOceanGrid[y, x] == ship.Display)           // if the [y,x] coordinate hits a ship
+                if (_opponentOceanGrid[y, x] == ship.DisplayNuetral)           // if the [y,x] coordinate hits a ship
                 {
                     hitShip = ship;
                 }

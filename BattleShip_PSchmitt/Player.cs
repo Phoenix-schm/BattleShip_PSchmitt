@@ -51,11 +51,11 @@ namespace BattleShip_PSchmitt
         /// and its string name</returns>
         public static List<Battleship> CreateShips()
         {
-            Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'd');
-            Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 's');
-            Battleship cruiserShip = new Battleship(3, spaces: [], "Cruiser", 'c');
-            Battleship battleShip = new Battleship(4, spaces: [], "Battleship", 'B');
-            Battleship carrierShip = new Battleship(5, spaces: [], "Carrier", 'C');
+            Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'd', 'Z');
+            Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 's', 'Y');
+            Battleship cruiserShip = new Battleship(3, spaces: [], "Cruiser", 'c', 'X');
+            Battleship battleShip = new Battleship(4, spaces: [], "Battleship", 'B', 'W');
+            Battleship carrierShip = new Battleship(5, spaces: [], "Carrier", 'C', 'V');
 
             return [destroyerShip, submarineShip, cruiserShip, battleShip, carrierShip];
         }

@@ -39,6 +39,7 @@
         public static string ChooseRandomShot(CPU cpu, Player player, Random rand)
         {
             char[,] targetGrid = cpu.playerTargetGrid;
+            char[,] opponentOceanGrid = player.playerOceanGrid;
             bool isValid = false;
             string message = "";
 
@@ -60,5 +61,7 @@
             }
             return message;
         }
+
+        //static Battleship? isShipHit()
     }
 }

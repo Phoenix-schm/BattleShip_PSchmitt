@@ -4,21 +4,20 @@
     {
         public static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
         {
-            {'~', ConsoleColor.DarkBlue },
-            {'d', ConsoleColor.Green },
-            {'s', ConsoleColor.Green },
-            {'c', ConsoleColor.Green },
-            {'B', ConsoleColor.Green },
-            {'C', ConsoleColor.Green },
-            {'H', ConsoleColor.DarkRed },
-            {'M', ConsoleColor.White }
+            {'~', ConsoleColor.DarkBlue},
+            {'d', ConsoleColor.Green}, {'Z', ConsoleColor.DarkRed},
+            {'s', ConsoleColor.Green}, {'Y', ConsoleColor.DarkRed},
+            {'c', ConsoleColor.Green}, {'X', ConsoleColor.DarkRed},
+            {'B', ConsoleColor.Green}, {'W', ConsoleColor.DarkRed},
+            {'C', ConsoleColor.Green}, {'V', ConsoleColor.DarkRed},
+            {'M', ConsoleColor.White}
         };
         /// <summary>
         /// Displays the inputted grid with numbered axis'. Currently only displays '~'
         /// Meant for showing player ships
         /// </summary>
         /// <param name="displayGrid">Grid to be displayed</param>
-        public static void DisplayOceanGrid(char[,] displayGrid)
+        public static void DisplayOceanGrid(char[,] displayGrid, Player player)
         {
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
@@ -31,17 +30,17 @@
                 for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
                 {
                     Console.ForegroundColor = oceanGridColors[displayGrid[y_axis, x_axis]];
-                    if (displayGrid[y_axis, x_axis] != '~' && displayGrid[y_axis, x_axis] != 'H' && displayGrid[y_axis, x_axis] != 'M')   // if the coordinate contains a ship.
+                    if (displayGrid[y_axis, x_axis] == '~')
+                    {
+                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
+                    }
+                    else if (IfCharEqualShipNuetralDisplay(displayGrid[y_axis, x_axis], player.playerShipList))
                     {
                         Console.Write('S' + "  ");
                     }
-                    else if (displayGrid[y_axis, x_axis] == 'H' || displayGrid[y_axis, x_axis] == 'M')
+                    else if (IfCharEqualShipIsHitDisplay(displayGrid[y_axis, x_axis], player.playerShipList) || displayGrid[y_axis, x_axis] == 'M')
                     {
                         Console.Write('*' + "  ");
-                    }
-                    else
-                    {
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
                     }
                 }
                 Console.ResetColor();
@@ -115,7 +114,7 @@
             {
                 for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis++)
                 {
-                    currentOceanGrid[y_axis, x_axis] = chosenShip.Display;
+                    currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
                     chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                                      // Adds coordinates to chosenShip index list
                 }
             }
@@ -123,7 +122,7 @@
             {
                 for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis--)
                 {
-                    currentOceanGrid[y_axis, x_axis] = chosenShip.Display;
+                    currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
                     chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                                      // Adds coordinates to chosenShip index list
                 }
             }
@@ -177,6 +176,32 @@
             }
 
             return isValidIndex;
+        }
+
+        public static bool IfCharEqualShipIsHitDisplay(char checkedChar, List<Battleship> shipList)
+        {
+            bool isSpaceHitShip = false;
+            foreach(Battleship battleship in shipList)
+            {
+                if (checkedChar == battleship.DisplayWhenHit)
+                {
+                    isSpaceHitShip = true;
+                }
+            }
+            return isSpaceHitShip;
+        }
+
+        public static bool IfCharEqualShipNuetralDisplay(char checkedChar, List<Battleship> shipList)
+        {
+            bool isSpaceNuetralShip = false;
+            foreach(Battleship battleship in shipList)
+            {
+                if (checkedChar == battleship.DisplayNuetral)
+                {
+                    isSpaceNuetralShip = true;
+                }
+            }
+            return isSpaceNuetralShip;
         }
     }
 }

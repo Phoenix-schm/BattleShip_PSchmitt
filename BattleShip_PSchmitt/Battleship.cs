@@ -7,19 +7,20 @@ namespace BattleShip_PSchmitt
         private int _shipLength;
         private List<int[]> _eachIndexSpace = [];
         public string name = "";
-        private char _display;
+        private char _displayNuetral;
+        private char _displayWhenHit;
         public bool IsHit   // use for CPU ai. if there's a ship that's been hit and is still floating, then zone in on it
         {
             get
             {
-                return _eachIndexSpace.Count < _shipLength && IsStillFloating;
+                return _shipLength < _eachIndexSpace.Count && IsStillFloating;
             }
         }
         public bool IsStillFloating
         {
             get
             {
-                return _eachIndexSpace.Count > 0;
+                return _shipLength > 0;
             }
         }
         public int ShipLength
@@ -31,21 +32,26 @@ namespace BattleShip_PSchmitt
         {
             get { return _eachIndexSpace; }
         }
-        public char Display
+        public char DisplayNuetral
         {
-            get { return _display; }
+            get { return _displayNuetral; }
+        }
+        public char DisplayWhenHit
+        {
+            get { return _displayWhenHit; }
         }
         public Battleship()
         {
             _shipLength = 0;
             name = "ship";
         }
-        public Battleship(int length, List<int[]> spaces, string shipName, char displayOnGrid)
+        public Battleship(int length, List<int[]> spaces, string shipName, char displayOnGrid, char displayWhenHit)
         {
             _shipLength = length;
             name = shipName;
             _eachIndexSpace = spaces;
-            _display = displayOnGrid;
+            _displayNuetral = displayOnGrid;
+            _displayWhenHit = displayWhenHit;
         }
     }
 }

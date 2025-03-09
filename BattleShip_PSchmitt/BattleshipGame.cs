@@ -143,6 +143,7 @@ namespace BattleShip_PSchmitt
 
             return PlayerInput.PlayAgainInput();
         }
+
         /// <summary>
         /// Going through Battleship with two players
         /// </summary>
@@ -156,12 +157,12 @@ namespace BattleShip_PSchmitt
 
             // Initialize Player grids, one at a time.
             Console.WriteLine("Alright " + player1.name + ", make your grid.");
-            player1.playerOceanGrid = CreateOceanGrid(player1);
-            //player1.playerOceanGrid = CPU.CreateCPUoceanGrid(player1, random);
+            //player1.playerOceanGrid = CreateOceanGrid(player1);
+            player1.playerOceanGrid = CPU.CreateCPUoceanGrid(player1, random);
 
             Console.WriteLine(player2.name + " it's your turn to make a grid.");
-            player2.playerOceanGrid = CreateOceanGrid(player2);
-            //player2.playerOceanGrid = CPU.CreateCPUoceanGrid(player2, random);
+            //player2.playerOceanGrid = CreateOceanGrid(player2);
+            player2.playerOceanGrid = CPU.CreateCPUoceanGrid(player2, random);
 
             Console.WriteLine("Time to choose who goes first.");
             Console.Write("Write the name of the player that goes first: ");
@@ -188,7 +189,7 @@ namespace BattleShip_PSchmitt
 
             DisplayMessageAndClear("Have " + firstPlayer.name + " take command of the computer. \nPress any key when you're ready to begin...");
 
-            while (player1.IsAlive && player2.IsAlive)
+            while (firstPlayer.IsAlive && secondPlayer.IsAlive)
             {
                 GameGrid.DisplayPlayerGrids(firstPlayer);
                 DisplayShotTakenMessage(secondPlayer, secondPlayerShotMessage, ConsoleColor.Red);       // Displays the shot message of the previous secondPlayer shot
@@ -268,19 +269,19 @@ namespace BattleShip_PSchmitt
                         Console.WriteLine("That was not a valid coordinate");
                         Console.ResetColor();
                         Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(playerOceanGrid);
+                        OceanGrid.DisplayOceanGrid(playerOceanGrid, player);
                     }
                     else                                                                    // Shows the grid at least once
                     {
                         Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(playerOceanGrid);
+                        OceanGrid.DisplayOceanGrid(playerOceanGrid, player);
                     }
 
                     if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
                         playerOceanGrid = PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
                         Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(playerOceanGrid);
+                        OceanGrid.DisplayOceanGrid(playerOceanGrid, player);
                     }
 
                     Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
@@ -331,7 +332,14 @@ namespace BattleShip_PSchmitt
                 Console.ResetColor();
             }
         }
-        static void DisplayShotTakenMessage(Player displayPlayer, string targetMessage, ConsoleColor color)
+
+        /// <summary>
+        /// When a shot is made on the board, a shot message is created. This method displays that message along with who just shot and where. 
+        /// </summary>
+        /// <param name="displayPlayer"></param>
+        /// <param name="shotMessage">The shot message that was returned by TargetGrid.PlaceShotsOnTargetGrid()</param>
+        /// <param name="color">The color the whole thing will display as</param>
+        static void DisplayShotTakenMessage(Player displayPlayer, string shotMessage, ConsoleColor color)
         {
             if (displayPlayer.previousShot != null)
             {
@@ -339,12 +347,16 @@ namespace BattleShip_PSchmitt
                 Console.WriteLine(displayPlayer.name + " Turn:");
                 Console.WriteLine("----------------------");
                 Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + "," + (displayPlayer.previousShot[1] + 1) + ".");
-                Console.WriteLine(targetMessage);
+                Console.WriteLine(shotMessage);
                 Console.WriteLine();
             }
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Displays a message before waiting for a key press and then clearing the console. 
+        /// </summary>
+        /// <param name="message">A string that will be displayed. Should usually request the player press any key.</param>
         static void DisplayMessageAndClear(string message)
         {
             Console.Write(message);
