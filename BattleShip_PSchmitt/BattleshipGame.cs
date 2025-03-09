@@ -96,9 +96,9 @@ namespace BattleShip_PSchmitt
             int shotsTaken = 0;
 
             Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
-            //player.playerOceanGrid = CreateOceanGrid(player);
-            player.playerOceanGrid = CPU.CreateCPUoceanGrid(player, rand);
-            cpu.playerOceanGrid = CPU.CreateCPUoceanGrid(cpu, rand);
+            //CreateOceanGrid(player);
+            CPU.CreateCPUoceanGrid(player, rand);
+            CPU.CreateCPUoceanGrid(cpu, rand);
 
             Console.WriteLine("Now for battle!");
             //GameGrid.DisplayPlayerGrids(cpu);
@@ -110,7 +110,7 @@ namespace BattleShip_PSchmitt
                 GameGrid.DisplayPlayerGrids(player);
                 DisplayShotTakenMessage(cpu, cpuMessage, ConsoleColor.Red);
 
-                int[] userCoordinates = TargetGrid.ReturnValidUserCoordinates(player);
+                int[] userCoordinates = TargetGrid.ReturnValidUserCoordinates(player, cpu);
                 playerMessage = TargetGrid.PlaceShotsOnTargetGrid(player, cpu, userCoordinates[0], userCoordinates[1]);     // Player shoots, returns the shot message
                 Console.Clear();
                 Console.WriteLine("\x1b[3J");
@@ -157,12 +157,12 @@ namespace BattleShip_PSchmitt
 
             // Initialize Player grids, one at a time.
             Console.WriteLine("Alright " + player1.name + ", make your grid.");
-            //player1.playerOceanGrid = CreateOceanGrid(player1);
-            player1.playerOceanGrid = CPU.CreateCPUoceanGrid(player1, random);
+            // CreateOceanGrid(player1);
+            CPU.CreateCPUoceanGrid(player1, random);
 
             Console.WriteLine(player2.name + " it's your turn to make a grid.");
-            //player2.playerOceanGrid = CreateOceanGrid(player2);
-            player2.playerOceanGrid = CPU.CreateCPUoceanGrid(player2, random);
+            // CreateOceanGrid(player2);
+            CPU.CreateCPUoceanGrid(player2, random);
 
             Console.WriteLine("Time to choose who goes first.");
             Console.Write("Write the name of the player that goes first: ");
@@ -194,7 +194,7 @@ namespace BattleShip_PSchmitt
                 GameGrid.DisplayPlayerGrids(firstPlayer);
                 DisplayShotTakenMessage(secondPlayer, secondPlayerShotMessage, ConsoleColor.Red);       // Displays the shot message of the previous secondPlayer shot
 
-                playerCoordinates = TargetGrid.ReturnValidUserCoordinates(firstPlayer);
+                playerCoordinates = TargetGrid.ReturnValidUserCoordinates(firstPlayer, secondPlayer);
                 firstPlayerShotMessage = TargetGrid.PlaceShotsOnTargetGrid(firstPlayer, secondPlayer, playerCoordinates[0], playerCoordinates[1]);
                 Console.Clear();
                 Console.WriteLine("\x1b[3J");
@@ -211,7 +211,7 @@ namespace BattleShip_PSchmitt
                     GameGrid.DisplayPlayerGrids(secondPlayer);
                     DisplayShotTakenMessage(firstPlayer, firstPlayerShotMessage, ConsoleColor.Red);     // Displays the shot message of the previous firstPlayer shot
 
-                    playerCoordinates = TargetGrid.ReturnValidUserCoordinates(secondPlayer);
+                    playerCoordinates = TargetGrid.ReturnValidUserCoordinates(secondPlayer, firstPlayer);
                     secondPlayerShotMessage = TargetGrid.PlaceShotsOnTargetGrid(secondPlayer, firstPlayer, playerCoordinates[0], playerCoordinates[1]);
                     Console.Clear();
                     Console.WriteLine("\x1b[3J");
@@ -250,8 +250,8 @@ namespace BattleShip_PSchmitt
         /// <returns>Returns the updated grid.</returns>
         static char[,] CreateOceanGrid(Player player)
         {
-            char[,] playerOceanGrid = player.playerOceanGrid;
-            List<Battleship> playerShipList = player.playerShipList;
+            //char[,] playerOceanGrid = GameGrid.CreateDefaultGrid();
+            List<Battleship> playerShipList = player.shipList;
             Battleship? chosenShip = null;
             int chosenDirection = -1;
 
@@ -269,19 +269,19 @@ namespace BattleShip_PSchmitt
                         Console.WriteLine("That was not a valid coordinate");
                         Console.ResetColor();
                         Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(playerOceanGrid, player);
+                        OceanGrid.DisplayOceanGrid(player);
                     }
                     else                                                                    // Shows the grid at least once
                     {
                         Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(playerOceanGrid, player);
+                        OceanGrid.DisplayOceanGrid(player);
                     }
 
                     if (doneOnce == 1 && isValidCoordinates)                               // If the player correctly placed the ship, check if they want to undo
                     {
-                        playerOceanGrid = PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, playerOceanGrid, chosenDirection);
+                        PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, player.oceanGrid, chosenDirection);
                         Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(playerOceanGrid, player);
+                        OceanGrid.DisplayOceanGrid(player);
                     }
 
                     Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
@@ -301,14 +301,14 @@ namespace BattleShip_PSchmitt
                     Console.WriteLine();
                     chosenDirection = PlayerInput.ChooseDirectionToPlaceShip(directionList);
 
-                    playerOceanGrid = OceanGrid.PlaceShipsOnOceanGrid(playerOceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
+                    OceanGrid.PlaceShipsOnOceanGrid(player.oceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
                     doneOnce = 1;
                     Console.Clear();
                     Console.WriteLine("\x1b[3J");                   // Fully clears the console.
                 } while (!isValidCoordinates);
             }
-            return playerOceanGrid;
+            return player.oceanGrid;
         }
 
         /// <summary>

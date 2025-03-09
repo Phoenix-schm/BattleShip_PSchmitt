@@ -62,12 +62,12 @@
 
                 if (playerInput != null && playerInput != "")
                 {
-                    for (int index = 1; index < player.playerShipList.Count + 1; index++)              // Going through the list of ships
+                    for (int index = 1; index < player.shipList.Count + 1; index++)              // Going through the list of ships
                     {
-                        if (playerInput.ToLower() == player.playerShipList[index - 1].name.ToLower() || playerInput == index.ToString())  // if player picked the correct a listed ship
+                        if (playerInput.ToLower() == player.shipList[index - 1].name.ToLower() || playerInput == index.ToString())  // if player picked the correct a listed ship
                         {
                             isValidShip = true;
-                            chosenShip = player.playerShipList[index - 1];                             // minus 1 index for off-by-one
+                            chosenShip = player.shipList[index - 1];                             // minus 1 index for off-by-one
                             break;
                         }
                     }
@@ -122,6 +122,11 @@
                             ValidNumber = index - 1;                    // Minus one to deal with off by one
                             break;
                         }
+                    }
+                    if (playerInput == "-1")
+                    {
+                        isValidNumber = true;
+                        ValidNumber = -1;
                     }
                     if (!isValidNumber)
                     {
@@ -209,10 +214,6 @@
                     for (int index = chosenShip.EachIndexOnOceanGrid.Count - 1; index >= 0; index--)
                     {
                         int[] shipSpaces = chosenShip.EachIndexOnOceanGrid[index];
-                        if (direction == 0 || direction == 1)
-                        {
-                            Array.Reverse(shipSpaces);
-                        }
 
                         int y = shipSpaces[0];
                         int x = shipSpaces[1];

@@ -1,15 +1,16 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class OceanGrid
+    internal class OceanGrid : GameGrid
     {
         public static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
         {
             {'~', ConsoleColor.DarkBlue},
-            {'d', ConsoleColor.Green}, {'Z', ConsoleColor.DarkRed},
-            {'s', ConsoleColor.Green}, {'Y', ConsoleColor.DarkRed},
-            {'c', ConsoleColor.Green}, {'X', ConsoleColor.DarkRed},
-            {'B', ConsoleColor.Green}, {'W', ConsoleColor.DarkRed},
-            {'C', ConsoleColor.Green}, {'V', ConsoleColor.DarkRed},
+            {'d', ConsoleColor.Green}, {'Z', ConsoleColor.Red},
+            {'s', ConsoleColor.Green}, {'Y', ConsoleColor.Red},
+            {'c', ConsoleColor.Green}, {'X', ConsoleColor.Red},
+            {'B', ConsoleColor.Green}, {'W', ConsoleColor.Red},
+            {'C', ConsoleColor.Green}, {'V', ConsoleColor.Red},
+            {'N', ConsoleColor.DarkRed},
             {'M', ConsoleColor.White}
         };
         /// <summary>
@@ -17,28 +18,30 @@
         /// Meant for showing player ships
         /// </summary>
         /// <param name="displayGrid">Grid to be displayed</param>
-        public static void DisplayOceanGrid(char[,] displayGrid, Player player)
+        public static void DisplayOceanGrid(Player player)
         {
+            char[,] playerOceanGrid = player.oceanGrid;
+            List<Battleship> playerShipList = player.shipList;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
             string numberedX_axis = string.Join(" ", numberedAxis);
-            Console.WriteLine("  " + numberedX_axis);                                       // Displays the numbers of the x axis
+            Console.WriteLine("  " + numberedX_axis);                                               // Displays the numbers of the x axis
 
-            for (int y_axis = 0; y_axis < displayGrid.GetLength(0); y_axis++)
+            for (int y_axis = 0; y_axis < playerOceanGrid.GetLength(0); y_axis++)
             {
-                Console.Write(numberedAxis[y_axis] + " ");                                  // Displays the numbers of each y axis
-                for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
+                Console.Write(numberedAxis[y_axis] + " ");                                          // Displays the numbers of each y axis
+                for (int x_axis = 0; x_axis < playerOceanGrid.GetLength(1); x_axis++)
                 {
-                    Console.ForegroundColor = oceanGridColors[displayGrid[y_axis, x_axis]];
-                    if (displayGrid[y_axis, x_axis] == '~')
+                    Console.ForegroundColor = oceanGridColors[playerOceanGrid[y_axis, x_axis]];     // Changes color based on char at [y,x]
+                    if (playerOceanGrid[y_axis, x_axis] == '~')                                     // Displays ocean
                     {
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
+                        Console.Write(playerOceanGrid[y_axis, x_axis] + "  ");
                     }
-                    else if (IfCharEqualShipNuetralDisplay(displayGrid[y_axis, x_axis], player.playerShipList))
+                    else if (IfCharEqualShipNuetralDisplay(playerOceanGrid[y_axis, x_axis], playerShipList))    // Displays unhit ships
                     {
                         Console.Write('S' + "  ");
                     }
-                    else if (IfCharEqualShipIsHitDisplay(displayGrid[y_axis, x_axis], player.playerShipList) || displayGrid[y_axis, x_axis] == 'M')
+                    else if (IfCharEqualShipIsHitDisplay(playerOceanGrid[y_axis, x_axis], playerShipList) || playerOceanGrid[y_axis, x_axis] == 'M') // Displays opponent targets
                     {
                         Console.Write('*' + "  ");
                     }
@@ -115,7 +118,14 @@
                 for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis++)
                 {
                     currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
-                    chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                                      // Adds coordinates to chosenShip index list
+                    if (direction == 1)
+                    {
+                        chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Adds coordinates to chosenShip index list
+                    }
+                    else
+                    {
+                        chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                  // Adds coordinates to chosenShip index list
+                    }
                 }
             }
             else if (direction == 0 || direction == 2)                                          // Going backwards
@@ -123,7 +133,14 @@
                 for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis--)
                 {
                     currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
-                    chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                                      // Adds coordinates to chosenShip index list
+                    if (direction == 0)
+                    {
+                        chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Adds coordinates to chosenShip index list
+                    }
+                    else
+                    {
+                        chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);                  // Adds coordinates to chosenShip index list
+                    }
                 }
             }
             return currentOceanGrid;
@@ -176,32 +193,6 @@
             }
 
             return isValidIndex;
-        }
-
-        public static bool IfCharEqualShipIsHitDisplay(char checkedChar, List<Battleship> shipList)
-        {
-            bool isSpaceHitShip = false;
-            foreach(Battleship battleship in shipList)
-            {
-                if (checkedChar == battleship.DisplayWhenHit)
-                {
-                    isSpaceHitShip = true;
-                }
-            }
-            return isSpaceHitShip;
-        }
-
-        public static bool IfCharEqualShipNuetralDisplay(char checkedChar, List<Battleship> shipList)
-        {
-            bool isSpaceNuetralShip = false;
-            foreach(Battleship battleship in shipList)
-            {
-                if (checkedChar == battleship.DisplayNuetral)
-                {
-                    isSpaceNuetralShip = true;
-                }
-            }
-            return isSpaceNuetralShip;
         }
     }
 }

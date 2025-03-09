@@ -2,13 +2,14 @@
 
 namespace BattleShip_PSchmitt
 {
-    class TargetGrid
+    class TargetGrid : GameGrid
     {
         public static Dictionary<char, ConsoleColor> targetGridColors = new Dictionary<char, ConsoleColor>()
         {
-            {'~', ConsoleColor.DarkBlue },
-            {'M', ConsoleColor.White },
-            {'H', ConsoleColor.DarkRed }
+            {'~', ConsoleColor.DarkBlue},
+            {'M', ConsoleColor.White},
+            {'H', ConsoleColor.Red},
+            {'N', ConsoleColor.DarkRed}
         };
         /// <summary>
         /// Displays the inputted grid with numbered axis'.
@@ -28,7 +29,14 @@ namespace BattleShip_PSchmitt
                 for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
                 {
                     Console.ForegroundColor = targetGridColors[displayGrid[y_axis, x_axis]];
-                    Console.Write(displayGrid[y_axis, x_axis] + "  ");
+                    if (displayGrid[y_axis, x_axis] == 'N')
+                    {
+                        Console.Write("H" + "  ");
+                    }
+                    else
+                    {
+                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
+                    }
                 }
                 Console.ResetColor();
                 Console.WriteLine();
@@ -45,9 +53,9 @@ namespace BattleShip_PSchmitt
         public static string PlaceShotsOnTargetGrid(Player currentPlayer, Player opponentPlayer, int chosenShot_y, int chosenShot_x)
         {
             // Variable initializations
-            char[,] playerTargetGrid = currentPlayer.playerTargetGrid;
-            char[,] opponentOceanGrid = opponentPlayer.playerOceanGrid;
-            List<Battleship> opponentShips = opponentPlayer.playerShipList;
+            char[,] playerTargetGrid = currentPlayer.targetGrid;
+            char[,] opponentOceanGrid = opponentPlayer.oceanGrid;
+            List<Battleship> opponentShips = opponentPlayer.shipList;
             string opponentName = opponentPlayer.name;
             string shotMessage;                                             // The message displayed to the player after a turn
 
@@ -56,7 +64,7 @@ namespace BattleShip_PSchmitt
 
             if (hitShip != null)                                            // if a ship has been hit
             {
-                //hitShip.EachIndexOnOceanGrid.RemoveAt(0);                   // Removes an index position in the ships list of positions (doesn't matter which one)
+                //hitShip.EachIndexOnOceanGrid.RemoveAt(0);                 // Removes an index position in the ships list of positions (doesn't matter which one)
                 hitShip.ShipLength--;
 
                 shotMessage = opponentName + ": Ack! It's a hit.";
@@ -66,6 +74,13 @@ namespace BattleShip_PSchmitt
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if all the ships index positions have been removed).
                 {
                     shotMessage += "\n" + opponentPlayer.name + ": You sunk my battleship!";
+                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)
+                    {
+                        int y = hitShip.EachIndexOnOceanGrid[index][0];
+                        int x = hitShip.EachIndexOnOceanGrid[index][1];
+                        playerTargetGrid[y, x] = 'N';
+                        opponentOceanGrid[y, x] = 'N';
+                    }
                     opponentShips.Remove(hitShip);
                 }
             }
@@ -106,7 +121,7 @@ namespace BattleShip_PSchmitt
         /// </summary>
         /// <param name="currentPlayer">The current player being asked for coordinates.</param>
         /// <returns>Returns valid coordinates the player can shoot at.</returns>
-        public static int[] ReturnValidUserCoordinates(Player currentPlayer)
+        public static int[] ReturnValidUserCoordinates(Player currentPlayer, Player opponentPlayer)
         {
             bool isValidCoordinates = false;
             int yCoord = -1;
@@ -116,7 +131,11 @@ namespace BattleShip_PSchmitt
                 yCoord = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
                 xCoord = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
 
-                if (currentPlayer.playerTargetGrid[yCoord, xCoord] == 'M' || currentPlayer.playerTargetGrid[yCoord, xCoord] == 'H')
+                if (yCoord == -1 || xCoord == -1)
+                {
+                    OceanGrid.DisplayOceanGrid(opponentPlayer);
+                }
+                else if (currentPlayer.targetGrid[yCoord, xCoord] == 'M' || currentPlayer.targetGrid[yCoord, xCoord] == 'H')
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine("You've already hit that coordinate.");
@@ -128,6 +147,17 @@ namespace BattleShip_PSchmitt
                 }
             }
             return [yCoord, xCoord];
+        }
+
+        public static char[,] ReplaceCharWithSunkDisplay(char[,] opponentGrid, Battleship hitShip)
+        {
+            for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)
+            {
+                int y = hitShip.EachIndexOnOceanGrid[index][0];
+                int x = hitShip.EachIndexOnOceanGrid[index][1];
+                opponentGrid[y, x] = 'H';
+            }
+            return opponentGrid;
         }
     }
 }

@@ -15,9 +15,9 @@ namespace BattleShip_PSchmitt
             {"Dark Green", ConsoleColor.DarkGreen },
             {"Yellow", ConsoleColor.Yellow }
         };
-        public char[,] playerOceanGrid;
-        public char[,] playerTargetGrid;
-        public List<Battleship> playerShipList;
+        public char[,] oceanGrid;
+        public char[,] targetGrid;
+        public List<Battleship> shipList;
         public string name = "";
         public int[]? previousShot;
         public ConsoleColor playerColor;
@@ -26,21 +26,21 @@ namespace BattleShip_PSchmitt
         {
             get
             {
-                return playerShipList.Count > 0;
+                return shipList.Count > 0;
             }
         }
 
         public Player()
         {
-            playerShipList = CreateShips();                        // Default number of ships. Will act as health
-            playerOceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
-            playerTargetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
+            shipList = CreateShips();                        // Default number of ships. Will act as health
+            oceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
+            targetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
         }
         public Player(string playerName)
         {
-            playerShipList = CreateShips();                        // Default number of ships. Will act as health
-            playerOceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
-            playerTargetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
+            shipList = CreateShips();                        // Default number of ships. Will act as health
+            oceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
+            targetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
             name = playerName;
         }
 
