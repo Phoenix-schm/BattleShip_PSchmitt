@@ -152,6 +152,9 @@ namespace BattleShip_PSchmitt
             CPU.CreateCPUoceanGrid(player2, random);
 
             Console.WriteLine("Time to choose who goes first.");
+            Console.WriteLine("Player names:");
+            Console.WriteLine(player1.name);
+            Console.WriteLine(player2.name);
             Console.Write("Write the name of the player that goes first: ");
             PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
@@ -328,13 +331,13 @@ namespace BattleShip_PSchmitt
         static string PlayerTurn(Player currentPlayer, Player opponentPlayer, ref int shotsTaken, string shotMessage)
         {
             GameGrid.DisplayPlayerGrids(currentPlayer);
-            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);     // Displays the shot message of the previous firstPlayer shot
+            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);     // Displays the shot message of the previous previous player shot
 
-            int[] playerCoordinates = TargetGrid.ReturnValidUserCoordinates(currentPlayer, opponentPlayer);
+            int[] playerCoordinates = TargetGrid.ReturnValidUserCoordinates(currentPlayer, opponentPlayer);                             // askss for [y,x] coordinates from player
             shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
 
             GameGrid.DisplayPlayerGrids(currentPlayer);
-            DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current secondPlayer shot
+            DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current player shot
             shotsTaken++;
 
             return shotMessage;

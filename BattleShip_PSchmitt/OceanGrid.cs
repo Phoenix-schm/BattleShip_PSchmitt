@@ -11,6 +11,7 @@
             {'c', ConsoleColor.Green}, {'X', ConsoleColor.Red},
             {'B', ConsoleColor.Green}, {'W', ConsoleColor.Red},
             {'C', ConsoleColor.Green}, {'V', ConsoleColor.Red},
+
             {'N', ConsoleColor.DarkRed},                            // Color of a fully sunk ship
             {'M', ConsoleColor.White}
         };
@@ -21,29 +22,30 @@
         /// <param name="displayGrid">Grid to be displayed</param>
         public static void DisplayOceanGrid(Player player)
         {
-            char[,] playerOceanGrid = player.oceanGrid;
+            char[,] displayOceanGrid = player.oceanGrid;
             List<Battleship> playerShipList = player.shipList;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
             string numberedX_axis = string.Join(" ", numberedAxis);
             Console.WriteLine("  " + numberedX_axis);                                               // Displays the numbers of the x axis
 
-            for (int y_axis = 0; y_axis < playerOceanGrid.GetLength(0); y_axis++)
+            for (int y_axis = 0; y_axis < displayOceanGrid.GetLength(0); y_axis++)
             {
                 Console.Write(numberedAxis[y_axis] + " ");                                          // Displays the numbers of each y axis
-                for (int x_axis = 0; x_axis < playerOceanGrid.GetLength(1); x_axis++)
+                for (int x_axis = 0; x_axis < displayOceanGrid.GetLength(1); x_axis++)
                 {
-                    Console.ForegroundColor = oceanGridColors[playerOceanGrid[y_axis, x_axis]];     // Changes color based on char at [y,x]
-                    char indexOnGrid = playerOceanGrid[y_axis, x_axis];
-                    if (indexOnGrid == '~')                                                 // Displays ocean
+                    char charAtIndex = displayOceanGrid[y_axis, x_axis];
+                    Console.ForegroundColor = oceanGridColors[charAtIndex];     // Changes color based on char at [y,x]
+
+                    if (charAtIndex == '~')                                                // Displays ocean
                     {
-                        Console.Write(indexOnGrid + "  ");
+                        Console.Write(charAtIndex + "  ");
                     }
-                    else if (IsCharShipDisplayWhenNuetral(indexOnGrid, playerShipList))    // Displays unhit ships
+                    else if (IsCharShipDisplayWhenNuetral(charAtIndex, playerShipList))    // Displays unhit ships
                     {
                         Console.Write('S' + "  ");
-                    }                             //        hit ship locatiosn            missed locations      sunk ships
-                    else if (IsCharShipDisplayWhenHit(indexOnGrid, playerShipList) || indexOnGrid == 'M' || indexOnGrid == 'N') // Displays opponent targets
+                    }
+                    else // Displays opponent targets
                     {
                         Console.Write('*' + "  ");
                     }

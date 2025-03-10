@@ -16,26 +16,29 @@ namespace BattleShip_PSchmitt
         /// Meant for showing player shots
         /// </summary>
         /// <param name="displayGrid"></param>
-        public static void DisplayTargetGrid(char[,] displayGrid)
+        public static void DisplayTargetGrid(Player player)
         {
+            char[,] displayTargetGrid = player.targetGrid;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
             string numberedX_axis = string.Join(" ", numberedAxis);
             Console.WriteLine("  " + numberedX_axis);                                           // Displays the numbers of the x axis
 
-            for (int y_axis = 0; y_axis < displayGrid.GetLength(0); y_axis++)
+            for (int y_axis = 0; y_axis < displayTargetGrid.GetLength(0); y_axis++)
             {
                 Console.Write(numberedAxis[y_axis] + " ");                                      // Displays the numbers of each y axis
-                for (int x_axis = 0; x_axis < displayGrid.GetLength(1); x_axis++)
+                for (int x_axis = 0; x_axis < displayTargetGrid.GetLength(1); x_axis++)
                 {
-                    Console.ForegroundColor = targetGridColors[displayGrid[y_axis, x_axis]];
-                    if (displayGrid[y_axis, x_axis] == 'N')
+                    char charAtIndex = displayTargetGrid[y_axis, x_axis];
+                    Console.ForegroundColor = targetGridColors[charAtIndex];
+
+                    if (charAtIndex == player.targetSunkDisplay)
                     {
-                        Console.Write("H" + "  ");
+                        Console.Write(player.targetHitDisplay + "  ");
                     }
-                    else
+                    else    // Displays hit, miss and ocean displays
                     {
-                        Console.Write(displayGrid[y_axis, x_axis] + "  ");
+                        Console.Write(charAtIndex + "  ");
                     }
                 }
                 Console.ResetColor();
@@ -67,7 +70,7 @@ namespace BattleShip_PSchmitt
                 hitShip.ShipLength--;
 
                 shotMessage = opponentName + ": Ack! It's a hit.";
-                playerTargetGrid[chosenShot_y, chosenShot_x] = 'H';
+                playerTargetGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetHitDisplay;
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = hitShip.DisplayWhenHit;
 
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if the ships length is now 0).
@@ -77,8 +80,9 @@ namespace BattleShip_PSchmitt
                     {
                         int y = hitShip.EachIndexOnOceanGrid[index][0];
                         int x = hitShip.EachIndexOnOceanGrid[index][1];
-                        playerTargetGrid[y, x] = hitShip.displayWhenSunk;
-                        opponentOceanGrid[y, x] = hitShip.displayWhenSunk;
+                        
+                        playerTargetGrid[y, x] = currentPlayer.targetSunkDisplay;
+                        opponentOceanGrid[y, x] = currentPlayer.targetSunkDisplay;
                     }
                     opponentShips.Remove(hitShip);
                 }
@@ -131,12 +135,13 @@ namespace BattleShip_PSchmitt
             {
                 y_axis = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
                 x_axis = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
+                char charAtIndex = currentPlayer.targetGrid[y_axis, x_axis];
 
                 if (y_axis == -1)                                   // Cheat Code
                 {
                     OceanGrid.DisplayOceanGrid(opponentPlayer);
                 }
-                else if (currentPlayer.targetGrid[y_axis, x_axis] == 'M' || currentPlayer.targetGrid[y_axis, x_axis] == 'H')
+                else if (charAtIndex != '~')
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine("You've already hit that coordinate.");

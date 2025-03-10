@@ -33,18 +33,18 @@ namespace BattleShip_PSchmitt
             Console.ResetColor();
             Console.WriteLine(currentPlayer.name + " Grids");
             Console.WriteLine("       -Target Grid-       ");
-            TargetGrid.DisplayTargetGrid(currentPlayer.targetGrid);
+            TargetGrid.DisplayTargetGrid(currentPlayer);
             Console.WriteLine("        -Ocean Grid-          ");
             OceanGrid.DisplayOceanGrid(currentPlayer);
             Console.WriteLine();
         }
 
-        public static bool IsCharShipDisplayWhenHit(char checkChar, List<Battleship> shipList)
+        public static bool IsCharShipDisplayWhenHit(char checkChar, Player opponentPlayer)
         {
             bool isCharHitShip = false;
-            foreach (Battleship ship in shipList)
+            foreach (Battleship ship in opponentPlayer.shipList)
             {
-                if (checkChar == ship.DisplayWhenHit || checkChar == 'H')
+                if (checkChar == ship.DisplayWhenHit)
                 {
                     isCharHitShip = true;
                 }
@@ -63,19 +63,6 @@ namespace BattleShip_PSchmitt
                 }
             }
             return isCharNuetralShip;
-        }
-
-        public static bool IsCharShipDisplayWhenSunk(char checkChar, List<Battleship> shipList)
-        {
-            bool isCharSunkShip = false;
-            foreach(Battleship ship in shipList)
-            {
-                if (checkChar == ship.displayWhenSunk)
-                {
-                    isCharSunkShip = true;
-                }
-            }
-            return isCharSunkShip;
         }
     }
 }
