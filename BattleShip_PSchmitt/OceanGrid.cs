@@ -82,26 +82,25 @@
         /// <returns>Modified ocean grid.</returns>
         public static char[,] PlaceShipOnOceanGrid(Player player, Battleship chosenShip, string direction, int[] userCoordinates, ref bool canShipBePlaced)
         {
-            char[,] currentOceanGrid = player.oceanGrid;
             int y_axis = userCoordinates[0];
             int x_axis = userCoordinates[1];
             if (direction == "up" || direction == "down")                           // If ship is being placed vertically
             {
-                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
+                player.oceanGrid = FlipGameGridXYAxis(player.oceanGrid);
                 y_axis = userCoordinates[1];
                 x_axis = userCoordinates[0];
             }
 
-            canShipBePlaced = CheckCanShipBePlaced(currentOceanGrid, chosenShip, direction, y_axis, x_axis);   // Whether the ship can be placed at the user coordinates
+            canShipBePlaced = CheckCanShipBePlaced(player.oceanGrid, chosenShip, direction, y_axis, x_axis);   // Whether the ship can be placed at the user coordinates
 
             if (canShipBePlaced)
             {
-                currentOceanGrid = PlaceShipOnOceanGrid_BasedOnDirection(currentOceanGrid, chosenShip, direction, y_axis, x_axis);
+                player.oceanGrid = PlaceShipOnOceanGrid_BasedOnDirection(player.oceanGrid, chosenShip, direction, y_axis, x_axis);
             }
 
             if (direction == "up" || direction == "down")                           // Undoes board flip.
             {
-                currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
+                player.oceanGrid = FlipGameGridXYAxis(player.oceanGrid);
             }
 
             return player.oceanGrid;
