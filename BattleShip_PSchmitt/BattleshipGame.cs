@@ -264,7 +264,7 @@ namespace BattleShip_PSchmitt
                     Console.WriteLine();
                     chosenDirection = PlayerInput.ChooseDirectionToPlaceShip(directionList);
 
-                    player.oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player.oceanGrid, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
+                    OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
                     doneOnce = 1;
                     Console.Clear();

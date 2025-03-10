@@ -2,6 +2,9 @@
 {
     class CPU : Player
     {
+        int _validDirection;
+        List<int> _invalidDirection = [];
+        List<int[]> _knownHitLocations = [];
         /// <summary>
         /// Creates an Ocean grid with random ship placements
         /// </summary>
@@ -23,7 +26,7 @@
                     int y = rand.Next(0, oceanGrid.GetLength(0));
                     int x = rand.Next(0, oceanGrid.GetLength(1));
                     int directionChoice = rand.Next(0, 4);
-                    cpuPlayer.oceanGrid = OceanGrid.PlaceShipOnOceanGrid(cpuPlayer.oceanGrid, chosenShip, directionList[directionChoice], [y, x], ref isValidCoordinates);
+                    OceanGrid.PlaceShipOnOceanGrid(cpuPlayer, chosenShip, directionList[directionChoice], [y, x], ref isValidCoordinates);
 
                 } while (!isValidCoordinates);
             }
@@ -41,26 +44,118 @@
         {
             char[,] targetGrid = cpuPlayer.targetGrid;
             char[,] opponentOceanGrid = opponentPlayer.oceanGrid;
+            int[]? previousShot = cpuPlayer.previousShot;
+
             bool isValid = false;
             string message = "";
 
-            while (!isValid)
+            if (IsAShipHitButNotSunk(opponentPlayer))           // if a ship was hit and it hasn't been sunk
             {
-                int y = rand.Next(0, targetGrid.GetLength(0));
-                int x = rand.Next(0, targetGrid.GetLength(1));
-
-                if (targetGrid[y, x] == 'M' || targetGrid[y, x] == 'H')      // If it's already hit that spot
+                if (opponentOceanGrid[previousShot[0], previousShot[1]] == 'H')
                 {
-                    continue;
+                    // add to the _knownHitLocations[]
+                    // choose a direction
+                    // shoot at direction
+                    // if direction gets an 'H', then save as valid direction.
+                    // keep shooting in that direction until its no longer valid (won't occur if the ship ahas been sunk)
+                    // if direction gets an 'M',
+                    //      then it isn't valid.
+                    //      add to _invalidDirections
+                    //      Next else statement will occur
                 }
-                else
+                else if ()// previous shot missed, but we know the previous valid direction
                 {
-                    message = TargetGrid.PlaceShotsOnTargetGrid(cpuPlayer, opponentPlayer, y, x);
-                    cpuPlayer.previousShot = [y, x];
-                    isValid = true;
+                    // if valid direction was up, go down. Vice versa 
+                    //      new valid direction
+                    //      potential* for loop to the first ship.HitDisplay
+                    // if valid direction was right, go left
+                    //      new valid direction
+                    //      potential* for loop to the first ship.HitDisplay
+                }
+                else // previous shot missed an we don't have a valid direction
+                {
+                    // choose a random direction that isn't in the _invalidDirections
+                    // shoot in that direction
+
+                    // if it leads to a ship.HitDisplay
+                    // _validDirection
+                    // else it wasn't a hit
+                    // add to _invalidDirections
+                }
+
+            }
+            else            // there is no ship that has been hit and not sunk
+            {
+                // reset _invalidDirections, validDirection, and knownHitLocations
+                while (!isValid)
+                {
+                    int y = rand.Next(0, targetGrid.GetLength(0));
+                    int x = rand.Next(0, targetGrid.GetLength(1));
+
+                    if (targetGrid[y, x] == 'M' || targetGrid[y, x] == 'H')      // If it's already hit that spot
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        message = TargetGrid.PlaceShotsOnTargetGrid(cpuPlayer, opponentPlayer, y, x);
+                        cpuPlayer.previousShot = [y, x];
+                        isValid = true;
+                    }
                 }
             }
             return message;
         }
+
+        static bool IsAShipHitButNotSunk(Player opponent)
+        {
+            List<Battleship> opponentShips = opponent.shipList;
+            bool isShipHitNotSunk = false;
+            foreach(Battleship ship in opponentShips)
+            {
+                if (ship.IsHit)
+                {
+                    isShipHitNotSunk = true;
+                }
+            }
+
+            return isShipHitNotSunk;
+        }
+
+        static int ReturnADirection(int[] previousShot, char[,] opponentGrid)
+        {
+            // choose a random int for direction
+            bool isValidDirection = false;
+            int y = previousShot[0];
+            int x = previousShot[1];
+
+            int[] checkCoordinates;
+
+            // do
+                // if direction is invalid
+                    // choose a new direction that isn't in _invalidDirections
+                // else if _invalidDirections doesn't contain that direction then proceed
+                    // switchcase direction
+
+                    //  up
+                    //      checkCoordinates = [y++, x]
+                    //  down
+                    //      checkCoordinates = [y--, x]
+                    //  left
+                    //      checkCoordinates = [y, x++]
+                    //  right
+                    //      checkCoordinates = [y, x--]
+                //
+                // if (checkCoordinates[0] > 9 || checkCoordinates [0] < 0)
+                    // isn't valid direction
+                    // add to invalidDirections
+                // if (checkCoordinates[1] > 9 || checkCoordinates[1] < 0)
+                    // isn'tvalid direciton
+                    // add to invalidDirections
+            // while (!isValidDirection)
+
+            // return a valid direction
+        }
+            
     }
 }

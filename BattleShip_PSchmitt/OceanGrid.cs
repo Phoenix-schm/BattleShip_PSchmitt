@@ -80,8 +80,9 @@
         /// <param name="userCoordinates">The coordinates the the ship will be placed at.</param>
         /// <param name="canShipBePlaced">The check if the ship can be placed at the user coordinates.</param>
         /// <returns>Modified ocean grid.</returns>
-        public static char[,] PlaceShipOnOceanGrid(char[,] currentOceanGrid, Battleship chosenShip, string direction, int[] userCoordinates, ref bool canShipBePlaced)
+        public static char[,] PlaceShipOnOceanGrid(Player player, Battleship chosenShip, string direction, int[] userCoordinates, ref bool canShipBePlaced)
         {
+            char[,] currentOceanGrid = player.oceanGrid;
             int y_axis = userCoordinates[0];
             int x_axis = userCoordinates[1];
             if (direction == "up" || direction == "down")                           // If ship is being placed vertically
@@ -102,7 +103,8 @@
             {
                 currentOceanGrid = FlipGameGridXYAxis(currentOceanGrid);
             }
-            return currentOceanGrid;
+
+            return player.oceanGrid;
         }
         /// <summary>
         /// Updates the currentOceanGrid with the chosenShip.Display at [y,x]
