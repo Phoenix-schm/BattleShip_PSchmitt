@@ -77,8 +77,8 @@ namespace BattleShip_PSchmitt
                     {
                         int y = hitShip.EachIndexOnOceanGrid[index][0];
                         int x = hitShip.EachIndexOnOceanGrid[index][1];
-                        playerTargetGrid[y, x] = 'N';
-                        opponentOceanGrid[y, x] = 'N';
+                        playerTargetGrid[y, x] = hitShip.displayWhenSunk;
+                        opponentOceanGrid[y, x] = hitShip.displayWhenSunk;
                     }
                     opponentShips.Remove(hitShip);
                 }

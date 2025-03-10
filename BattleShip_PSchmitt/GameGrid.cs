@@ -39,30 +39,43 @@ namespace BattleShip_PSchmitt
             Console.WriteLine();
         }
 
-        public static bool IfCharEqualShipIsHitDisplay(char checkedChar, List<Battleship> shipList)
+        public static bool IsCharShipDisplayWhenHit(char checkChar, List<Battleship> shipList)
         {
-            bool isSpaceHitShip = false;
-            foreach (Battleship battleship in shipList)
+            bool isCharHitShip = false;
+            foreach (Battleship ship in shipList)
             {
-                if (checkedChar == battleship.DisplayWhenHit || checkedChar == 'H')
+                if (checkChar == ship.DisplayWhenHit || checkChar == 'H')
                 {
-                    isSpaceHitShip = true;
+                    isCharHitShip = true;
                 }
             }
-            return isSpaceHitShip;
+            return isCharHitShip;
         }
 
-        public static bool IfCharEqualShipNuetralDisplay(char checkedChar, List<Battleship> shipList)
+        public static bool IsCharShipDisplayWhenNuetral(char checkChar, List<Battleship> shipList)
         {
-            bool isSpaceNuetralShip = false;
-            foreach (Battleship battleship in shipList)
+            bool isCharNuetralShip = false;
+            foreach (Battleship ship in shipList)
             {
-                if (checkedChar == battleship.DisplayNuetral)
+                if (checkChar == ship.DisplayNuetral)
                 {
-                    isSpaceNuetralShip = true;
+                    isCharNuetralShip = true;
                 }
             }
-            return isSpaceNuetralShip;
+            return isCharNuetralShip;
+        }
+
+        public static bool IsCharShipDisplayWhenSunk(char checkChar, List<Battleship> shipList)
+        {
+            bool isCharSunkShip = false;
+            foreach(Battleship ship in shipList)
+            {
+                if (checkChar == ship.displayWhenSunk)
+                {
+                    isCharSunkShip = true;
+                }
+            }
+            return isCharSunkShip;
         }
     }
 }

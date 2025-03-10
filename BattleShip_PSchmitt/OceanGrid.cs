@@ -35,15 +35,15 @@
                 {
                     Console.ForegroundColor = oceanGridColors[playerOceanGrid[y_axis, x_axis]];     // Changes color based on char at [y,x]
                     char indexOnGrid = playerOceanGrid[y_axis, x_axis];
-                    if (indexOnGrid == '~')                                     // Displays ocean
+                    if (indexOnGrid == '~')                                                 // Displays ocean
                     {
                         Console.Write(indexOnGrid + "  ");
                     }
-                    else if (IfCharEqualShipNuetralDisplay(indexOnGrid, playerShipList))    // Displays unhit ships
+                    else if (IsCharShipDisplayWhenNuetral(indexOnGrid, playerShipList))    // Displays unhit ships
                     {
                         Console.Write('S' + "  ");
                     }                             //        hit ship locatiosn            missed locations      sunk ships
-                    else if (IfCharEqualShipIsHitDisplay(indexOnGrid, playerShipList) || indexOnGrid == 'M' || indexOnGrid == 'N') // Displays opponent targets
+                    else if (IsCharShipDisplayWhenHit(indexOnGrid, playerShipList) || indexOnGrid == 'M' || indexOnGrid == 'N') // Displays opponent targets
                     {
                         Console.Write('*' + "  ");
                     }

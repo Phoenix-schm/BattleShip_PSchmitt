@@ -96,8 +96,8 @@ namespace BattleShip_PSchmitt
             Random rand = new Random();
 
             Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
-            //CreateOceanGrid(player);
-            CPU.CreateCPUoceanGrid(player, rand);
+            CreateOceanGrid(player);
+            //CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpu, rand);
 
             Console.WriteLine("Now for battle!");
