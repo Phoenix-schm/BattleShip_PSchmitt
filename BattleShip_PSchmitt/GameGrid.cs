@@ -31,14 +31,19 @@ namespace BattleShip_PSchmitt
         public static void DisplayPlayerGrids(Player currentPlayer)
         {
             Console.ResetColor();
-            Console.WriteLine(currentPlayer.name + " Grids");
-            Console.WriteLine("       -Target Grid-       ");
+            Console.WriteLine(currentPlayer.name + " Grids:");
+            Console.WriteLine("         -Target Grid-       ");
             TargetGrid.DisplayTargetGrid(currentPlayer);
-            Console.WriteLine("        -Ocean Grid-          ");
+            Console.WriteLine("         -Ocean Grid-          ");
             OceanGrid.DisplayOceanGrid(currentPlayer);
             Console.WriteLine();
         }
-
+        /// <summary>
+        /// checks if the inputted char is a ship.DisplayWhenHit
+        /// </summary>
+        /// <param name="checkChar">the char being checked</param>
+        /// <param name="opponentPlayer">the opponent player having their shiplist checked</param>
+        /// <returns>True if checkedChar a DisplayWhenHit. False if checkedChar is anything else</returns>
         public static bool IsCharShipDisplayWhenHit(char checkChar, Player opponentPlayer)
         {
             bool isCharHitShip = false;
@@ -51,7 +56,12 @@ namespace BattleShip_PSchmitt
             }
             return isCharHitShip;
         }
-
+        /// <summary>
+        /// checks if the inputted char is a nuetral ship display
+        /// </summary>
+        /// <param name="checkChar">the char being checked</param>
+        /// <param name="shipList">the shiplist being checked</param>
+        /// <returns>True if the checkedChar is a nuetral display. False if checkedChar is anything else.</returns>
         public static bool IsCharShipDisplayWhenNuetral(char checkChar, List<Battleship> shipList)
         {
             bool isCharNuetralShip = false;

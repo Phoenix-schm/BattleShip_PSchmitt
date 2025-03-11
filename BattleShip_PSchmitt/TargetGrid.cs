@@ -80,7 +80,6 @@ namespace BattleShip_PSchmitt
                     {
                         int y = hitShip.EachIndexOnOceanGrid[index][0];
                         int x = hitShip.EachIndexOnOceanGrid[index][1];
-                        
                         playerTargetGrid[y, x] = currentPlayer.targetSunkDisplay;
                         opponentOceanGrid[y, x] = currentPlayer.targetSunkDisplay;
                     }
@@ -137,10 +136,6 @@ namespace BattleShip_PSchmitt
                 x_axis = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
                 char charAtIndex = currentPlayer.targetGrid[y_axis, x_axis];
 
-                if (y_axis == -1)                                   // Cheat Code
-                {
-                    OceanGrid.DisplayOceanGrid(opponentPlayer);
-                }
                 else if (charAtIndex != '~')
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;

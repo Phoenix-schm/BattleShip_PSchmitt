@@ -123,11 +123,6 @@
                             break;
                         }
                     }
-                    if (playerInput == "-1")
-                    {
-                        isValidNumber = true;
-                        ValidNumber = -1;
-                    }
                     if (!isValidNumber)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -226,11 +221,13 @@
                     }
                     chosenShip.EachIndexOnOceanGrid.Clear();
                     Console.Clear();
+                    Console.WriteLine("\x1b[3J");                   // Fully clears the console.
                 }
                 else if (userInput.ToLower() == "yes" || userInput == "1")
                 {
                     isValidChoice = true;
                     Console.Clear();
+                    Console.WriteLine("\x1b[3J");                   // Fully clears the console.
                 }
                 else
                 {

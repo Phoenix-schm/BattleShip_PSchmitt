@@ -18,6 +18,7 @@ namespace BattleShip_PSchmitt
         public char targetSunkDisplay = 'N';
         public char targetMissDisplay = 'M';
         public char targetHitDisplay = 'H';
+
         public char[,] oceanGrid;
         public char[,] targetGrid;
         public List<Battleship> shipList;
