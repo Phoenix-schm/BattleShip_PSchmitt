@@ -111,17 +111,17 @@
                             break;
                     }
 
-                    int[] firstValidHit = GetFirstHitOfLastShip(cpu, opponentPlayer);
+                    int[] firstHit = GetFirstHitOfLastShip(cpu, opponentPlayer);
                     cpu._switchDirection++;
 
-                    message = ShootAtDirection(cpu, opponentPlayer, firstValidHit[0], firstValidHit[1], (int)cpu._validDirection, rand);
+                    message = ShootAtDirection(cpu, opponentPlayer, firstHit[0], firstHit[1], (int)cpu._validDirection, rand);
                 }
                 else // previous shot missed and we "don't" have a valid direction, but there is still a hit ship
                 {    //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
-                    int[] firstValidHit = GetFirstHitOfLastShip(cpu, opponentPlayer);
+                    int[] firstHit = GetFirstHitOfLastShip(cpu, opponentPlayer);
 
                     int randomDirection = rand.Next(cpu.directionListMin, cpu.directionListMax);
-                    message = ShootAtDirection(cpu, opponentPlayer, firstValidHit[0], firstValidHit[1], randomDirection, rand);
+                    message = ShootAtDirection(cpu, opponentPlayer, firstHit[0], firstHit[1], randomDirection, rand);
                 }
 
             }
@@ -224,8 +224,9 @@
                 int y = previousShot[0];
                 int x = previousShot[1];
 
-                if (cpuPlayer._invalidDirections.Count == 4)                    // occurs if two ships are right next to each other (not level, but are flush)
-                {                                                               //  and the last hit is at a corner
+                if (cpuPlayer._invalidDirections.Count == 4)                    // occurs if two ships are right next to each other (flush, but not level),
+                {                                                               //  it hit the latter ship in a middle section,
+                                                                                //  and the last hit is at a corner
                     y = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[0];
                     x = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[1];
                     cpuPlayer._invalidDirections.Clear();
@@ -298,7 +299,12 @@
 
             return newCoordinates;
         }
-
+        /// <summary>
+        /// Gets the first hit locations of the last ship that's been targeted
+        /// </summary>
+        /// <param name="cpuPlayer"></param>
+        /// <param name="opponentPlayer"></param>
+        /// <returns>Returns the coordinates of the first hit location of the last ship.</returns>
         static int[] GetFirstHitOfLastShip(CPU cpuPlayer, Player opponentPlayer)
         {
             // Player and CPU variables
