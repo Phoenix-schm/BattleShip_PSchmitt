@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class GameGrid
+    class GameGrid
     {
         /// <summary>
         /// Creates the default version of the battleship grid filled with '~'

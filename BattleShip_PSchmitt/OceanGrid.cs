@@ -1,8 +1,8 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class OceanGrid : GameGrid
+    class OceanGrid : GameGrid
     {
-        public static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
+        static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
         {
             {'~', ConsoleColor.DarkBlue},
             // Non-hit ship spaces          Hit ship spaces
@@ -56,23 +56,6 @@
             }
         }
 
-        /// <summary>
-        /// Flips the x axis to the y axis and vice versa. For vertical outputs
-        /// </summary>
-        /// <param name="normalGrid">The grid that is being flipped</param>
-        /// <returns>flipped grid.</returns>
-        public static char[,] FlipGameGridXYAxis(char[,] normalGrid)
-        {
-            char[,] flippedGrid = new char[normalGrid.GetLength(0), normalGrid.GetLength(1)];
-            for (int x_axis = 0; x_axis < normalGrid.GetLength(1); x_axis++)
-            {
-                for (int y_axis = 0; y_axis < normalGrid.GetLength(0); y_axis++)
-                {
-                    flippedGrid[y_axis, x_axis] = normalGrid[x_axis, y_axis];
-                }
-            }
-            return flippedGrid;
-        }
 
         /// <summary>
         /// Horizontal placement of ships onto the ocean grid.
@@ -117,7 +100,7 @@
         /// <param name="y">The y coordinate the ship is being placed.</param>
         /// <param name="x">The x coordinate the ship is being placed.</param>
         /// <returns>The modified ocean grid with the placed ship.</returns>
-        public static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
+        static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
         {
             switch(direction)
             {
@@ -165,14 +148,14 @@
         /// <param name="y">The y coordinate being checked</param>
         /// <param name="x">The x coordinate being checked.</param>
         /// <returns>Returns a bool of whether the chosenShip can be placed at coordinates.</returns>
-        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
+        static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
         {
             bool isValidIndex = false;
             int canShipFitHere = 0;
             switch (direction)
             {
                 case Player.Directions.Down: case Player.Directions.Right:
-                    while (x != currentOceanGrid.GetLength(1) && currentOceanGrid[y, x] == '~')
+                    while (x != currentOceanGrid.GetLength(1) && currentOceanGrid[y, x] == '~') // If x hasn't hit the edge of the grid and another ship
                     {
                         if (canShipFitHere < chosenShip.ShipLength)
                         {
@@ -187,7 +170,7 @@
                     }
                     break;
                 case Player.Directions.Up: case Player.Directions.Left:
-                    while (x != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y, x] == '~')
+                    while (x != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y, x] == '~') // If x hasn't hit the edge of the grid and another ship
                     {
                         if (canShipFitHere < chosenShip.ShipLength)
                         {
@@ -205,13 +188,32 @@
 
             return isValidIndex;
         }
+
+        /// <summary>
+        /// Flips the x axis to the y axis and vice versa. For vertical outputs
+        /// </summary>
+        /// <param name="normalGrid">The grid that is being flipped</param>
+        /// <returns>flipped grid.</returns>
+        static char[,] FlipGameGridXYAxis(char[,] normalGrid)
+        {
+            char[,] flippedGrid = new char[normalGrid.GetLength(0), normalGrid.GetLength(1)];
+            for (int x_axis = 0; x_axis < normalGrid.GetLength(1); x_axis++)
+            {
+                for (int y_axis = 0; y_axis < normalGrid.GetLength(0); y_axis++)
+                {
+                    flippedGrid[y_axis, x_axis] = normalGrid[x_axis, y_axis];
+                }
+            }
+            return flippedGrid;
+        }
+
         /// <summary>
         /// checks if the inputed char is a nuetral ship display
         /// </summary>
         /// <param name="checkChar">the char being checked</param>
         /// <param name="shipList">the shiplist being checked</param>
         /// <returns>True if the checkedChar is a nuetral display. False if checkedChar is anything else.</returns>
-        public static bool IsCharShipDisplayWhenNuetral(char checkChar, List<Battleship> shipList)
+        static bool IsCharShipDisplayWhenNuetral(char checkChar, List<Battleship> shipList)
         {
             bool isCharNuetralShip = false;
             foreach (Battleship ship in shipList)

@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    internal class PlayerInput
+    class PlayerInput
     {
         /// <summary>
         /// Used on the Main Menu. Checks if the player input is one of the main menu choices
@@ -20,28 +20,25 @@
                     {
                         choice = mainMenuChoices[index];
 
-                        if (choice == "Invalid")
+                        if (choice == "Invalid")    // Invalid is 0
                         {
                             continue;
                         }
                         else if (playerInput.ToLower() == choice.ToLower() || playerInput == index.ToString())        // If playerinput is one of the main menu
-                        {                                                                                                   //      string or ints
+                        {                                                                                             //    string or ints
                             isValidChoice = true;
                             break;
                         }
                     }
                     if (!isValidChoice)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("That was not a valid menu choice.");
+                        InvalidMessage("That is not a valid menu choice.");
                     }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing.");
+                    InvalidMessage("Cannot input nothing.");
                 }
-                Console.ResetColor();
             }
             return choice.ToLower();
         }
@@ -74,26 +71,22 @@
 
                     if (isValidShip)
                     {
-                        if (chosenShip.EachIndexOnOceanGrid.Count > 0)                            // if the ship has been chosen previously
+                        if (chosenShip.EachIndexOnOceanGrid.Count > 0)                           // if the ship has been chosen previously
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
                             isValidShip = false;
-                            Console.WriteLine("You've already picked that ship before.");
+                            InvalidMessage("You have already chosen that ship.");
                         }
                     }
 
                     if (chosenShip == null)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("That isn't a ship you can choose.");
+                        InvalidMessage("That is not a ship you can choose.");
                     }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing");
+                    InvalidMessage("Cannot input nothing.");
                 }
-                Console.ResetColor();
             }
             return chosenShip;
         }
@@ -125,24 +118,20 @@
                     }
                     if (!isValidNumber)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Those are not valid coordinates");
+                        InvalidMessage("That is not a coordinate on the grid.");
                     }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing");
+                    InvalidMessage("Cannot input nothing.");
                 }
-                Console.ResetColor();
             }
             return ValidNumber;
         }
 
         /// <summary>
-        /// checks if player input is a valid direction
+        /// Checks if player input is a valid direction
         /// </summary>
-        /// <param name="directionList"></param>
         /// <returns></returns>
         public static Player.Directions ChooseDirectionToPlaceShip()
         {
@@ -178,18 +167,44 @@
                     }
                     if (!isValidDirection)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid direction.");
+                        InvalidMessage("That was not a valid direction.");
                     }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing.");
+                    InvalidMessage("Cannot input nothing.");
                 }
-                Console.ResetColor();
             }
             return chosenDirection;
+        }
+
+        /// <summary>
+        /// Asks the currentPlayer to give two coordinates.
+        /// If the index at those coordinates has already been shot at, then redo.
+        /// </summary>
+        /// <param name="currentPlayer">The current player being asked for coordinates.</param>
+        /// <returns>Returns valid coordinates the player can shoot at.</returns>
+        public static int[] ReturnValidUserCoordinates(Player currentPlayer)
+        {
+            bool isValidCoordinates = false;
+            int y_axis = -1;
+            int x_axis = -1;
+            while (!isValidCoordinates)
+            {
+                y_axis = CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
+                x_axis = CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
+                char charAtIndex = currentPlayer.targetGrid[y_axis, x_axis];
+
+                if (charAtIndex != '~')
+                {
+                    InvalidMessage("You've already hit that coordinate.");
+                }
+                else
+                {
+                    isValidCoordinates = true;
+                }
+            }
+            return [y_axis, x_axis];
         }
 
         /// <summary>
@@ -202,45 +217,50 @@
         /// <returns></returns>
         public static char[,] CheckRedoGridInput(ref Battleship chosenShip, ref int totalShipIndex, char[,] playerOceanGrid)
         {
-            bool isValidChoice = false;
-            string? userInput = "";
             Console.WriteLine("You have placed " + chosenShip.name + " onto the grid.");
             Console.WriteLine("Are you happy with this placement?");
             Console.WriteLine("1) Yes");
             Console.WriteLine("2) No");
 
+            bool isValidChoice = false;
+            string? userInput;
             while (!isValidChoice)
             {
                 userInput = Console.ReadLine();
-
-                if (userInput.ToLower() == "no" || userInput == "2")
+                if (userInput != null &&  userInput != "")
                 {
-                    isValidChoice = true;
-                    totalShipIndex--;
-                    for (int index = chosenShip.EachIndexOnOceanGrid.Count - 1; index >= 0; index--)
+                    if (userInput.ToLower() == "no" || userInput == "2")
                     {
-                        int[] shipSpaces = chosenShip.EachIndexOnOceanGrid[index];
+                        isValidChoice = true;
+                        totalShipIndex--;
+                        for (int index = chosenShip.EachIndexOnOceanGrid.Count - 1; index >= 0; index--)    // remove each index space from player grid
+                        {
+                            int[] shipSpaces = chosenShip.EachIndexOnOceanGrid[index];
+                            int y = shipSpaces[0];
+                            int x = shipSpaces[1];
 
-                        int y = shipSpaces[0];
-                        int x = shipSpaces[1];
-                        playerOceanGrid[y, x] = '~';
+                            playerOceanGrid[y, x] = '~';
+                        }
+                        chosenShip.EachIndexOnOceanGrid.Clear();                                            // Clear out the chosenShip indexes
                     }
-                    chosenShip.EachIndexOnOceanGrid.Clear();
-                }
-                else if (userInput.ToLower() == "yes" || userInput == "1")
-                {
-                    isValidChoice = true;
+                    else if (userInput.ToLower() == "yes" || userInput == "1")
+                    {
+                        isValidChoice = true;
+                    }
+                    else
+                    {
+                        InvalidMessage("That wasn't a valid input.");
+                    }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("That wasn't a valid input");
-                    Console.ResetColor();
+                    InvalidMessage("Cannot input nothing.");
                 }
             }
             BattleshipGame.FullyClearConsole();
             return playerOceanGrid;
         }
+
         /// <summary>
         /// Asks the player if they'd like to play again.
         /// </summary>
@@ -258,23 +278,27 @@
             while (!isValidInput)
             {
                 userInput = Console.ReadLine();
-
-                if (userInput.ToLower() == "yes" || userInput == "1")
+                if (userInput != null && userInput != "")
                 {
-                    isValidInput = true;
-                    outputValue = true;
-                }
-                else if (userInput.ToLower() == "no" || userInput == "2")
-                {
-                    isValidInput = true;
-                    outputValue = false;
+                    if (userInput.ToLower() == "yes" || userInput == "1")
+                    {
+                        isValidInput = true;
+                        outputValue = true;
+                    }
+                    else if (userInput.ToLower() == "no" || userInput == "2")
+                    {
+                        isValidInput = true;
+                        outputValue = false;
+                    }
+                    else
+                    {
+                        InvalidMessage("That wasn't a valid input");
+                    }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("That is not a valid input.");
-                    Console.ResetColor();
-                }
+                    InvalidMessage("Cannot input nothing");
+                }    
             }
             return outputValue;
         }
@@ -292,7 +316,7 @@
             while (!isValidName)
             {
                 userinput = Console.ReadLine();
-                if (userinput != null)
+                if (userinput != null && userinput != "")
                 {
                     if (userinput.ToLower() == player1.name.ToLower())
                     {
@@ -306,22 +330,21 @@
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("That is not a player name.");
+                        InvalidMessage("That wasn't a valid player name.");
                     }
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cannot input nothing.");
+                    InvalidMessage("Cannot input nothing.");
                 }
-                Console.ResetColor();
             }
         }
 
-        //public static void GiveYourselfAName(Player player)
-        //{
-        //    Console.WriteLine("")
-        //}
+        static void InvalidMessage(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
     }
 }

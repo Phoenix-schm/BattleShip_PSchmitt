@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-namespace BattleShip_PSchmitt
+﻿namespace BattleShip_PSchmitt
 {
     class Player
     {
@@ -49,7 +47,7 @@ namespace BattleShip_PSchmitt
         /// </summary>
         /// <returns>An array of each batteship: amount of int spaces it takes up, an empty List of spaces it takes on a grid,
         /// and its string name</returns>
-        public static List<Battleship> CreateShips()
+        static List<Battleship> CreateShips()
         {
             Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'd', 'Z');
             Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 's', 'Y');

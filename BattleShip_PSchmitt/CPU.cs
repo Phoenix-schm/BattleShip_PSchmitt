@@ -18,7 +18,7 @@
         public static char[,] CreateCPUoceanGrid(Player cpuPlayer, Random rand)
         {
             List<Battleship> playerShipList = cpuPlayer.shipList;
-            CPU temporaryPlayer = new CPU();
+            CPU temporaryPlayer = new CPU();                        // Creation of a temporary CPU player for use of auto grid creation in Player players. (for debugging)
             
             for (int index = 0; index < playerShipList.Count; index++)
             {
@@ -112,13 +112,12 @@
                     }
 
                     cpu._switchDirection++;
-                    int[] firstValidHit = cpu._knownHitLocations[0];  // Shoot at the first known hit coordinates
-
+                    int[] firstValidHit = cpu._knownHitLocations[0];  // Shoot at the first known hit coordinates,
+                                                                      //    does cause some strange looking choices in edge cases, but overall sound
                     message = ShootAtDirection(cpu, opponentPlayer, firstValidHit[0], firstValidHit[1], (int)cpu._validDirection, rand);
                 }
                 else // previous shot missed and we "don't" have a valid direction, but there is still a hit ship
-                {
-                    //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
+                {    //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
                     int[] firstValidHit = cpu._knownHitLocations[0];  // Shoot at the first known hit coordinates
                     int randomDirection = rand.Next(cpu.directionListMin, cpu.directionListMax);
 
@@ -182,16 +181,15 @@
         /// Removes sunk ship coordinates from _knownHitLocations list
         /// </summary>
         /// <param name="cpuPlayer">cpu player being modified</param>
-        /// <param name="opponentPlayer">opponent player being checked</param>
         /// <returns>The new _knownHitLocations without the sunk ship coordinates</returns>
         static List<int[]> RemoveSunkShipCoordinates(CPU cpuPlayer)
         {
             char[,] targetGrid = cpuPlayer.targetGrid;
-            List<int[]> hitLocations = cpuPlayer._knownHitLocations;
+            List<int[]> hitLocationsList = cpuPlayer._knownHitLocations;
 
-            for (int index = 0; index < hitLocations.Count; index++)
+            for (int index = 0; index < hitLocationsList.Count; index++)
             {
-                int[] hitCoordinates = hitLocations[index];
+                int[] hitCoordinates = hitLocationsList[index];
                 if (targetGrid[hitCoordinates[0], hitCoordinates[1]] == cpuPlayer.targetSunkDisplay)        // if a coordinate in hitlocations has a sunkShip char
                 {
                     cpuPlayer._knownHitLocations.RemoveAt(index);
@@ -300,7 +298,7 @@
 
             if (cpu.targetGrid[cpu.previousShot[0], cpu.previousShot[1]] != cpu.targetHitDisplay)    // if the direction didn't hit a ship
             {
-                cpu._invalidDirection.Add((Directions)cpu._validDirection); // Will never be valid due to function always being entered with a validDirection
+                cpu._invalidDirection.Add((Directions)cpu._validDirection); // Will never be null due to function always being entered with a validDirection
             }
 
             return message;

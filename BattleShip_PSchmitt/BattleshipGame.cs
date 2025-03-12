@@ -1,14 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Numerics;
-
-namespace BattleShip_PSchmitt
+﻿namespace BattleShip_PSchmitt
 {
     class BattleshipGame
     {
         static void Main(string[] args)
         {
-            string[] mainMenuChoices = { "Invalid", "Player Vs CPU", "Player Vs Player", "Tutorial", "Quit" };
+            string[] mainMenuChoices = { "Invalid", "Player Vs CPU", "Player Vs Player", "Quit" };
             string[] titleScreen =
             {
                 " ____        _   _   _           _     _       ",
@@ -53,8 +49,6 @@ namespace BattleShip_PSchmitt
                             isPlayingRound = Play_PlayerVsPlayer();
                         }
                         break;
-                    case "tutorial":
-                        break;
                     default:
                         Console.WriteLine("This shouldn't be accessible.");
                         break;
@@ -94,8 +88,8 @@ namespace BattleShip_PSchmitt
             Random rand = new Random();
 
             //Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
-            //CreateOceanGrid(player);
-            CPU.CreateCPUoceanGrid(player, rand);
+            CreateOceanGrid(player);
+            //CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
             //Console.WriteLine("Now for battle!");
@@ -145,7 +139,7 @@ namespace BattleShip_PSchmitt
             //CreateOceanGrid(player1);
             CPU.CreateCPUoceanGrid(player1, random);
 
-            DisplayMessageAndClear(player1.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
+            DisplayMessageAndClear(player2.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
             // CreateOceanGrid(player2);
             CPU.CreateCPUoceanGrid(player2, random);
 
@@ -316,7 +310,7 @@ namespace BattleShip_PSchmitt
                 Console.ForegroundColor = color;
                 Console.WriteLine(displayPlayer.name + " Turn:");
                 Console.WriteLine("----------------------");
-                Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + " , " + (displayPlayer.previousShot[1] + 1) + ".");
+                Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + "," + (displayPlayer.previousShot[1] + 1) + ".");
                 Console.WriteLine(shotMessage);
                 Console.WriteLine();
             }
@@ -337,8 +331,9 @@ namespace BattleShip_PSchmitt
             GameGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
 
-            int[] playerCoordinates = TargetGrid.ReturnValidUserCoordinates(currentPlayer);                             // askss for [y,x] coordinates from player
+            int[] playerCoordinates = PlayerInput.ReturnValidUserCoordinates(currentPlayer);                             // askss for [y,x] coordinates from player
             shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
+            FullyClearConsole();
 
             GameGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current player shot
@@ -364,13 +359,6 @@ namespace BattleShip_PSchmitt
             Console.Clear();
             Console.WriteLine("\x1b[3J");       // Fully clears the console
             Console.Clear();                    // Previous line adds a WriteLine()
-        }
-
-        static void DisplayRules()
-        {
-            Player tutorial = new Player();
-            Console.WriteLine("The rules of battleship are simple");
-
         }
     }
 }

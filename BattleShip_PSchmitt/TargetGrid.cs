@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace BattleShip_PSchmitt
+﻿namespace BattleShip_PSchmitt
 {
     class TargetGrid : GameGrid
     {
@@ -21,6 +19,7 @@ namespace BattleShip_PSchmitt
         {
             char[,] displayTargetGrid = player.targetGrid;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
+
 
             string numberedX_axis = string.Join(" ", numberedAxis);
             Console.WriteLine("  " + numberedX_axis);                                           // Displays the numbers of the x axis
@@ -93,7 +92,6 @@ namespace BattleShip_PSchmitt
                 playerTargetGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetMissDisplay;
                 opponentOceanGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetMissDisplay;
             }
-            BattleshipGame.FullyClearConsole();
             return shotMessage;
         }
 
@@ -118,36 +116,6 @@ namespace BattleShip_PSchmitt
                 }
             }
             return hitShip;
-        }
-        /// <summary>
-        /// Asks the currentPlayer to give two coordinates.
-        /// If the index at those coordinates has already been shot at, then redo.
-        /// </summary>
-        /// <param name="currentPlayer">The current player being asked for coordinates.</param>
-        /// <returns>Returns valid coordinates the player can shoot at.</returns>
-        public static int[] ReturnValidUserCoordinates(Player currentPlayer)
-        {
-            bool isValidCoordinates = false;
-            int y_axis = -1;
-            int x_axis = -1;
-            while (!isValidCoordinates)
-            {
-                y_axis = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
-                x_axis = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
-                char charAtIndex = currentPlayer.targetGrid[y_axis, x_axis];
-
-                if (charAtIndex != '~')
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("You've already hit that coordinate.");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    isValidCoordinates = true;
-                }
-            }
-            return [y_axis, x_axis];
         }
     }
 }
