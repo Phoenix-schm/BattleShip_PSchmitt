@@ -93,7 +93,7 @@
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
             //Console.WriteLine("Now for battle!");
-            GameGrid.DisplayPlayerGrids(cpuPlayer);
+            //GameGrid.DisplayPlayerGrids(cpuPlayer);
             int shotsTaken = 0;
             string shotMessage = "";
 
@@ -115,7 +115,7 @@
             }
             else
             {
-                Console.WriteLine(player.name + " lost against the CPU." + player.name + " wasn't up to the challenge.");
+                Console.WriteLine(player.name + " lost against the CPU. " + player.name + " wasn't up to the challenge.");
                 Console.WriteLine(player.name + " finished the game with " + shotsTaken + " shots.");
             }
             DisplayMessageAndClear("Press any key to continue...");
