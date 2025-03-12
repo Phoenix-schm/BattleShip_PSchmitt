@@ -226,14 +226,10 @@
                         playerOceanGrid[y, x] = '~';
                     }
                     chosenShip.EachIndexOnOceanGrid.Clear();
-                    Console.Clear();
-                    Console.WriteLine("\x1b[3J");                   // Fully clears the console.
                 }
                 else if (userInput.ToLower() == "yes" || userInput == "1")
                 {
                     isValidChoice = true;
-                    Console.Clear();
-                    Console.WriteLine("\x1b[3J");                   // Fully clears the console.
                 }
                 else
                 {
@@ -242,6 +238,7 @@
                     Console.ResetColor();
                 }
             }
+            BattleshipGame.FullyClearConsole();
             return playerOceanGrid;
         }
         /// <summary>

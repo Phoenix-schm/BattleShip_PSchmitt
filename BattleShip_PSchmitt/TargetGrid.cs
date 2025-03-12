@@ -11,11 +11,12 @@ namespace BattleShip_PSchmitt
             {'H', ConsoleColor.Red},
             {'N', ConsoleColor.DarkRed}     // Color of a fully sunk ship 
         };
+
         /// <summary>
-        /// Displays the inputted grid with numbered axis'.
+        /// Displays the inputed grid with numbered axises
         /// Meant for showing player shots
         /// </summary>
-        /// <param name="displayGrid"></param>
+        /// <param name="player">The player that's target grid will be displayed</param>
         public static void DisplayTargetGrid(Player player)
         {
             char[,] displayTargetGrid = player.targetGrid;
@@ -63,7 +64,7 @@ namespace BattleShip_PSchmitt
             string shotMessage;                                             // The message displayed to the player after a turn
 
             Battleship? hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);  // Whether there is a ship being hit.
-            currentPlayer.previousShot = [chosenShot_y, chosenShot_x];                                          // Initializes the players shot for display purposes
+            currentPlayer.previousShot = [chosenShot_y, chosenShot_x];                                          // Initializes the players shot for display and cpu AI purposes
 
             if (hitShip != null)                                            // if a ship has been hit
             {
@@ -76,7 +77,7 @@ namespace BattleShip_PSchmitt
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if the ships length is now 0).
                 {
                     shotMessage += "\n" + opponentPlayer.name + ": You sunk my battleship!";
-                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)    // Replace ship index positions with the "Sunk Ship" char
+                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)    // Replace ship index positions with the "Sunk Ship" display
                     {
                         int y = hitShip.EachIndexOnOceanGrid[index][0];
                         int x = hitShip.EachIndexOnOceanGrid[index][1];
@@ -89,11 +90,10 @@ namespace BattleShip_PSchmitt
             else
             {
                 shotMessage = opponentName + ": That's a miss.";
-                playerTargetGrid[chosenShot_y, chosenShot_x] = 'M';
-                opponentOceanGrid[chosenShot_y, chosenShot_x] = 'M';
+                playerTargetGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetMissDisplay;
+                opponentOceanGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetMissDisplay;
             }
-            Console.Clear();
-            Console.WriteLine("\x1b[3J");
+            BattleshipGame.FullyClearConsole();
             return shotMessage;
         }
 
@@ -125,7 +125,7 @@ namespace BattleShip_PSchmitt
         /// </summary>
         /// <param name="currentPlayer">The current player being asked for coordinates.</param>
         /// <returns>Returns valid coordinates the player can shoot at.</returns>
-        public static int[] ReturnValidUserCoordinates(Player currentPlayer, Player opponentPlayer)
+        public static int[] ReturnValidUserCoordinates(Player currentPlayer)
         {
             bool isValidCoordinates = false;
             int y_axis = -1;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-namespace BattleShip_PSchmitt
+﻿namespace BattleShip_PSchmitt
 {
     class Battleship
     {

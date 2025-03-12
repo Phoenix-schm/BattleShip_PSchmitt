@@ -12,17 +12,6 @@ namespace BattleShip_PSchmitt
             Left,
             Right
         }
-        //public static Dictionary<string, ConsoleColor> playerColorList = new Dictionary<string, ConsoleColor>
-        //{
-        //    {"Invalid", ConsoleColor.Black },
-        //    {"Default", ConsoleColor.Gray },
-        //    {"Red", ConsoleColor.Red },
-        //    {"Magenta", ConsoleColor.Magenta },
-        //    {"Cyan", ConsoleColor.Cyan },
-        //    {"Dark Cyan", ConsoleColor.DarkCyan },
-        //    {"Dark Green", ConsoleColor.DarkGreen },
-        //    {"Yellow", ConsoleColor.Yellow }
-        //};
         public char targetSunkDisplay = 'N';
         public char targetMissDisplay = 'M';
         public char targetHitDisplay = 'H';
@@ -30,9 +19,8 @@ namespace BattleShip_PSchmitt
         public char[,] oceanGrid;
         public char[,] targetGrid;
         public List<Battleship> shipList;
-        public string name = "";
+        public string name = "Player";
         public int[]? previousShot;
-        //public ConsoleColor playerColor;
         public int goesFirst = 0;
         public bool IsAlive
         {

@@ -93,17 +93,17 @@ namespace BattleShip_PSchmitt
 
             Random rand = new Random();
 
-            Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
+            //Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
             //CreateOceanGrid(player);
             CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
-            Console.WriteLine("Now for battle!");
+            //Console.WriteLine("Now for battle!");
             GameGrid.DisplayPlayerGrids(cpuPlayer);
             int shotsTaken = 0;
             string shotMessage = "";
 
-            while (player.IsAlive && cpuPlayer.IsAlive)                                                   // While both players have all their ships on the board.
+            while (player.IsAlive && cpuPlayer.IsAlive)                                             // While both players have all their ships on the board.
             {
                 shotMessage = PlayerTurn(player, cpuPlayer, ref shotsTaken, shotMessage);
 
@@ -268,8 +268,7 @@ namespace BattleShip_PSchmitt
                     OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
                     doneOnce = 1;
-                    Console.Clear();
-                    Console.WriteLine("\x1b[3J");                   // Fully clears the console.
+                    FullyClearConsole();
 
                     if (isValidCoordinates)                         // If the player correctly placed the ship, check if they want to undo
                     {
@@ -317,7 +316,7 @@ namespace BattleShip_PSchmitt
                 Console.ForegroundColor = color;
                 Console.WriteLine(displayPlayer.name + " Turn:");
                 Console.WriteLine("----------------------");
-                Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + "," + (displayPlayer.previousShot[1] + 1) + ".");
+                Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + " , " + (displayPlayer.previousShot[1] + 1) + ".");
                 Console.WriteLine(shotMessage);
                 Console.WriteLine();
             }
@@ -336,9 +335,9 @@ namespace BattleShip_PSchmitt
         static string PlayerTurn(Player currentPlayer, Player opponentPlayer, ref int shotsTaken, string shotMessage)
         {
             GameGrid.DisplayPlayerGrids(currentPlayer);
-            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);     // Displays the shot message of the previous previous player shot
+            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
 
-            int[] playerCoordinates = TargetGrid.ReturnValidUserCoordinates(currentPlayer, opponentPlayer);                             // askss for [y,x] coordinates from player
+            int[] playerCoordinates = TargetGrid.ReturnValidUserCoordinates(currentPlayer);                             // askss for [y,x] coordinates from player
             shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
 
             GameGrid.DisplayPlayerGrids(currentPlayer);
@@ -357,9 +356,14 @@ namespace BattleShip_PSchmitt
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write(message);
             Console.ReadKey();
-            Console.Clear();
-            Console.WriteLine("\x1b[3J");
+            FullyClearConsole();
+        }
+        public static void FullyClearConsole()
+        {
             Console.ResetColor();
+            Console.Clear();
+            Console.WriteLine("\x1b[3J");       // Fully clears the console
+            Console.Clear();                    // Previous line adds a WriteLine()
         }
 
         static void DisplayRules()

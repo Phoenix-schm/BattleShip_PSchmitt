@@ -15,11 +15,12 @@
             {'N', ConsoleColor.DarkRed},                            // Color of a fully sunk ship
             {'M', ConsoleColor.White}
         };
+
         /// <summary>
-        /// Displays the inputted grid with numbered axis'. Currently only displays '~'
+        /// Displays the inputed grid with numbered axises 
         /// Meant for showing player ships
         /// </summary>
-        /// <param name="displayGrid">Grid to be displayed</param>
+        /// <param name="player">The player grid being displayed.</param>
         public static void DisplayOceanGrid(Player player)
         {
             char[,] displayOceanGrid = player.oceanGrid;
@@ -35,17 +36,17 @@
                 for (int x_axis = 0; x_axis < displayOceanGrid.GetLength(1); x_axis++)
                 {
                     char charAtIndex = displayOceanGrid[y_axis, x_axis];
-                    Console.ForegroundColor = oceanGridColors[charAtIndex];     // Changes color based on char at [y,x]
+                    Console.ForegroundColor = oceanGridColors[charAtIndex];                 // Changes color based on char at [y,x]
 
-                    if (charAtIndex == '~')                                                // Displays ocean
+                    if (charAtIndex == '~')                                                 // Displays ocean
                     {
                         Console.Write(charAtIndex + "  ");
                     }
-                    else if (IsCharShipDisplayWhenNuetral(charAtIndex, playerShipList))    // Displays unhit ships
+                    else if (IsCharShipDisplayWhenNuetral(charAtIndex, playerShipList))     // Displays unhit ships
                     {
                         Console.Write('S' + "  ");
                     }
-                    else // Displays opponent targets
+                    else // Displays opponent targets: sunk, hit, and misses
                     {
                         Console.Write('*' + "  ");
                     }
@@ -76,7 +77,7 @@
         /// <summary>
         /// Horizontal placement of ships onto the ocean grid.
         /// </summary>
-        /// <param name="currentOceanGrid">The current modified grid being modified.</param>
+        /// <param name="player">The current player being updated</param>
         /// <param name="chosenShip">The ship being placed onto the board.</param>
         /// <param name="direction">Whether the ship will be placed forwards or backwards.</param>
         /// <param name="userCoordinates">The coordinates the the ship will be placed at.</param>
@@ -113,40 +114,40 @@
         /// <param name="currentOceanGrid">The current grid being updated.</param>
         /// <param name="chosenShip">The ship being placed on the board.</param>
         /// <param name="direction">The direction the ship is being placed.</param>
-        /// <param name="y_axis">The y coordinate the ship is being placed.</param>
-        /// <param name="x_axis">The x coordinate the ship is being placed.</param>
+        /// <param name="y">The y coordinate the ship is being placed.</param>
+        /// <param name="x">The x coordinate the ship is being placed.</param>
         /// <returns>The modified ocean grid with the placed ship.</returns>
-        public static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y_axis, int x_axis)
+        public static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
         {
             switch(direction)
             {
                 case Player.Directions.Down: case Player.Directions.Right:
-                    for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis++)
+                    for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x++)
                     {
-                        currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
+                        currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
 
                         if (direction == Player.Directions.Down)
                         {
-                            chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Inverse to [x,y] to accomodate grid flippage 
+                            chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
                         }
                         else
                         {
-                            chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);
+                            chosenShip.EachIndexOnOceanGrid.Add([y, x]);
                         }
                     }
                     break;
                 case Player.Directions.Up: case Player.Directions.Left:
-                    for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x_axis--)
+                    for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x--)
                     {
-                        currentOceanGrid[y_axis, x_axis] = chosenShip.DisplayNuetral;
+                        currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
 
                         if (direction == Player.Directions.Up)
                         {
-                            chosenShip.EachIndexOnOceanGrid.Add([x_axis, y_axis]);                  // Inverse to [x,y] to accomodate grid flippage
+                            chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
                         }
                         else
                         {
-                            chosenShip.EachIndexOnOceanGrid.Add([y_axis, x_axis]);
+                            chosenShip.EachIndexOnOceanGrid.Add([y, x]);
                         }
                     }
 
@@ -156,22 +157,22 @@
         }
 
         /// <summary>
-        /// Checks if the chosenShip can be placed at the user coordinates.
+        /// Checks if the chosenShip can be placed at the user coordinates in direction.
         /// </summary>
         /// <param name="currentOceanGrid">The current modified grid being checked</param>
         /// <param name="chosenShip">The current ship being placed onto the board</param>
         /// <param name="direction">The direction the ship is being placed.</param>
-        /// <param name="y_axis">The y coordinate being checked</param>
-        /// <param name="x_axis">The x coordinate being checked.</param>
+        /// <param name="y">The y coordinate being checked</param>
+        /// <param name="x">The x coordinate being checked.</param>
         /// <returns>Returns a bool of whether the chosenShip can be placed at coordinates.</returns>
-        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y_axis, int x_axis)
+        public static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
         {
             bool isValidIndex = false;
             int canShipFitHere = 0;
             switch (direction)
             {
                 case Player.Directions.Down: case Player.Directions.Right:
-                    while (x_axis != currentOceanGrid.GetLength(1) && currentOceanGrid[y_axis, x_axis] == '~')
+                    while (x != currentOceanGrid.GetLength(1) && currentOceanGrid[y, x] == '~')
                     {
                         if (canShipFitHere < chosenShip.ShipLength)
                         {
@@ -182,11 +183,11 @@
                             isValidIndex = true;
                             break;
                         }
-                        x_axis++;
+                        x++;
                     }
                     break;
                 case Player.Directions.Up: case Player.Directions.Left:
-                    while (x_axis != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y_axis, x_axis] == '~')
+                    while (x != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y, x] == '~')
                     {
                         if (canShipFitHere < chosenShip.ShipLength)
                         {
@@ -197,12 +198,31 @@
                             isValidIndex = true;
                             break;
                         }
-                        x_axis--;
+                        x--;
                     }
                     break;
             }
 
             return isValidIndex;
+        }
+        /// <summary>
+        /// checks if the inputed char is a nuetral ship display
+        /// </summary>
+        /// <param name="checkChar">the char being checked</param>
+        /// <param name="shipList">the shiplist being checked</param>
+        /// <returns>True if the checkedChar is a nuetral display. False if checkedChar is anything else.</returns>
+        public static bool IsCharShipDisplayWhenNuetral(char checkChar, List<Battleship> shipList)
+        {
+            bool isCharNuetralShip = false;
+            foreach (Battleship ship in shipList)
+            {
+                if (checkChar == ship.DisplayNuetral)
+                {
+                    isCharNuetralShip = true;
+                    break;
+                }
+            }
+            return isCharNuetralShip;
         }
     }
 }
