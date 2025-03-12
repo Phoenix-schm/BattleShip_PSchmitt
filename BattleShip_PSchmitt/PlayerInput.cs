@@ -144,30 +144,36 @@
         /// </summary>
         /// <param name="directionList"></param>
         /// <returns></returns>
-        public static string ChooseDirectionToPlaceShip(string[] directionList)
+        public static Player.Directions ChooseDirectionToPlaceShip()
         {
             bool isValidDirection = false;
-            string? playerInput = "";
-            string chosenDirection = "invalid";
+            Player.Directions chosenDirection = Player.Directions.Invalid;
 
             while (!isValidDirection)
             {
                 Console.Write("Choose a direction to place the ship: ");
-                playerInput = Console.ReadLine();
+                string? playerInput = Console.ReadLine();
                 if (playerInput != null)
                 {
-                    for (int index = 1; index < directionList.Length + 1; index++)
+                    foreach (Player.Directions direction in Enum.GetValues(typeof(Player.Directions)))
                     {
-                        if (playerInput.ToLower() == directionList[index - 1].ToLower()) // if playerInput = direction string or number
+                        string directionString = direction.ToString();
+                        int directionIndex = (int)direction;
+                        if (directionString == "Invalid")
+                        {
+                            continue;
+                        }
+                        else if (playerInput.ToLower() == directionString.ToLower())
                         {
                             isValidDirection = true;
-                            chosenDirection = directionList[index - 1];
+                            chosenDirection = direction;
                             break;
                         }
-                        else if (playerInput == index.ToString())
+                        else if (playerInput == directionIndex.ToString())
                         {
                             isValidDirection = true;
-                            chosenDirection = directionList[index - 1];
+                            chosenDirection = direction;
+                            break;
                         }
                     }
                     if (!isValidDirection)
@@ -183,7 +189,7 @@
                 }
                 Console.ResetColor();
             }
-            return chosenDirection.ToLower();
+            return chosenDirection;
         }
 
         /// <summary>

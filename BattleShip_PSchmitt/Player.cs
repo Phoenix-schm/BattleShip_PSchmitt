@@ -4,6 +4,14 @@ namespace BattleShip_PSchmitt
 {
     class Player
     {
+        public enum Directions
+        {
+            Invalid,
+            Up,
+            Down,
+            Left,
+            Right
+        }
         //public static Dictionary<string, ConsoleColor> playerColorList = new Dictionary<string, ConsoleColor>
         //{
         //    {"Invalid", ConsoleColor.Black },

@@ -136,7 +136,7 @@ namespace BattleShip_PSchmitt
                 x_axis = PlayerInput.CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
                 char charAtIndex = currentPlayer.targetGrid[y_axis, x_axis];
 
-                else if (charAtIndex != '~')
+                if (charAtIndex != '~')
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine("You've already hit that coordinate.");

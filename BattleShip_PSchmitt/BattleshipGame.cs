@@ -94,12 +94,12 @@ namespace BattleShip_PSchmitt
             Random rand = new Random();
 
             Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
-            CreateOceanGrid(player);
-            //CPU.CreateCPUoceanGrid(player, rand);
+            //CreateOceanGrid(player);
+            CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
             Console.WriteLine("Now for battle!");
-
+            GameGrid.DisplayPlayerGrids(cpuPlayer);
             int shotsTaken = 0;
             string shotMessage = "";
 
@@ -217,9 +217,7 @@ namespace BattleShip_PSchmitt
         {
             List<Battleship> playerShipList = player.shipList;
             Battleship? chosenShip = null;
-            string chosenDirection;
 
-            string[] directionList = { "Up", "Down", "Left", "Right" };
             bool isValidCoordinates = false;
             int doneOnce = 0;
 
@@ -250,13 +248,22 @@ namespace BattleShip_PSchmitt
                     int userY = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
                     int userX = PlayerInput.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
 
+                    int directionListIndex = 0;
                     Console.WriteLine("Placement Directions: ");
-                    for (int directionIndex = 0; directionIndex < directionList.Length; directionIndex++)
+                    foreach (Player.Directions direction in Enum.GetValues(typeof(Player.Directions)))
                     {
-                        Console.WriteLine((directionIndex + 1) + ") " + directionList[directionIndex]);
+                        if (direction == Player.Directions.Invalid)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            directionListIndex++;
+                            Console.WriteLine(directionListIndex + ") " + direction);
+                        }
                     }
                     Console.WriteLine();
-                    chosenDirection = PlayerInput.ChooseDirectionToPlaceShip(directionList);
+                    Player.Directions chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
 
                     OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
