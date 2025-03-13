@@ -27,9 +27,7 @@
         public static void DisplayPlayerGrids(Player currentPlayer)
         {
             Console.WriteLine(currentPlayer.name + " Grids:");
-            Console.WriteLine("         -Target Grid-       ");
             TargetGrid.DisplayTargetGrid(currentPlayer);
-            Console.WriteLine("         -Ocean Grid-          ");
             OceanGrid.DisplayOceanGrid(currentPlayer);
             Console.WriteLine();
         }

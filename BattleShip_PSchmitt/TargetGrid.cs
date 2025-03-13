@@ -5,8 +5,8 @@
         public static Dictionary<char, ConsoleColor> targetGridColors = new Dictionary<char, ConsoleColor>()
         {
             {'~', ConsoleColor.DarkBlue},
-            {'M', ConsoleColor.White},
-            {'H', ConsoleColor.Red},
+            {'M', ConsoleColor.White},      // Missed targets
+            {'H', ConsoleColor.Red},        // Hit ships
             {'N', ConsoleColor.DarkRed}     // Color of a fully sunk ship 
         };
 
@@ -20,6 +20,7 @@
             char[,] displayTargetGrid = player.targetGrid;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
+            Console.WriteLine("         -Target Grid-       ");
 
             string numberedX_axis = string.Join(" ", numberedAxis);
             Console.WriteLine("  " + numberedX_axis);                                           // Displays the numbers of the x axis
@@ -100,17 +101,17 @@
         /// </summary>
         /// <param name="y">The y coordinate being hit.</param>
         /// <param name="x">The x coordinate being hit.</param>
-        /// <param name="_opponentOceanGrid">The ocean grid being shot at.</param>
-        /// <param name="_opponentShipList">The list of ships the method will be checking.</param>
+        /// <param name="opponentOceanGrid">The ocean grid being shot at.</param>
+        /// <param name="opponentShipList">The list of ships the method will be checking.</param>
         /// <returns>Returns 'null' if a ship wasn't hit.
         /// Returns Battship from _opponentShipList if a ship was hit.</returns>
-        public static Battleship? ReturnHitShip(int y, int x, char[,] _opponentOceanGrid, List<Battleship> _opponentShipList)
+        static Battleship? ReturnHitShip(int y, int x, char[,] opponentOceanGrid, List<Battleship> opponentShipList)
         {
             Battleship? hitShip = null;
 
-            foreach (Battleship ship in _opponentShipList)
+            foreach (Battleship ship in opponentShipList)
             {
-                if (_opponentOceanGrid[y, x] == ship.DisplayNuetral)           // if the [y,x] coordinate hits a ship
+                if (opponentOceanGrid[y, x] == ship.DisplayNuetral)           // if the [y,x] coordinate hits a ship
                 {
                     hitShip = ship;
                 }

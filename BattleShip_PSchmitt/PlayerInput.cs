@@ -133,10 +133,10 @@
         /// Checks if player input is a valid direction
         /// </summary>
         /// <returns></returns>
-        public static Player.Directions ChooseDirectionToPlaceShip()
+        public static Player.DirectionList ChooseDirectionToPlaceShip()
         {
             bool isValidDirection = false;
-            Player.Directions chosenDirection = Player.Directions.Invalid;
+            Player.DirectionList chosenDirection = Player.DirectionList.Invalid;
 
             while (!isValidDirection)
             {
@@ -144,7 +144,7 @@
                 string? playerInput = Console.ReadLine();
                 if (playerInput != null)
                 {
-                    foreach (Player.Directions direction in Enum.GetValues(typeof(Player.Directions)))
+                    foreach (Player.DirectionList direction in Enum.GetValues(typeof(Player.DirectionList)))
                     {
                         string directionString = direction.ToString();
                         int directionIndex = (int)direction;

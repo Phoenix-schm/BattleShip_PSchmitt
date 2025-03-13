@@ -27,6 +27,8 @@
             List<Battleship> playerShipList = player.shipList;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
 
+            Console.WriteLine("         -Ocean Grid-          ");
+
             string numberedX_axis = string.Join(" ", numberedAxis);
             Console.WriteLine("  " + numberedX_axis);                                               // Displays the numbers of the x axis
 
@@ -66,11 +68,11 @@
         /// <param name="userCoordinates">The coordinates the the ship will be placed at.</param>
         /// <param name="canShipBePlaced">The check if the ship can be placed at the user coordinates.</param>
         /// <returns>Modified ocean grid.</returns>
-        public static char[,] PlaceShipOnOceanGrid(Player player, Battleship chosenShip, Player.Directions direction, int[] userCoordinates, ref bool canShipBePlaced)
+        public static char[,] PlaceShipOnOceanGrid(Player player, Battleship chosenShip, Player.DirectionList direction, int[] userCoordinates, ref bool canShipBePlaced)
         {
             int y_axis = userCoordinates[0];
             int x_axis = userCoordinates[1];
-            if (direction == Player.Directions.Up || direction == Player.Directions.Down)           // If ship is being placed vertically
+            if (direction == Player.DirectionList.Up || direction == Player.DirectionList.Down)           // If ship is being placed vertically
             {
                 player.oceanGrid = FlipGameGridXYAxis(player.oceanGrid);
                 y_axis = userCoordinates[1];                                                        // Flip x/y to accomodate flip
@@ -84,7 +86,7 @@
                 player.oceanGrid = PlaceShipOnOceanGrid_BasedOnDirection(player.oceanGrid, chosenShip, direction, y_axis, x_axis);
             }
 
-            if (direction == Player.Directions.Up || direction == Player.Directions.Down)           // Undoes board flip.
+            if (direction == Player.DirectionList.Up || direction == Player.DirectionList.Down)           // Undoes board flip.
             {
                 player.oceanGrid = FlipGameGridXYAxis(player.oceanGrid);
             }
@@ -100,16 +102,16 @@
         /// <param name="y">The y coordinate the ship is being placed.</param>
         /// <param name="x">The x coordinate the ship is being placed.</param>
         /// <returns>The modified ocean grid with the placed ship.</returns>
-        static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
+        static char[,] PlaceShipOnOceanGrid_BasedOnDirection(char[,] currentOceanGrid, Battleship chosenShip, Player.DirectionList direction, int y, int x)
         {
             switch(direction)
             {
-                case Player.Directions.Down: case Player.Directions.Right:
+                case Player.DirectionList.Down: case Player.DirectionList.Right:
                     for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x++)
                     {
                         currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
 
-                        if (direction == Player.Directions.Down)
+                        if (direction == Player.DirectionList.Down)
                         {
                             chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
                         }
@@ -119,12 +121,12 @@
                         }
                     }
                     break;
-                case Player.Directions.Up: case Player.Directions.Left:
+                case Player.DirectionList.Up: case Player.DirectionList.Left:
                     for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x--)
                     {
                         currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
 
-                        if (direction == Player.Directions.Up)
+                        if (direction == Player.DirectionList.Up)
                         {
                             chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
                         }
@@ -148,13 +150,13 @@
         /// <param name="y">The y coordinate being checked</param>
         /// <param name="x">The x coordinate being checked.</param>
         /// <returns>Returns a bool of whether the chosenShip can be placed at coordinates.</returns>
-        static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, Player.Directions direction, int y, int x)
+        static bool CheckCanShipBePlaced(char[,] currentOceanGrid, Battleship chosenShip, Player.DirectionList direction, int y, int x)
         {
             bool isValidIndex = false;
             int canShipFitHere = 0;
             switch (direction)
             {
-                case Player.Directions.Down: case Player.Directions.Right:
+                case Player.DirectionList.Down: case Player.DirectionList.Right:
                     while (x != currentOceanGrid.GetLength(1) && currentOceanGrid[y, x] == '~') // If x hasn't hit the edge of the grid and another ship
                     {
                         if (canShipFitHere < chosenShip.ShipLength)
@@ -169,7 +171,7 @@
                         x++;
                     }
                     break;
-                case Player.Directions.Up: case Player.Directions.Left:
+                case Player.DirectionList.Up: case Player.DirectionList.Left:
                     while (x != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y, x] == '~') // If x hasn't hit the edge of the grid and another ship
                     {
                         if (canShipFitHere < chosenShip.ShipLength)

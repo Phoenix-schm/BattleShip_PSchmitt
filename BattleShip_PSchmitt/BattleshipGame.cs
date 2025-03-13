@@ -87,13 +87,10 @@
 
             Random rand = new Random();
 
-            //Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
+            Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
             CreateOceanGrid(player);
-            //CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
-            //Console.WriteLine("Now for battle!");
-            //GameGrid.DisplayPlayerGrids(cpuPlayer);
             int shotsTaken = 0;
             string shotMessage = "";
 
@@ -136,12 +133,10 @@
 
             // Initialize Player grids, one at a time.
             DisplayMessageAndClear("Alright " + player1.name + ", make your grid. \nTake your place at the computer and press any key to continue...");
-            //CreateOceanGrid(player1);
-            CPU.CreateCPUoceanGrid(player1, random);
+            CreateOceanGrid(player1);
 
             DisplayMessageAndClear(player2.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
-            // CreateOceanGrid(player2);
-            CPU.CreateCPUoceanGrid(player2, random);
+            CreateOceanGrid(player2);
 
             Console.WriteLine("Time to choose who goes first.");
             Console.WriteLine("Player names:");
@@ -244,9 +239,9 @@
 
                     int directionListIndex = 0;
                     Console.WriteLine("Placement Directions: ");
-                    foreach (Player.Directions direction in Enum.GetValues(typeof(Player.Directions)))
+                    foreach (Player.DirectionList direction in Enum.GetValues(typeof(Player.DirectionList)))
                     {
-                        if (direction == Player.Directions.Invalid)
+                        if (direction == Player.DirectionList.Invalid)
                         {
                             continue;
                         }
@@ -257,7 +252,7 @@
                         }
                     }
                     Console.WriteLine();
-                    Player.Directions chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
+                    Player.DirectionList chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
 
                     OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 

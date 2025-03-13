@@ -2,12 +2,12 @@
 {
     class CPU : Player
     {
-        Directions? _validDirection;
-        List<Directions> _invalidDirections = [];
+        DirectionList? _validDirection;
+        List<DirectionList> _invalidDirections = [];
         List<int[]> _knownHitLocations = [];
         int _switchDirection = 0;
-        public int directionListMax = Enum.GetValues(typeof(Directions)).Length;
-        public int directionListMin = Enum.GetValues(typeof(Directions)).GetLowerBound(0) + 1;   // Gets the minimum dimension of Directions, minus Invalid
+        int _directionListMax = Enum.GetValues(typeof(DirectionList)).Length;
+        int _directionListMin = Enum.GetValues(typeof(DirectionList)).GetLowerBound(0) + 1;   // Gets the minimum dimension of Directions, minus Invalid
 
         /// <summary>
         /// Creates an Ocean grid with random ship placements
@@ -29,10 +29,10 @@
                 {
                     int y = rand.Next(0, cpuPlayer.oceanGrid.GetLength(0));
                     int x = rand.Next(0, cpuPlayer.oceanGrid.GetLength(1));
-                    int randomDirection = rand.Next(temporaryPlayer.directionListMin, temporaryPlayer.directionListMax);
+                    int randomDirection = rand.Next(temporaryPlayer._directionListMin, temporaryPlayer._directionListMax);
 
-                    Directions directionChoice = Directions.Invalid;
-                    foreach(Directions direction in Enum.GetValues(typeof(Directions)))
+                    DirectionList directionChoice = DirectionList.Invalid;
+                    foreach(DirectionList direction in Enum.GetValues(typeof(DirectionList)))
                     {
                         if (randomDirection == (int)direction)
                         {
@@ -83,7 +83,7 @@
                 // if the previous shot was a hit, but we don't have a valid direction (Occurs at the first valid hit)
                 if (isCharAtIndexHitShip && cpu._validDirection == null)
                 {
-                    int randomDirection = rand.Next(cpu.directionListMin, cpu.directionListMax);
+                    int randomDirection = rand.Next(cpu._directionListMin, cpu._directionListMax);
                     message = ShootAtDirection(cpu, opponentPlayer, previousShot[0], previousShot[1], randomDirection, rand);
                 }
                 // if the previous shot was a hit, and we have a valid direction
@@ -95,19 +95,19 @@
                 //      Note: switching directions needs breathing room for edge cases (such as ships being right next to each other right next to a border)
                 else if (!isCharAtIndexHitShip && cpu._validDirection != null && cpu._knownHitLocations.Count > 1 && cpu._switchDirection <= 2)
                 {
-                    switch ((Directions)cpu._validDirection)           // Go in the opposite direction
+                    switch ((DirectionList)cpu._validDirection)           // Go in the opposite direction
                     {
-                        case Directions.Up:
-                            cpu._validDirection = Directions.Down;
+                        case DirectionList.Up:
+                            cpu._validDirection = DirectionList.Down;
                             break;
-                        case Directions.Down:
-                            cpu._validDirection = Directions.Up;
+                        case DirectionList.Down:
+                            cpu._validDirection = DirectionList.Up;
                             break;
-                        case Directions.Left:
-                            cpu._validDirection = Directions.Right;
+                        case DirectionList.Left:
+                            cpu._validDirection = DirectionList.Right;
                             break;
-                        case Directions.Right:
-                            cpu._validDirection = Directions.Left;
+                        case DirectionList.Right:
+                            cpu._validDirection = DirectionList.Left;
                             break;
                     }
 
@@ -120,7 +120,7 @@
                 {    //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
                     int[] firstHit = GetFirstHitOfLastShip(cpu, opponentPlayer);
 
-                    int randomDirection = rand.Next(cpu.directionListMin, cpu.directionListMax);
+                    int randomDirection = rand.Next(cpu._directionListMin, cpu._directionListMax);
                     message = ShootAtDirection(cpu, opponentPlayer, firstHit[0], firstHit[1], randomDirection, rand);
                 }
 
@@ -232,10 +232,10 @@
                     cpuPlayer._invalidDirections.Clear();
                     edgeCaseSituation = true;
                 }
-                if (cpuPlayer._invalidDirections.Contains((Directions)chosenDirection))      // if the chosenDirection is invalid
+                if (cpuPlayer._invalidDirections.Contains((DirectionList)chosenDirection))      // if the chosenDirection is invalid
                 {
                     // continuously choose a new direction until it isn't an invalid direction
-                    chosenDirection = rand.Next(cpuPlayer.directionListMin, cpuPlayer.directionListMax);
+                    chosenDirection = rand.Next(cpuPlayer._directionListMin, cpuPlayer._directionListMax);
                 }
                 else // the Direction wasn't on the invalid List
                 {
@@ -243,23 +243,26 @@
 
                     if (checkCoordinates[0] > 9 || checkCoordinates[0] < 0)         // if y coordinates out of bounds
                     {
-                        cpuPlayer._invalidDirections.Add((Directions)chosenDirection);
+                        cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
                     else if (checkCoordinates[1] > 9 || checkCoordinates[1] < 0)    // if x coordinates out of bounds
                     {
-                        cpuPlayer._invalidDirections.Add((Directions)chosenDirection);
+                        cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
                     else if (cpuPlayer.targetGrid[checkCoordinates[0], checkCoordinates[1]] != '~') // if it's already hit that spot
                     {
-                        cpuPlayer._invalidDirections.Add((Directions)chosenDirection);
+                        cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
                     else if (edgeCaseSituation && opponentPlayer.oceanGrid[checkCoordinates[0], checkCoordinates[1]] == '~')    // technically cheating, if cpu won't hit a ship
                     {
-                        cpuPlayer._invalidDirections.Add((Directions)chosenDirection);
+                        // edgeCaseSituation reset cpu._invalidDirections
+                        // edge case occurs at a corner so first two out of bounds if else statements will result in an invalid direction
+                        //      and the last two directions will either be a ship or the ocean, so...
+                        cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
                     else
                     {
-                        cpuPlayer._validDirection = (Directions)chosenDirection;
+                        cpuPlayer._validDirection = (DirectionList)chosenDirection;
                         isValidDirection = true;
                     }
 
@@ -278,18 +281,18 @@
         static int[] ModifyCoordinatesBasedOnDirection(int direction, int y, int x)
         {
             int[] newCoordinates;
-            switch ((Directions)direction)
+            switch ((DirectionList)direction)
             {
-                case Directions.Up:
+                case DirectionList.Up:
                     newCoordinates = [--y, x];
                     break;
-                case Directions.Down:
+                case DirectionList.Down:
                     newCoordinates = [++y, x];
                     break;
-                case Directions.Left:
+                case DirectionList.Left:
                     newCoordinates = [y, --x];
                     break;
-                case Directions.Right:
+                case DirectionList.Right:
                     newCoordinates = [y, ++x];
                     break;
                 default:                            // in case Invalid somehow comes through
@@ -359,7 +362,7 @@
 
             if (cpu.targetGrid[cpu.previousShot[0], cpu.previousShot[1]] != cpu.targetHitDisplay)    // if the direction didn't hit a ship
             {
-                cpu._invalidDirections.Add((Directions)cpu._validDirection); // Will never be null due to function always being entered with a validDirection
+                cpu._invalidDirections.Add((DirectionList)cpu._validDirection); // Will never be null due to function always being entered with a validDirection
             }
 
             return message;

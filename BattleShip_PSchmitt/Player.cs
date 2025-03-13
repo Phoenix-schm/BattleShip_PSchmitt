@@ -2,7 +2,7 @@
 {
     class Player
     {
-        public enum Directions
+        public enum DirectionList
         {
             Invalid,
             Up,
@@ -18,8 +18,8 @@
         public char[,] targetGrid;
         public List<Battleship> shipList;
         public string name = "Player";
-        public int[]? previousShot;
         public int goesFirst = 0;
+        public int[]? previousShot;
         public bool IsAlive
         {
             get
