@@ -24,7 +24,7 @@
         /// Displays the inputed player grids.
         /// </summary>
         /// <param name="currentPlayer">The current player being displayed.</param>
-        public static void DisplayPlayerGrids(Player currentPlayer)
+        public static void DisplayPlayerGrids(PlayerBase currentPlayer)
         {
             Console.WriteLine(currentPlayer.name + " Grids:");
             TargetGrid.DisplayTargetGrid(currentPlayer);

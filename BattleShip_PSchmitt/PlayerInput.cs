@@ -48,7 +48,7 @@
         /// </summary>
         /// <param name="player">The player placing the ship.</param>
         /// <returns>Battleship that is being placed onto the grid.</returns>
-        public static Battleship ChooseShipToPlace(Player player)
+        public static Battleship ChooseShipToPlace(PlayerBase player)
         {
             bool isValidShip = false;
             Battleship chosenShip = null;
@@ -109,6 +109,10 @@
                 {
                     for (int index = 1; index <= 10; index++)           // going through the numbers 1 - 10
                     {
+                        if (playerInput[0] == '0')                      // get rid of the zero, if the player inputs it as the first number
+                        {
+                            playerInput = playerInput.Replace('0', ' ').Trim();
+                        }
                         if (playerInput == index.ToString())
                         {
                             isValidNumber = true;
@@ -133,10 +137,10 @@
         /// Checks if player input is a valid direction
         /// </summary>
         /// <returns></returns>
-        public static Player.DirectionList ChooseDirectionToPlaceShip()
+        public static PlayerBase.DirectionList ChooseDirectionToPlaceShip()
         {
             bool isValidDirection = false;
-            Player.DirectionList chosenDirection = Player.DirectionList.Invalid;
+            PlayerBase.DirectionList chosenDirection = PlayerBase.DirectionList.Invalid;
 
             while (!isValidDirection)
             {
@@ -144,7 +148,7 @@
                 string? playerInput = Console.ReadLine();
                 if (playerInput != null)
                 {
-                    foreach (Player.DirectionList direction in Enum.GetValues(typeof(Player.DirectionList)))
+                    foreach (PlayerBase.DirectionList direction in Enum.GetValues(typeof(PlayerBase.DirectionList)))
                     {
                         string directionString = direction.ToString();
                         int directionIndex = (int)direction;
@@ -184,7 +188,7 @@
         /// </summary>
         /// <param name="currentPlayer">The current player being asked for coordinates.</param>
         /// <returns>Returns valid coordinates the player can shoot at.</returns>
-        public static int[] ReturnValidUserCoordinates(Player currentPlayer)
+        public static int[] ReturnValidUserCoordinates(PlayerBase currentPlayer)
         {
             bool isValidCoordinates = false;
             int y_axis = -1;
@@ -308,10 +312,10 @@
         /// </summary>
         /// <param name="player1"></param>
         /// <param name="player2"></param>
-        public static Player[] ChooseWhoGoesFirstInput(Player player1, Player player2)
+        public static PlayerBase[] ChooseWhoGoesFirstInput(PlayerBase player1, PlayerBase player2)
         {
             bool isValidName = false;
-            Player[]? playerOrder = null;
+            PlayerBase[]? playerOrder = null;
             string? userinput;
 
             while (!isValidName)

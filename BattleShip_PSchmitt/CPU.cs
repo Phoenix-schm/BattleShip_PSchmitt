@@ -1,7 +1,8 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class CPU : Player
+    class CPU : PlayerBase
     {
+        Random random = new Random();
         DirectionList? _validDirection;
         List<DirectionList> _invalidDirections = [];
         List<int[]> _knownHitLocations = [];
@@ -9,17 +10,21 @@
         int _directionListMax = Enum.GetValues(typeof(DirectionList)).Length;
         int _directionListMin = Enum.GetValues(typeof(DirectionList)).GetLowerBound(0) + 1;   // Gets the minimum dimension of Directions, minus Invalid
 
+        public CPU(string newName)
+        {
+            name = newName;
+        }
         /// <summary>
         /// Creates an Ocean grid with random ship placements
         /// </summary>
         /// <param name="cpuPlayer">The player having their grid created</param>
-        /// <param name="rand">Random generator</param>
         /// <returns>The new ocean grid with every ship placed in random places and directions</returns>
-        public static char[,] CreateCPUoceanGrid(Player cpuPlayer, Random rand)
+        public static char[,] CreateCPUoceanGrid(PlayerBase cpuPlayer)
         {
             List<Battleship> playerShipList = cpuPlayer.shipList;
-            CPU temporaryPlayer = new CPU();                        // Creation of a temporary CPU player for use of auto grid creation in Player players. (for debugging)
-            
+            CPU temporaryCPU = new CPU("temp");                        // Creation of a temporary CPU player for use of auto grid creation in Player players. (for debugging)
+            Random random = temporaryCPU.random;
+
             for (int index = 0; index < playerShipList.Count; index++)
             {
                 Battleship chosenShip = playerShipList[index];    // chooses a ship
@@ -27,9 +32,9 @@
 
                 while (!isValidCoordinates)
                 {
-                    int y = rand.Next(0, cpuPlayer.oceanGrid.GetLength(0));
-                    int x = rand.Next(0, cpuPlayer.oceanGrid.GetLength(1));
-                    int randomDirection = rand.Next(temporaryPlayer._directionListMin, temporaryPlayer._directionListMax);
+                    int y = random.Next(0, cpuPlayer.oceanGrid.GetLength(0));
+                    int x = random.Next(0, cpuPlayer.oceanGrid.GetLength(1));
+                    int randomDirection = random.Next(temporaryCPU._directionListMin, temporaryCPU._directionListMax);
 
                     DirectionList directionChoice = DirectionList.Invalid;
                     foreach(DirectionList direction in Enum.GetValues(typeof(DirectionList)))
@@ -53,7 +58,7 @@
         /// <param name="opponentPlayer">The human player.</param>
         /// <param name="rand">Random variable</param>
         /// <returns>The "shoot" message that will be displayed, whether the cpu successfully shot a player ship.</returns>
-        public static string CPUShotAI(CPU cpu, Player opponentPlayer, Random rand)
+        public static string CPUPlayerTurn(CPU cpu, PlayerBase opponentPlayer, Random rand)
         {
             char[,] targetGrid = cpu.targetGrid;
             char[,] opponentOceanGrid = opponentPlayer.oceanGrid;
@@ -148,7 +153,7 @@
         /// </summary>
         /// <param name="opponentPlayer">opponent player being checked</param>
         /// <returns>True if there is a hit ship, false if there is no hit ship</returns>
-        static bool IsAShipHitButNotSunk(Player opponentPlayer)
+        static bool IsAShipHitButNotSunk(PlayerBase opponentPlayer)
         {
             bool isShipHitNotSunk = false;
             foreach (Battleship ship in opponentPlayer.shipList)
@@ -219,28 +224,30 @@
         /// <param name="chosenDirection">The chosenDirection, represented as an int</param>
         /// <param name="rand">Random variable</param>
         /// <returns>Valid coordinates for the next shot. Adds to _validDirection and _invalidDirection</returns>
-        static int[] PlaceShotInDirection(CPU cpuPlayer, Player opponentPlayer, int[] previousShot, int chosenDirection, Random rand)
+        static int[] PlaceShotInDirection(CPU cpuPlayer, PlayerBase opponentPlayer, int[] previousShot, int chosenDirection, Random rand)
         {
             bool isValidDirection = false;
             int[] checkCoordinates = [];
             bool edgeCaseSituation1 = false;
             bool edgeCaseSituation2 = false;
+            int y_axis = 0;
+            int x_axis = 1;
 
             while (!isValidDirection)
             {
-                int y = previousShot[0];
-                int x = previousShot[1];
+                int y_shot = previousShot[y_axis];
+                int x_shot = previousShot[x_axis];
                 if (edgeCaseSituation2)                          
                 {
-                    y = cpuPlayer._knownHitLocations[0][0];
-                    x = cpuPlayer._knownHitLocations[0][1];
+                    y_shot = cpuPlayer._knownHitLocations[0][y_axis];
+                    x_shot = cpuPlayer._knownHitLocations[0][x_axis];
                 }
 
                 if (cpuPlayer._invalidDirections.Count == 4)                    // occurs if two ships are right next to each other (flush, but not level),
                 {                                                               //  it hit the latter ship in a middle section,
                                                                                 //  and the last hit is at a corner
-                    y = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[0];
-                    x = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[1];
+                    y_shot = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[y_axis];
+                    x_shot = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[x_axis];
                     cpuPlayer._invalidDirections.Clear();
                     edgeCaseSituation1 = true;
                 }
@@ -252,9 +259,9 @@
                 }
                 else // the Direction wasn't on the invalid List
                 {
-                    checkCoordinates = ModifyCoordinatesBasedOnDirection(chosenDirection, y, x);
-                    bool isCoordinatesOutOfBounds = checkCoordinates[0] > 9 || checkCoordinates[0] < 0 ||
-                                                    checkCoordinates[1] > 9 || checkCoordinates[1] < 0;
+                    checkCoordinates = ModifyCoordinatesBasedOnDirection(chosenDirection, y_shot, x_shot);
+                    bool isCoordinatesOutOfBounds = checkCoordinates[y_axis] > 9 || checkCoordinates[y_axis] < 0 ||
+                                                    checkCoordinates[x_axis] > 9 || checkCoordinates[x_axis] < 0;
 
                     if (isCoordinatesOutOfBounds && cpuPlayer._validDirection != null && cpuPlayer._switchDirection == 0)   // if two ships are right next to each other and the latter is at a border
                     {                                                                                                       // going in the chosenDirection will result in out of bounds
@@ -268,11 +275,11 @@
                     {
                         cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
-                    else if (cpuPlayer.targetGrid[checkCoordinates[0], checkCoordinates[1]] != '~') // if it's already hit that spot
+                    else if (cpuPlayer.targetGrid[checkCoordinates[y_axis], checkCoordinates[x_axis]] != '~') // if it's already hit that spot
                     {
                         cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
-                    else if (edgeCaseSituation1 && opponentPlayer.oceanGrid[checkCoordinates[0], checkCoordinates[1]] == '~')    // technically cheating, if cpu won't hit a ship
+                    else if (edgeCaseSituation1 && opponentPlayer.oceanGrid[checkCoordinates[y_axis], checkCoordinates[x_axis]] == '~')    // technically cheating, if cpu won't hit a ship
                     {
                         // edgeCaseSituation reset cpu._invalidDirections
                         // edge case occurs at a corner so first two out of bounds if else statements will result in an invalid direction
@@ -326,7 +333,7 @@
         /// <param name="cpuPlayer"></param>
         /// <param name="opponentPlayer"></param>
         /// <returns>Returns the coordinates of the first hit location of the last ship.</returns>
-        static int[] GetFirstHitOfLastShip(CPU cpuPlayer, Player opponentPlayer)
+        static int[] GetFirstHitOfLastShip(CPU cpuPlayer, PlayerBase opponentPlayer)
         {
             // Player and CPU variables
             List<int[]> hitLocations = cpuPlayer._knownHitLocations;
@@ -363,6 +370,7 @@
 
             return firstHitLocationOfLastShip;
         }
+
         /// <summary>
         /// Places a shot at direction (may not end up being chosenDirection)
         /// </summary>
@@ -373,7 +381,7 @@
         /// <param name="chosenDirection">the chosenDirection the shot will be attemoted at</param>
         /// <param name="rand">random variable</param>
         /// <returns>the Modified target grid of cpu, modified ocean grid of opponent, and the shot Message</returns>
-        static string ShootAtDirection(CPU cpu, Player opponentPlayer, int validHit_y, int validHit_x, int chosenDirection, Random rand)
+        static string ShootAtDirection(CPU cpu, PlayerBase opponentPlayer, int validHit_y, int validHit_x, int chosenDirection, Random rand)
         {
             cpu.previousShot = PlaceShotInDirection(cpu, opponentPlayer, [validHit_y, validHit_x], chosenDirection, rand);    // add to previousShot based on random direction
             string message = TargetGrid.PlaceShotsOnTargetGrid(cpu, opponentPlayer, cpu.previousShot[0], cpu.previousShot[1]);   // Shoot in direction

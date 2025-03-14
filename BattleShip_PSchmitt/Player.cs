@@ -1,68 +1,54 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class Player
+    class Player : PlayerBase
     {
-        public enum DirectionList
+        public Player(string newName)
         {
-            Invalid,
-            Up,
-            Down,
-            Left,
-            Right
-        }
-
-        // Target shot displays (used in both ocean grid and target grid)
-        public char targetSunkDisplay = 'N';
-        public char targetMissDisplay = 'M';
-        public char targetHitDisplay = 'H';
-
-        // Important initializations
-        public char[,] oceanGrid;
-        public char[,] targetGrid;
-        public List<Battleship> shipList;
-        public string name = "Player";
-
-        // Misc use
-        public int[]? previousShot;
-        public string shotMessage;
-        public int shotsTaken;
-
-        public bool IsAlive
-        {
-            get
-            {
-                return shipList.Count > 0;
-            }
-        }
-
-        public Player()
-        {
-            shipList = CreateShips();                        // Default number of ships. Will act as health
-            oceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
-            targetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
-        }
-        public Player(string playerName)
-        {
-            shipList = CreateShips();                        // Default number of ships. Will act as health
-            oceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
-            targetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
-            name = playerName;
+            name = newName;
         }
 
         /// <summary>
-        /// Creation of each battleship
+        /// The entire encapsulation of a player turn. Display player grids, Display shot message (if there is one), get player coordinates,
+        /// Shoot at player coordinates and create shotMessage, Display modified player grids and shot message
         /// </summary>
-        /// <returns>An array of each batteship: amount of int spaces it takes up, an empty List of spaces it takes on a grid,
-        /// and its string name</returns>
-        static List<Battleship> CreateShips()
+        /// <param name="currentPlayer">The current player that is playing</param>
+        /// <param name="opponentPlayer">The opposing player</param>
+        /// <param name="shotMessage">The current shot message</param>
+        /// <returns>The shotMessage of the current player.</returns>
+        public static string PlayerTurn(PlayerBase currentPlayer, PlayerBase opponentPlayer, string shotMessage)
         {
-            Battleship destroyerShip = new Battleship(2, spaces: [], "Destroyer", 'd', 'Z');
-            Battleship submarineShip = new Battleship(3, spaces: [], "Submarine", 's', 'Y');
-            Battleship cruiserShip = new Battleship(3, spaces: [], "Cruiser", 'c', 'X');
-            Battleship battleShip = new Battleship(4, spaces: [], "Battleship", 'B', 'W');
-            Battleship carrierShip = new Battleship(5, spaces: [], "Carrier", 'C', 'V');
+            GameGrid.DisplayPlayerGrids(currentPlayer);
+            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
 
-            return [destroyerShip, submarineShip, cruiserShip, battleShip, carrierShip];
+            int[] playerCoordinates = PlayerInput.ReturnValidUserCoordinates(currentPlayer);                             // askss for [y,x] coordinates from player
+            shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
+            BattleshipGame.FullyClearConsole();
+
+            GameGrid.DisplayPlayerGrids(currentPlayer);
+            DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current player shot
+            currentPlayer.shotsTaken++;
+
+            return shotMessage;
+        }
+
+        /// <summary>
+        /// When a shot is made on the board, a shot message is created. This method displays that message along with who just shot and where. 
+        /// </summary>
+        /// <param name="displayPlayer"></param>
+        /// <param name="shotMessage">The shot message that was returned by TargetGrid.PlaceShotsOnTargetGrid()</param>
+        /// <param name="color">The color the whole thing will display as</param>
+        static void DisplayShotTakenMessage(PlayerBase displayPlayer, string shotMessage, ConsoleColor color)
+        {
+            if (displayPlayer.previousShot != null)
+            {
+                Console.ForegroundColor = color;
+                Console.WriteLine(displayPlayer.name + " Turn:");
+                Console.WriteLine("----------------------");
+                Console.WriteLine(displayPlayer.name + " shoots coordinate " + (displayPlayer.previousShot[0] + 1) + "," + (displayPlayer.previousShot[1] + 1) + ".");
+                Console.WriteLine(shotMessage);
+                Console.WriteLine();
+            }
+            Console.ResetColor();
         }
     }
 }
