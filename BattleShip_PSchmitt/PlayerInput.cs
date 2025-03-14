@@ -308,9 +308,10 @@
         /// </summary>
         /// <param name="player1"></param>
         /// <param name="player2"></param>
-        public static void ChooseWhoGoesFirstInput(Player player1, Player player2)
+        public static Player[] ChooseWhoGoesFirstInput(Player player1, Player player2)
         {
             bool isValidName = false;
+            Player[]? playerOrder = null;
             string? userinput;
 
             while (!isValidName)
@@ -321,12 +322,12 @@
                     if (userinput.ToLower() == player1.name.ToLower())
                     {
                         isValidName = true;
-                        player1.goesFirst = 1;
+                        playerOrder = [player1, player2];
                     }
                     else if (userinput.ToLower() == player2.name.ToLower())
                     {
                         isValidName = true;
-                        player2.goesFirst = 1;
+                        playerOrder = [player2, player1];
                     }
                     else
                     {
@@ -338,6 +339,8 @@
                     InvalidMessage("Cannot input nothing.");
                 }
             }
+
+            return playerOrder;
         }
 
         static void InvalidMessage(string message)

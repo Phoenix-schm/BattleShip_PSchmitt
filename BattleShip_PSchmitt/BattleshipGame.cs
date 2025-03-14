@@ -91,12 +91,11 @@
             CreateOceanGrid(player);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
-            int shotsTaken = 0;
             string shotMessage = "";
 
             while (player.IsAlive && cpuPlayer.IsAlive)                                             // While both players have all their ships on the board.
             {
-                shotMessage = PlayerTurn(player, cpuPlayer, ref shotsTaken, shotMessage);
+                shotMessage = PlayerTurn(player, cpuPlayer, shotMessage);
 
                 if (cpuPlayer.IsAlive)
                 {
@@ -108,12 +107,12 @@
             if (player.IsAlive)
             {
                 Console.WriteLine("Congrats " + player.name + " you are victorious!");
-                Console.WriteLine(player.name + " finished the game with " + shotsTaken + " shots.");
+                Console.WriteLine(player.name + " finished the game with " + player.shotsTaken + " shots.");
             }
             else
             {
                 Console.WriteLine(player.name + " lost against the CPU. " + player.name + " wasn't up to the challenge.");
-                Console.WriteLine(player.name + " finished the game with " + shotsTaken + " shots.");
+                Console.WriteLine(player.name + " finished the game with " + player.shotsTaken + " shots.");
             }
             DisplayMessageAndClear("Press any key to continue...");
 
@@ -133,64 +132,63 @@
 
             // Initialize Player grids, one at a time.
             DisplayMessageAndClear("Alright " + player1.name + ", make your grid. \nTake your place at the computer and press any key to continue...");
-            CreateOceanGrid(player1);
+            //CreateOceanGrid(player1);
+            CPU.CreateCPUoceanGrid(player1, random);
 
             DisplayMessageAndClear(player2.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
-            CreateOceanGrid(player2);
+            //CreateOceanGrid(player2);
+            CPU.CreateCPUoceanGrid(player2, random);
 
             Console.WriteLine("Time to choose who goes first.");
             Console.WriteLine("Player names:");
             Console.WriteLine(player1.name);
             Console.WriteLine(player2.name);
             Console.Write("Write the name of the player that goes first: ");
-            PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
-            Player firstPlayer;
-            Player secondPlayer;
-            if (player1.goesFirst == 1)
-            {
-                firstPlayer = player1;
-                secondPlayer = player2;
-            }
-            else
-            {
-                firstPlayer = player2;
-                secondPlayer = player1;
-            }
+            Player[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
-            int firstShotsTaken = 0;
-            int secondShotsTaken = 0;
             string shotMessage = "";
-            DisplayMessageAndClear("Have " + firstPlayer.name + " take command of the computer. \nPress any key when you're ready to begin...");
+            DisplayMessageAndClear("Have " + playerOrder[0].name + " take command of the computer. \nPress any key when you're ready to begin...");
 
-            while (firstPlayer.IsAlive && secondPlayer.IsAlive)
+            int nextPlayer = 1;
+            for (int currentPlayer = 0; playerOrder[currentPlayer].IsAlive && playerOrder[nextPlayer].IsAlive;)
             {
-                shotMessage = PlayerTurn(firstPlayer, secondPlayer, ref firstShotsTaken, shotMessage);
-
-                if (secondPlayer.IsAlive)
+                if (currentPlayer == 0)     // Switch who the next player is based on who the current player is
                 {
-                    DisplayMessageAndClear("Press any key to continue...");
-                    DisplayMessageAndClear("Switch player to " + secondPlayer.name + ". Press any key when ready to continue...");  // Buffer for switching between players so that
-                                                                                                                                    //      they can't see each others grids 
-                    shotMessage = PlayerTurn(secondPlayer, firstPlayer, ref secondShotsTaken, shotMessage);
+                    nextPlayer = 1;
+                }
+                else
+                {
+                    nextPlayer = 0;
                 }
 
-                if (firstPlayer.IsAlive && secondPlayer.IsAlive)
+                shotMessage = PlayerTurn(playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
+
+                if (playerOrder[nextPlayer].IsAlive)      // if the next player is alive then prompt players to switch betweeen who's in control
                 {
                     DisplayMessageAndClear("Press any key to continue...");
-                    DisplayMessageAndClear("Switch player to " + firstPlayer.name + ". Press any key when ready to continue...");
+                    DisplayMessageAndClear("Switch player to " + playerOrder[nextPlayer].name + ". Press any key when ready to continue...");
+                }
+
+                if (currentPlayer == playerOrder.Length - 1)    // once currentPlayer is at the end of the list of players. Reset
+                {
+                    currentPlayer = 0;
+                }
+                else
+                {
+                    currentPlayer++;
                 }
             }
 
-            if (firstPlayer.IsAlive)
+            if (playerOrder[0].IsAlive)
             {
-                Console.WriteLine("Congratulations " + firstPlayer.name + " you beat " + secondPlayer.name + ".");
-                Console.WriteLine(firstPlayer.name + " finished the game with " + firstShotsTaken + " shots.");
+                Console.WriteLine("Congratulations " + playerOrder[0].name + " you beat " + playerOrder[1].name + ".");
+                Console.WriteLine(playerOrder[0].name + " finished the game with " + playerOrder[0].shotsTaken + " shots.");
             }
             else
             {
-                Console.WriteLine("Congratulations " + secondPlayer.name + " you beat " + firstPlayer.name + ".");
-                Console.WriteLine(secondPlayer.name + " finished the game with " + secondShotsTaken + " shots.");
+                Console.WriteLine("Congratulations " + playerOrder[1].name + " you beat " + playerOrder[0].name + ".");
+                Console.WriteLine(playerOrder[1].name + " finished the game with " + playerOrder[1].shotsTaken + " shots.");
             }
 
             DisplayMessageAndClear("Press any key to continue...");
@@ -321,7 +319,7 @@
         /// <param name="shotsTaken">the amount of shots that have been made so far.</param>
         /// <param name="shotMessage">The current shot message</param>
         /// <returns></returns>
-        static string PlayerTurn(Player currentPlayer, Player opponentPlayer, ref int shotsTaken, string shotMessage)
+        static string PlayerTurn(Player currentPlayer, Player opponentPlayer, string shotMessage)
         {
             GameGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
@@ -332,7 +330,7 @@
 
             GameGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current player shot
-            shotsTaken++;
+            currentPlayer.shotsTaken++;
 
             return shotMessage;
         }

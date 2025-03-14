@@ -58,7 +58,6 @@
             }
         }
 
-
         /// <summary>
         /// Horizontal placement of ships onto the ocean grid.
         /// </summary>

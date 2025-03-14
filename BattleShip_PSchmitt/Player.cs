@@ -10,16 +10,23 @@
             Left,
             Right
         }
+
+        // Target shot displays (used in both ocean grid and target grid)
         public char targetSunkDisplay = 'N';
         public char targetMissDisplay = 'M';
         public char targetHitDisplay = 'H';
 
+        // Important initializations
         public char[,] oceanGrid;
         public char[,] targetGrid;
         public List<Battleship> shipList;
         public string name = "Player";
+
+        // Misc use
         public int goesFirst = 0;
         public int[]? previousShot;
+        public int shotsTaken;
+
         public bool IsAlive
         {
             get
