@@ -85,7 +85,7 @@ namespace BattleShip_PSchmitt
         static bool Play_PlayerVsCPU()
         {
             // Initialize player variables
-            Player player = new Player("Player");
+            Player player = new Player("You");
             CPU cpuPlayer = new CPU();
             BattleshipGame game = new BattleshipGame();
             cpuPlayer.name = "CPU";
@@ -93,7 +93,8 @@ namespace BattleShip_PSchmitt
             Random rand = new Random();
 
             Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
-            CPU.CreateCPUoceanGrid(player, rand);
+            CreateOceanGrid(player);
+            //CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
             Player[] playerOrder = [player, cpuPlayer];
