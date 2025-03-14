@@ -1,7 +1,11 @@
-﻿namespace BattleShip_PSchmitt
+﻿using System.Numerics;
+
+namespace BattleShip_PSchmitt
 {
     class BattleshipGame
     {
+        int winningPlayer = 0;
+        int losingPlayer = 1;
         static void Main(string[] args)
         {
             string[] mainMenuChoices = { "Invalid", "Player Vs CPU", "Player Vs Player", "Quit" };
@@ -83,26 +87,18 @@
             // Initialize player variables
             Player player = new Player("Player");
             CPU cpuPlayer = new CPU();
+            BattleshipGame game = new BattleshipGame();
             cpuPlayer.name = "CPU";
 
             Random rand = new Random();
 
             Console.WriteLine("Howdy " + player.name + "! Time to make your grid.");
-            CreateOceanGrid(player);
+            CPU.CreateCPUoceanGrid(player, rand);
             CPU.CreateCPUoceanGrid(cpuPlayer, rand);
 
-            string shotMessage = "";
+            Player[] playerOrder = [player, cpuPlayer];
 
-            while (player.IsAlive && cpuPlayer.IsAlive)                                             // While both players have all their ships on the board.
-            {
-                shotMessage = PlayerTurn(player, cpuPlayer, shotMessage);
-
-                if (cpuPlayer.IsAlive)
-                {
-                    DisplayMessageAndClear("Press any key to continue...");
-                    shotMessage = CPU.CPUShotAI(cpuPlayer, player, rand);                          // CPU shoots, returns the shot message
-                }
-            }
+            playerOrder = PlayBattleShip(playerOrder);
 
             if (player.IsAlive)
             {
@@ -111,7 +107,7 @@
             }
             else
             {
-                Console.WriteLine(player.name + " lost against the CPU. " + player.name + " wasn't up to the challenge.");
+                Console.WriteLine(player.name + " lost against the computer. " + player.name + " wasn't up to the challenge.");
                 Console.WriteLine(player.name + " finished the game with " + player.shotsTaken + " shots.");
             }
             DisplayMessageAndClear("Press any key to continue...");
@@ -125,9 +121,9 @@
         /// <returns>Boolean for if players want to try again.</returns>
         static bool Play_PlayerVsPlayer()
         {
+            BattleshipGame battleshipGame = new BattleshipGame();
             Player player1 = new Player("Player 1");
             Player player2 = new Player("Player 2");
-
             Random random = new Random();
 
             // Initialize Player grids, one at a time.
@@ -147,52 +143,70 @@
 
             Player[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
-            string shotMessage = "";
             DisplayMessageAndClear("Have " + playerOrder[0].name + " take command of the computer. \nPress any key when you're ready to begin...");
 
+            playerOrder = PlayBattleShip(playerOrder);
+
+            Console.WriteLine("Congratulations " + playerOrder[battleshipGame.winningPlayer].name + " you beat " + playerOrder[battleshipGame.losingPlayer].name + ".");
+            Console.WriteLine(playerOrder[battleshipGame.winningPlayer].name + " finished the game with " + playerOrder[battleshipGame.winningPlayer].shotsTaken + " shots.");
+
+            DisplayMessageAndClear("Press any key to continue...");
+            return PlayerInput.PlayAgainInput();
+        }
+
+        static Player[] PlayBattleShip(Player[] playerOrder)
+        {
+            Random random = new Random();
+            int currentPlayer = 0;
             int nextPlayer = 1;
-            for (int currentPlayer = 0; playerOrder[currentPlayer].IsAlive && playerOrder[nextPlayer].IsAlive;)
+            string shotMessage = "";
+
+            while (playerOrder[currentPlayer].IsAlive && playerOrder[nextPlayer].IsAlive)
             {
-                if (currentPlayer == 0)     // Switch who the next player is based on who the current player is
+                if (playerOrder[currentPlayer] is CPU)                      // if the player is a CPU player
                 {
-                    nextPlayer = 1;
+                    shotMessage = CPU.CPUShotAI((CPU)playerOrder[currentPlayer], playerOrder[nextPlayer], random);          // CPU shoots, returns the shot message
                 }
-                else
+                else                                                        // if the player is human
                 {
-                    nextPlayer = 0;
-                }
-
-                shotMessage = PlayerTurn(playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
-
-                if (playerOrder[nextPlayer].IsAlive)      // if the next player is alive then prompt players to switch betweeen who's in control
-                {
-                    DisplayMessageAndClear("Press any key to continue...");
-                    DisplayMessageAndClear("Switch player to " + playerOrder[nextPlayer].name + ". Press any key when ready to continue...");
+                    shotMessage = PlayerTurn(playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
+                    if (playerOrder[nextPlayer].IsAlive && playerOrder[nextPlayer] is not CPU)      // if the next player is alive then prompt players to switch betweeen who's in control
+                    {
+                        DisplayMessageAndClear("Press any key to continue...");
+                        DisplayMessageAndClear("Switch player to " + playerOrder[nextPlayer].name + ". Press any key when ready to continue...");
+                    }
+                    else if (playerOrder[nextPlayer].IsAlive)
+                    {
+                        DisplayMessageAndClear("Press any key to continue...");
+                    }
                 }
 
                 if (currentPlayer == playerOrder.Length - 1)    // once currentPlayer is at the end of the list of players. Reset
                 {
                     currentPlayer = 0;
+                    nextPlayer = 1;
                 }
                 else
                 {
-                    currentPlayer++;
+                    currentPlayer = 1;
+                    nextPlayer = 0;
                 }
             }
 
-            if (playerOrder[0].IsAlive)
+            Player[] whoWon = new Player[2];
+            foreach( Player player in playerOrder)
             {
-                Console.WriteLine("Congratulations " + playerOrder[0].name + " you beat " + playerOrder[1].name + ".");
-                Console.WriteLine(playerOrder[0].name + " finished the game with " + playerOrder[0].shotsTaken + " shots.");
-            }
-            else
-            {
-                Console.WriteLine("Congratulations " + playerOrder[1].name + " you beat " + playerOrder[0].name + ".");
-                Console.WriteLine(playerOrder[1].name + " finished the game with " + playerOrder[1].shotsTaken + " shots.");
+                if (player.IsAlive)
+                {
+                    whoWon[0] = player;
+                }
+                else
+                {
+                    whoWon[1] = player;
+                }
             }
 
-            DisplayMessageAndClear("Press any key to continue...");
-            return PlayerInput.PlayAgainInput();
+            return whoWon;
         }
 
         /// <summary>

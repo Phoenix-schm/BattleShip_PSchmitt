@@ -23,8 +23,8 @@
         public string name = "Player";
 
         // Misc use
-        public int goesFirst = 0;
         public int[]? previousShot;
+        public string shotMessage;
         public int shotsTaken;
 
         public bool IsAlive

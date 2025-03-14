@@ -265,7 +265,6 @@
                         cpuPlayer._validDirection = (DirectionList)chosenDirection;
                         isValidDirection = true;
                     }
-
                 }
             }
 
@@ -296,12 +295,12 @@
                     newCoordinates = [y, ++x];
                     break;
                 default:                            // in case Invalid somehow comes through
-                    newCoordinates = [-1, - 1];
+                    newCoordinates = [-1, -1];
                     break;
             }
-
             return newCoordinates;
         }
+
         /// <summary>
         /// Gets the first hit locations of the last ship that's been targeted
         /// </summary>
@@ -315,7 +314,7 @@
             List<Battleship> shipList  = opponentPlayer.shipList;
             char[,] oceanGrid = opponentPlayer.oceanGrid;
 
-            // Variables related hit coordinates
+            // Variables related to hit coordinates
             int lastHitIndex = hitLocations.Count - 1;
             int[] lastHitLocation = hitLocations[lastHitIndex];
 
