@@ -4,7 +4,7 @@
     {
         static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
         {
-            {'~', ConsoleColor.DarkBlue},
+            {'~', ConsoleColor.DarkBlue},                           // ocean
             // Non-hit ship spaces          Hit ship spaces
             {'d', ConsoleColor.Green}, {'Z', ConsoleColor.Red},
             {'s', ConsoleColor.Green}, {'Y', ConsoleColor.Red},
@@ -13,7 +13,7 @@
             {'C', ConsoleColor.Green}, {'V', ConsoleColor.Red},
 
             {'N', ConsoleColor.DarkRed},                            // Color of a fully sunk ship
-            {'M', ConsoleColor.White}
+            {'M', ConsoleColor.White}                               // an opponent missed target
         };
 
         /// <summary>

@@ -217,8 +217,7 @@
         /// <param name="chosenShip">The ship potentially being undone</param>
         /// <param name="totalShipIndex">Adjusts if the player wishes to undo a ship.</param>
         /// <param name="playerOceanGrid">The grid being updated.</param>
-        /// <param name="direction">Adjusts the coordinate index based on vertical or horizontal</param>
-        /// <returns></returns>
+        /// <returns>The grid without the chosenShip and chosenShip indexes cleared</returns>
         public static char[,] CheckRedoGridInput(ref Battleship chosenShip, ref int totalShipIndex, char[,] playerOceanGrid)
         {
             Console.WriteLine("You have placed " + chosenShip.name + " onto the grid.");
@@ -318,8 +317,14 @@
             BasePlayer[]? playerOrder = null;
             string? userinput;
 
+            Console.WriteLine("Time to choose who goes first.");
+            Console.WriteLine("Player names:");
+            Console.WriteLine(player1.name);
+            Console.WriteLine(player2.name);
+
             while (!isValidName)
             {
+                Console.Write("Write the name of the player that goes first: ");
                 userinput = Console.ReadLine();
                 if (userinput != null && userinput != "")
                 {
@@ -347,7 +352,7 @@
             return playerOrder;
         }
 
-        static void InvalidMessage(string message)
+        public static void InvalidMessage(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);

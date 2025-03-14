@@ -1,10 +1,110 @@
-﻿namespace BattleShip_PSchmitt
+﻿using System.Diagnostics;
+
+namespace BattleShip_PSchmitt
 {
     class HumanPlayer : BasePlayer
     {
         public HumanPlayer(string newName)
         {
             name = newName;
+        }
+
+        /// <summary>
+        /// Has player place all battleships onto the grid
+        /// </summary>
+        /// <param name="player">Current player placing onto the grid.</param>
+        /// <returns>Returns the updated grid.</returns>
+        public static char[,] CreateOceanGrid(HumanPlayer player)
+        {
+            List<Battleship> playerShipList = player.shipList;
+            Battleship? chosenShip = null;
+
+            bool isValidCoordinates = false;
+            int doneOnce = 0;
+
+            for (int shipCountIndex = 0; shipCountIndex < playerShipList.Count; shipCountIndex++)     // Going through the number of ships in the ship list
+            {
+                do
+                {
+                    if (doneOnce == 1 && !isValidCoordinates)                               // If the previous coordinates weren't valid
+                    {
+                        PlayerInput.InvalidMessage("That was not a valid coordinate.");
+                        Console.WriteLine("Current Player Grid:");
+                        OceanGrid.DisplayOceanGrid(player);
+                    }
+                    else                                                                    // Shows the grid at least once
+                    {
+                        Console.WriteLine("Current Player Grid:");
+                        OceanGrid.DisplayOceanGrid(player);
+                    }
+
+                    Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
+                    DisplayShipsForPlacement(playerShipList);
+                    Console.WriteLine();
+                    chosenShip = PlayerInput.ChooseShipToPlace(player);
+
+                    int userY = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
+                    int userX = PlayerInput.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
+
+                    DisplayDirections();
+                    DirectionList chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
+
+                    OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
+
+                    doneOnce = 1;
+                    BattleshipGame.FullyClearConsole();
+
+                    if (isValidCoordinates)                         // If the player correctly placed the ship, check if they want to undo
+                    {
+                        Console.WriteLine("Current Player Grid:");
+                        OceanGrid.DisplayOceanGrid(player);
+                        PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, player.oceanGrid);
+                    }
+                } while (!isValidCoordinates);
+            }
+            return player.oceanGrid;
+        }
+
+        /// <summary>
+        /// Displays each ship with their associated number and take up of spaces.
+        /// Displays as grey if the ship has been updated
+        /// </summary>
+        /// <param name="shipList"></param>
+        static void DisplayShipsForPlacement(List<Battleship> shipList)
+        {
+            for (int index = 0; index < shipList.Count; index++)            // going through each ship in the list
+            {
+                if (shipList[index].EachIndexOnOceanGrid.Count > 0)         // if the ship has already been placed onto the grid
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].ShipLength + " spaces");
+                }
+                else
+                {
+                    Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].ShipLength + " spaces");
+                }
+                Console.ResetColor();
+            }
+        }
+        /// <summary>
+        /// Displays the valid directions. 
+        /// </summary>
+        static void DisplayDirections()
+        {
+            int directionListIndex = 0;
+            Console.WriteLine("Placement Directions: ");
+            foreach (DirectionList direction in Enum.GetValues(typeof(DirectionList)))
+            {
+                if (direction == DirectionList.Invalid)
+                {
+                    continue;
+                }
+                else
+                {
+                    directionListIndex++;
+                    Console.WriteLine(directionListIndex + ") " + direction);
+                }
+            }
         }
 
         /// <summary>
