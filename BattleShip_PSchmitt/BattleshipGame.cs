@@ -2,8 +2,10 @@
 {
     class BattleshipGame
     {
+        // used in PlayerVsPlayer()
         int winningPlayer = 0;
         int losingPlayer = 1;
+
         static void Main(string[] args)
         {
             string[] mainMenuChoices = { "Invalid", "Player Vs CPU", "Player Vs Player", "Quit" };
@@ -83,28 +85,27 @@
         static bool Play_PlayerVsCPU()
         {
             // Initialize player variables
-            Player player = new Player("You");
-            CPU cpuPlayer = new CPU("CPU");
-            BattleshipGame game = new BattleshipGame();
+            HumanPlayer player = new HumanPlayer("Player");
+            CPUPlayer cpuPlayer = new CPUPlayer("CPU");
 
             Console.WriteLine("Howdy! Time to make your grid.");
             CreateOceanGrid(player);
             //CPU.CreateCPUoceanGrid(player, rand);
-            CPU.CreateCPUoceanGrid(cpuPlayer);
+            CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
-            PlayerBase[] playerOrder = [player, cpuPlayer];
+            BasePlayer[] playerOrder = [player, cpuPlayer];
 
-            playerOrder = PlayBattleShip(playerOrder);
+            PlayBattleshipGame(playerOrder);
 
             if (player.IsAlive)
             {
-                Console.WriteLine("Congrats " + player.name + " you are victorious!");
-                Console.WriteLine(player.name + " finished the game with " + player.shotsTaken + " shots.");
+                Console.WriteLine("Congrats! you are victorious!");
+                Console.WriteLine("You finished the game with " + player.shotsTaken + " shots.");
             }
             else
             {
-                Console.WriteLine(player.name + " lost against the computer. " + player.name + " wasn't up to the challenge.");
-                Console.WriteLine(player.name + " finished the game with " + player.shotsTaken + " shots.");
+                Console.WriteLine("You lost against the computer. You weren't up to the challenge.");
+                Console.WriteLine("You finished the game with " + player.shotsTaken + " shots.");
             }
             DisplayMessageAndClear("Press any key to continue...");
 
@@ -118,17 +119,17 @@
         static bool Play_PlayerVsPlayer()
         {
             BattleshipGame game = new BattleshipGame();
-            Player player1 = new Player("Player 1");
-            Player player2 = new Player("Player 2");
+            HumanPlayer player1 = new HumanPlayer("Player 1");
+            HumanPlayer player2 = new HumanPlayer("Player 2");
 
             // Initialize Player grids, one at a time.
             DisplayMessageAndClear("Alright " + player1.name + ", make your grid. \nTake your place at the computer and press any key to continue...");
             //CreateOceanGrid(player1);
-            CPU.CreateCPUoceanGrid(player1);
+            CPUPlayer.CreateCPUoceanGrid(player1);
 
             DisplayMessageAndClear(player2.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
             //CreateOceanGrid(player2);
-            CPU.CreateCPUoceanGrid(player2);
+            CPUPlayer.CreateCPUoceanGrid(player2);
 
             Console.WriteLine("Time to choose who goes first.");
             Console.WriteLine("Player names:");
@@ -136,11 +137,10 @@
             Console.WriteLine(player2.name);
             Console.Write("Write the name of the player that goes first: ");
 
-            PlayerBase[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
+            BasePlayer[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
             DisplayMessageAndClear("Have " + playerOrder[0].name + " take command of the computer. \nPress any key when you're ready to begin...");
-
-            playerOrder = PlayBattleShip(playerOrder);
+            playerOrder = PlayBattleshipGame(playerOrder);
 
             Console.WriteLine("Congratulations " + playerOrder[game.winningPlayer].name + " you beat " + playerOrder[game.losingPlayer].name + ".");
             Console.WriteLine(playerOrder[game.winningPlayer].name + " finished the game with " + playerOrder[game.winningPlayer].shotsTaken + " shots.");
@@ -149,7 +149,7 @@
             return PlayerInput.PlayAgainInput();
         }
 
-        static PlayerBase[] PlayBattleShip(PlayerBase[] playerOrder)
+        static BasePlayer[] PlayBattleshipGame(BasePlayer[] playerOrder)
         {
             Random random = new Random();
             int currentPlayer = 0;
@@ -158,25 +158,25 @@
 
             while (playerOrder[currentPlayer].IsAlive && playerOrder[nextPlayer].IsAlive)
             {
-                if (playerOrder[currentPlayer] is CPU)                      // if the player is a CPU player
+                if (playerOrder[currentPlayer] is HumanPlayer)
                 {
-                    shotMessage = CPU.CPUPlayerTurn((CPU)playerOrder[currentPlayer], playerOrder[nextPlayer], random);          // CPU shoots, returns the shot message
-                }
-                else                                                        // if the player is human
-                {
-                    shotMessage = Player.PlayerTurn(playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
-                    if (playerOrder[nextPlayer].IsAlive && playerOrder[nextPlayer] is not CPU)      // if the next player is alive then prompt players to switch betweeen who's in control
+                    shotMessage = HumanPlayer.PlayerTurn(playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
+                    if (playerOrder[nextPlayer].IsAlive && playerOrder[nextPlayer] is not CPUPlayer)    // Occurs in Player Vs Player
                     {
                         DisplayMessageAndClear("Press any key to continue...");
                         DisplayMessageAndClear("Switch player to " + playerOrder[nextPlayer].name + ". Press any key when ready to continue...");
                     }
-                    else if (playerOrder[nextPlayer].IsAlive)
+                    else if (playerOrder[nextPlayer].IsAlive)                                           // Occuts in Player Vs CPU
                     {
                         DisplayMessageAndClear("Press any key to continue...");
                     }
                 }
+                else
+                {
+                    shotMessage = CPUPlayer.CPUPlayerTurn((CPUPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], random);     // CPU shoots, returns the shot message
+                }
 
-                if (currentPlayer == playerOrder.Length - 1)    // once currentPlayer is at the end of the list of players. Reset
+                if (currentPlayer == playerOrder.Length - 1)    // Switch between who the current player is
                 {
                     currentPlayer = 0;
                     nextPlayer = 1;
@@ -188,8 +188,8 @@
                 }
             }
 
-            PlayerBase[] whoWon = new PlayerBase[2];
-            foreach( PlayerBase player in playerOrder)
+            BasePlayer[] whoWon = new BasePlayer[2];
+            foreach (BasePlayer player in playerOrder)
             {
                 if (player.IsAlive)
                 {
@@ -209,7 +209,7 @@
         /// </summary>
         /// <param name="player">Current player placing onto the grid.</param>
         /// <returns>Returns the updated grid.</returns>
-        static char[,] CreateOceanGrid(PlayerBase player)
+        static char[,] CreateOceanGrid(BasePlayer player)
         {
             List<Battleship> playerShipList = player.shipList;
             Battleship? chosenShip = null;
@@ -246,9 +246,9 @@
 
                     int directionListIndex = 0;
                     Console.WriteLine("Placement Directions: ");
-                    foreach (PlayerBase.DirectionList direction in Enum.GetValues(typeof(PlayerBase.DirectionList)))
+                    foreach (BasePlayer.DirectionList direction in Enum.GetValues(typeof(BasePlayer.DirectionList)))
                     {
-                        if (direction == PlayerBase.DirectionList.Invalid)
+                        if (direction == BasePlayer.DirectionList.Invalid)
                         {
                             continue;
                         }
@@ -259,7 +259,7 @@
                         }
                     }
                     Console.WriteLine();
-                    PlayerBase.DirectionList chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
+                    BasePlayer.DirectionList chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
 
                     OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 

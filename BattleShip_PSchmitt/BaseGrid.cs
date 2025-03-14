@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class GameGrid
+    class BaseGrid
     {
         /// <summary>
         /// Creates the default version of the battleship grid filled with '~'
@@ -24,7 +24,7 @@
         /// Displays the inputed player grids.
         /// </summary>
         /// <param name="currentPlayer">The current player being displayed.</param>
-        public static void DisplayPlayerGrids(PlayerBase currentPlayer)
+        public static void DisplayPlayerGrids(BasePlayer currentPlayer)
         {
             Console.WriteLine(currentPlayer.name + " Grids:");
             TargetGrid.DisplayTargetGrid(currentPlayer);

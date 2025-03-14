@@ -48,7 +48,7 @@
         /// </summary>
         /// <param name="player">The player placing the ship.</param>
         /// <returns>Battleship that is being placed onto the grid.</returns>
-        public static Battleship ChooseShipToPlace(PlayerBase player)
+        public static Battleship ChooseShipToPlace(BasePlayer player)
         {
             bool isValidShip = false;
             Battleship chosenShip = null;
@@ -137,10 +137,10 @@
         /// Checks if player input is a valid direction
         /// </summary>
         /// <returns></returns>
-        public static PlayerBase.DirectionList ChooseDirectionToPlaceShip()
+        public static BasePlayer.DirectionList ChooseDirectionToPlaceShip()
         {
             bool isValidDirection = false;
-            PlayerBase.DirectionList chosenDirection = PlayerBase.DirectionList.Invalid;
+            BasePlayer.DirectionList chosenDirection = BasePlayer.DirectionList.Invalid;
 
             while (!isValidDirection)
             {
@@ -148,7 +148,7 @@
                 string? playerInput = Console.ReadLine();
                 if (playerInput != null)
                 {
-                    foreach (PlayerBase.DirectionList direction in Enum.GetValues(typeof(PlayerBase.DirectionList)))
+                    foreach (BasePlayer.DirectionList direction in Enum.GetValues(typeof(BasePlayer.DirectionList)))
                     {
                         string directionString = direction.ToString();
                         int directionIndex = (int)direction;
@@ -188,7 +188,7 @@
         /// </summary>
         /// <param name="currentPlayer">The current player being asked for coordinates.</param>
         /// <returns>Returns valid coordinates the player can shoot at.</returns>
-        public static int[] ReturnValidUserCoordinates(PlayerBase currentPlayer)
+        public static int[] ReturnValidUserCoordinates(BasePlayer currentPlayer)
         {
             bool isValidCoordinates = false;
             int y_axis = -1;
@@ -231,7 +231,7 @@
             while (!isValidChoice)
             {
                 userInput = Console.ReadLine();
-                if (userInput != null &&  userInput != "")
+                if (userInput != null && userInput != "")
                 {
                     if (userInput.ToLower() == "no" || userInput == "2")
                     {
@@ -302,7 +302,7 @@
                 else
                 {
                     InvalidMessage("Cannot input nothing");
-                }    
+                }
             }
             return outputValue;
         }
@@ -312,10 +312,10 @@
         /// </summary>
         /// <param name="player1"></param>
         /// <param name="player2"></param>
-        public static PlayerBase[] ChooseWhoGoesFirstInput(PlayerBase player1, PlayerBase player2)
+        public static BasePlayer[] ChooseWhoGoesFirstInput(BasePlayer player1, BasePlayer player2)
         {
             bool isValidName = false;
-            PlayerBase[]? playerOrder = null;
+            BasePlayer[]? playerOrder = null;
             string? userinput;
 
             while (!isValidName)

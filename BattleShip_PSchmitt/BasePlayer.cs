@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class PlayerBase
+    class BasePlayer
     {
         public enum DirectionList
         {
@@ -21,10 +21,9 @@
         public char[,] targetGrid;
         public List<Battleship> shipList;
         public string name = "Player";
-
-        // Misc use
         public int[]? previousShot;
-        public string? shotMessage;
+
+        // Misc use in game
         public int shotsTaken;
 
         public bool IsAlive
@@ -35,11 +34,11 @@
             }
         }
 
-        public PlayerBase()
+        public BasePlayer()
         {
             shipList = CreateShips();                        // Default number of ships. Will act as health
-            oceanGrid = GameGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
-            targetGrid = GameGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
+            oceanGrid = BaseGrid.CreateDefaultGrid();        // Deafult ocean grid. Will contain ships
+            targetGrid = BaseGrid.CreateDefaultGrid();       // Default target grid. Will show shots taken
         }
 
         /// <summary>

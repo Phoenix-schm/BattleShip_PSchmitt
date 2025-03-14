@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class TargetGrid : GameGrid
+    class TargetGrid : BaseGrid
     {
         public static Dictionary<char, ConsoleColor> targetGridColors = new Dictionary<char, ConsoleColor>()
         {
@@ -15,7 +15,7 @@
         /// Meant for showing player shots
         /// </summary>
         /// <param name="player">The player that's target grid will be displayed</param>
-        public static void DisplayTargetGrid(PlayerBase player)
+        public static void DisplayTargetGrid(BasePlayer player)
         {
             char[,] displayTargetGrid = player.targetGrid;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
@@ -54,7 +54,7 @@
         /// <param name="chosenShot_y">The y coordinate being shot at.</param>
         /// <param name="chosenShot_x">The x coordinate being shot at.</param>
         /// <returns></returns>
-        public static string PlaceShotsOnTargetGrid(PlayerBase currentPlayer, PlayerBase opponentPlayer, int chosenShot_y, int chosenShot_x)
+        public static string PlaceShotsOnTargetGrid(BasePlayer currentPlayer, BasePlayer opponentPlayer, int chosenShot_y, int chosenShot_x)
         {
             // Variable initializations
             char[,] playerTargetGrid = currentPlayer.targetGrid;

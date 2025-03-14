@@ -1,8 +1,8 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class Player : PlayerBase
+    class HumanPlayer : BasePlayer
     {
-        public Player(string newName)
+        public HumanPlayer(string newName)
         {
             name = newName;
         }
@@ -15,16 +15,16 @@
         /// <param name="opponentPlayer">The opposing player</param>
         /// <param name="shotMessage">The current shot message</param>
         /// <returns>The shotMessage of the current player.</returns>
-        public static string PlayerTurn(PlayerBase currentPlayer, PlayerBase opponentPlayer, string shotMessage)
+        public static string PlayerTurn(BasePlayer currentPlayer, BasePlayer opponentPlayer, string shotMessage)
         {
-            GameGrid.DisplayPlayerGrids(currentPlayer);
+            BaseGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
 
             int[] playerCoordinates = PlayerInput.ReturnValidUserCoordinates(currentPlayer);                             // askss for [y,x] coordinates from player
             shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
             BattleshipGame.FullyClearConsole();
 
-            GameGrid.DisplayPlayerGrids(currentPlayer);
+            BaseGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(currentPlayer, shotMessage, ConsoleColor.Cyan);  // Displays the shot message of the current player shot
             currentPlayer.shotsTaken++;
 
@@ -37,7 +37,7 @@
         /// <param name="displayPlayer"></param>
         /// <param name="shotMessage">The shot message that was returned by TargetGrid.PlaceShotsOnTargetGrid()</param>
         /// <param name="color">The color the whole thing will display as</param>
-        static void DisplayShotTakenMessage(PlayerBase displayPlayer, string shotMessage, ConsoleColor color)
+        static void DisplayShotTakenMessage(BasePlayer displayPlayer, string shotMessage, ConsoleColor color)
         {
             if (displayPlayer.previousShot != null)
             {

@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class CPU : PlayerBase
+    class CPUPlayer : BasePlayer
     {
         Random random = new Random();
         DirectionList? _validDirection;
@@ -10,7 +10,7 @@
         int _directionListMax = Enum.GetValues(typeof(DirectionList)).Length;
         int _directionListMin = Enum.GetValues(typeof(DirectionList)).GetLowerBound(0) + 1;   // Gets the minimum dimension of Directions, minus Invalid
 
-        public CPU(string newName)
+        public CPUPlayer(string newName)
         {
             name = newName;
         }
@@ -19,10 +19,10 @@
         /// </summary>
         /// <param name="cpuPlayer">The player having their grid created</param>
         /// <returns>The new ocean grid with every ship placed in random places and directions</returns>
-        public static char[,] CreateCPUoceanGrid(PlayerBase cpuPlayer)
+        public static char[,] CreateCPUoceanGrid(BasePlayer cpuPlayer)
         {
             List<Battleship> playerShipList = cpuPlayer.shipList;
-            CPU temporaryCPU = new CPU("temp");                        // Creation of a temporary CPU player for use of auto grid creation in Player players. (for debugging)
+            CPUPlayer temporaryCPU = new CPUPlayer("temp");                        // Creation of a temporary CPU player for use of auto grid creation in Player players. (for debugging)
             Random random = temporaryCPU.random;
 
             for (int index = 0; index < playerShipList.Count; index++)
@@ -37,7 +37,7 @@
                     int randomDirection = random.Next(temporaryCPU._directionListMin, temporaryCPU._directionListMax);
 
                     DirectionList directionChoice = DirectionList.Invalid;
-                    foreach(DirectionList direction in Enum.GetValues(typeof(DirectionList)))
+                    foreach (DirectionList direction in Enum.GetValues(typeof(DirectionList)))
                     {
                         if (randomDirection == (int)direction)
                         {
@@ -58,7 +58,7 @@
         /// <param name="opponentPlayer">The human player.</param>
         /// <param name="rand">Random variable</param>
         /// <returns>The "shoot" message that will be displayed, whether the cpu successfully shot a player ship.</returns>
-        public static string CPUPlayerTurn(CPU cpu, PlayerBase opponentPlayer, Random rand)
+        public static string CPUPlayerTurn(CPUPlayer cpu, BasePlayer opponentPlayer, Random rand)
         {
             char[,] targetGrid = cpu.targetGrid;
             char[,] opponentOceanGrid = opponentPlayer.oceanGrid;
@@ -153,7 +153,7 @@
         /// </summary>
         /// <param name="opponentPlayer">opponent player being checked</param>
         /// <returns>True if there is a hit ship, false if there is no hit ship</returns>
-        static bool IsAShipHitButNotSunk(PlayerBase opponentPlayer)
+        static bool IsAShipHitButNotSunk(BasePlayer opponentPlayer)
         {
             bool isShipHitNotSunk = false;
             foreach (Battleship ship in opponentPlayer.shipList)
@@ -173,7 +173,7 @@
         /// </summary>
         /// <param name="cpuPlayer">cpu player being modified</param>
         /// <returns>The new _knownHitLocations without the sunk ship coordinates</returns>
-        static List<int[]> RemoveSunkShipCoordinates(CPU cpuPlayer)
+        static List<int[]> RemoveSunkShipCoordinates(CPUPlayer cpuPlayer)
         {
             char[,] targetGrid = cpuPlayer.targetGrid;
             List<int[]> hitLocationsList = cpuPlayer._knownHitLocations;
@@ -224,7 +224,7 @@
         /// <param name="chosenDirection">The chosenDirection, represented as an int</param>
         /// <param name="rand">Random variable</param>
         /// <returns>Valid coordinates for the next shot. Adds to _validDirection and _invalidDirection</returns>
-        static int[] PlaceShotInDirection(CPU cpuPlayer, PlayerBase opponentPlayer, int[] previousShot, int chosenDirection, Random rand)
+        static int[] PlaceShotInDirection(CPUPlayer cpuPlayer, BasePlayer opponentPlayer, int[] previousShot, int chosenDirection, Random rand)
         {
             bool isValidDirection = false;
             int[] checkCoordinates = [];
@@ -237,7 +237,7 @@
             {
                 int y_shot = previousShot[y_axis];
                 int x_shot = previousShot[x_axis];
-                if (edgeCaseSituation2)                          
+                if (edgeCaseSituation2)
                 {
                     y_shot = cpuPlayer._knownHitLocations[0][y_axis];
                     x_shot = cpuPlayer._knownHitLocations[0][x_axis];
@@ -333,11 +333,11 @@
         /// <param name="cpuPlayer"></param>
         /// <param name="opponentPlayer"></param>
         /// <returns>Returns the coordinates of the first hit location of the last ship.</returns>
-        static int[] GetFirstHitOfLastShip(CPU cpuPlayer, PlayerBase opponentPlayer)
+        static int[] GetFirstHitOfLastShip(CPUPlayer cpuPlayer, BasePlayer opponentPlayer)
         {
             // Player and CPU variables
             List<int[]> hitLocations = cpuPlayer._knownHitLocations;
-            List<Battleship> shipList  = opponentPlayer.shipList;
+            List<Battleship> shipList = opponentPlayer.shipList;
             char[,] oceanGrid = opponentPlayer.oceanGrid;
 
             // Variables related to hit coordinates
@@ -381,7 +381,7 @@
         /// <param name="chosenDirection">the chosenDirection the shot will be attemoted at</param>
         /// <param name="rand">random variable</param>
         /// <returns>the Modified target grid of cpu, modified ocean grid of opponent, and the shot Message</returns>
-        static string ShootAtDirection(CPU cpu, PlayerBase opponentPlayer, int validHit_y, int validHit_x, int chosenDirection, Random rand)
+        static string ShootAtDirection(CPUPlayer cpu, BasePlayer opponentPlayer, int validHit_y, int validHit_x, int chosenDirection, Random rand)
         {
             cpu.previousShot = PlaceShotInDirection(cpu, opponentPlayer, [validHit_y, validHit_x], chosenDirection, rand);    // add to previousShot based on random direction
             string message = TargetGrid.PlaceShotsOnTargetGrid(cpu, opponentPlayer, cpu.previousShot[0], cpu.previousShot[1]);   // Shoot in direction
