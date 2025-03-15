@@ -2,14 +2,6 @@
 {
     class BasePlayer
     {
-        public enum DirectionList
-        {
-            Invalid,
-            Up,
-            Down,
-            Left,
-            Right
-        }
 
         // Target shot displays (used in both ocean grid and target grid)
         public char targetSunkDisplay = 'N';

@@ -68,7 +68,7 @@
             string message = "";
             char charAtTargetIndex;
 
-            if (IsAShipHitButNotSunk(opponentPlayer))               // if a ship was hit and it hasn't been sunk, we know that previousShot cannot be null
+            if (IsAnOpponoentShipHit(opponentPlayer))               // if a ship was hit and it hasn't been sunk, we know that previousShot cannot be null
             {
                 charAtTargetIndex = targetGrid[previousShot[0], previousShot[1]];
                 bool isCharAtIndexHitShip = charAtTargetIndex == cpu.targetHitDisplay;
@@ -153,7 +153,7 @@
         /// </summary>
         /// <param name="opponentPlayer">opponent player being checked</param>
         /// <returns>True if there is a hit ship, false if there is no hit ship</returns>
-        static bool IsAShipHitButNotSunk(BasePlayer opponentPlayer)
+        static bool IsAnOpponoentShipHit(BasePlayer opponentPlayer)
         {
             bool isShipHitNotSunk = false;
             foreach (Battleship ship in opponentPlayer.shipList)
@@ -220,11 +220,11 @@
         /// *should* never cause a permanent while loop due to IsShipHitButNotSunk() and previous checks
         /// </summary>
         /// <param name="cpuPlayer">The cpu player shooting</param>
-        /// <param name="previousShot">The previous shot taken by the cpu player</param>
+        /// <param name="lastValidHit">The last valid hit. Usually the cpu._previousShot</param>
         /// <param name="chosenDirection">The chosenDirection, represented as an int</param>
         /// <param name="rand">Random variable</param>
         /// <returns>Valid coordinates for the next shot. Adds to _validDirection and _invalidDirection</returns>
-        static int[] PlaceShotInDirection(CPUPlayer cpuPlayer, BasePlayer opponentPlayer, int[] previousShot, int chosenDirection, Random rand)
+        static int[] PlaceShotInDirection(CPUPlayer cpuPlayer, BasePlayer opponentPlayer, int[] lastValidHit, int chosenDirection, Random rand)
         {
             bool isValidDirection = false;
             int[] checkCoordinates = [];
@@ -235,8 +235,8 @@
 
             while (!isValidDirection)
             {
-                int y_shot = previousShot[y_axis];
-                int x_shot = previousShot[x_axis];
+                int y_shot = lastValidHit[y_axis];
+                int x_shot = lastValidHit[x_axis];
                 if (edgeCaseSituation1)
                 {
                     y_shot = cpuPlayer._knownHitLocations[0][y_axis];
@@ -271,7 +271,7 @@
                         chosenDirection = (int)GoInOppositeDirection((DirectionList)cpuPlayer._validDirection);
                         cpuPlayer._switchDirection++;
                     }
-                    else if (isCoordinatesOutOfBounds)
+                    else if (isCoordinatesOutOfBounds)  // If the first shot taken is out of bounds
                     {
                         cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }

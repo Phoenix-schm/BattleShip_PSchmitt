@@ -1,5 +1,13 @@
 ﻿namespace BattleShip_PSchmitt
 {
+    public enum DirectionList
+    {
+        Invalid,
+        Up,
+        Down,
+        Left,
+        Right
+    }
     class BattleshipGame
     {
         // used in PlayerVsPlayer()
@@ -24,7 +32,7 @@
                 Console.WriteLine(row);
             }
             
-            DisplayMessageAndClear("Tip: For best experience, resize the console to be bigger. \nPress any key to continue...");
+            DisplayMessageAndClear("Tip: For best experience, resize the console vertically to be bigger. \nPress any key to continue...");
 
             //start game here
             bool isPlayingBattleship = true;
@@ -96,7 +104,7 @@
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
 
-            PlayBattleshipGame(playerOrder);
+            Play_BattleshipGame(playerOrder);
 
             if (player.IsAlive)
             {
@@ -135,7 +143,7 @@
             BasePlayer[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
             DisplayMessageAndClear("Have " + playerOrder[0].name + " take command of the computer. \nPress any key when you're ready to begin...");
-            playerOrder = PlayBattleshipGame(playerOrder);
+            playerOrder = Play_BattleshipGame(playerOrder);
 
             // Display winner
             Console.WriteLine("Congratulations " + playerOrder[game.winningPlayer].name + ", you beat " + playerOrder[game.losingPlayer].name + ".");
@@ -150,7 +158,7 @@
         /// </summary>
         /// <param name="playerOrder">The order of who goes first and second when playing</param>
         /// <returns>An array of who won, in order of winner then loser.</returns>
-        static BasePlayer[] PlayBattleshipGame(BasePlayer[] playerOrder) //add battleshipgame seed
+        static BasePlayer[] Play_BattleshipGame(BasePlayer[] playerOrder) //add battleshipgame seed
         {
             BattleshipGame game = new BattleshipGame();
             Random random = new Random();

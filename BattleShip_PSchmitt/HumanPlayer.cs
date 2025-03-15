@@ -43,6 +43,7 @@
 
                     int userY = PlayerInput.InputValidNumOnGrid("Choose a y coordinate to place the ship");
                     int userX = PlayerInput.InputValidNumOnGrid("Choose an x coodrinate to place the ship");
+                    Console.WriteLine();
 
                     DisplayDirections();
                     DirectionList chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();
