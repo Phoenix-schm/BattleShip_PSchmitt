@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace BattleShip_PSchmitt
+﻿namespace BattleShip_PSchmitt
 {
     class HumanPlayer : BasePlayer
     {
@@ -43,8 +41,8 @@ namespace BattleShip_PSchmitt
                     Console.WriteLine();
                     chosenShip = PlayerInput.ChooseShipToPlace(player);
 
-                    int userY = PlayerInput.CheckInputNumIsOnGrid("Choose a y coordinate to place the ship");
-                    int userX = PlayerInput.CheckInputNumIsOnGrid("Choose an x coodrinate to place the ship");
+                    int userY = PlayerInput.InputValidNumOnGrid("Choose a y coordinate to place the ship");
+                    int userX = PlayerInput.InputValidNumOnGrid("Choose an x coodrinate to place the ship");
 
                     DisplayDirections();
                     DirectionList chosenDirection = PlayerInput.ChooseDirectionToPlaceShip();

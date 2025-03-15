@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class TargetGrid : BaseGrid
+    class TargetGrid
     {
         public static Dictionary<char, ConsoleColor> targetGridColors = new Dictionary<char, ConsoleColor>()
         {

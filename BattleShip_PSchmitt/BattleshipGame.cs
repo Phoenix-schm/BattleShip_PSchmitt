@@ -145,7 +145,12 @@
             return PlayerInput.PlayAgainInput();
         }
 
-        static BasePlayer[] PlayBattleshipGame(BasePlayer[] playerOrder)
+        /// <summary>
+        /// Plays the battleship game with each player taking turns
+        /// </summary>
+        /// <param name="playerOrder">The order of who goes first and second when playing</param>
+        /// <returns>An array of who won, in order of winner then loser.</returns>
+        static BasePlayer[] PlayBattleshipGame(BasePlayer[] playerOrder) //add battleshipgame seed
         {
             BattleshipGame game = new BattleshipGame();
             Random random = new Random();
@@ -186,7 +191,7 @@
                 }
             }
 
-            BasePlayer[] whoWon = new BasePlayer[2];
+            BasePlayer[] whoWon = new BasePlayer[playerOrder.Length];
             foreach (BasePlayer player in playerOrder)      // Creates an array of the winning results in order of winner to loser
             {
                 if (player.IsAlive)
@@ -213,6 +218,10 @@
             Console.ReadKey();
             FullyClearConsole();
         }
+
+        /// <summary>
+        /// Fully clears the console of all elements
+        /// </summary>
         public static void FullyClearConsole()
         {
             Console.ResetColor();

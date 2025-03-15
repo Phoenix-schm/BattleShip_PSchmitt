@@ -228,8 +228,8 @@
         {
             bool isValidDirection = false;
             int[] checkCoordinates = [];
-            bool edgeCaseSituation1 = false;
             bool edgeCaseSituation2 = false;
+            bool edgeCaseSituation1 = false;
             int y_axis = 0;
             int x_axis = 1;
 
@@ -237,19 +237,19 @@
             {
                 int y_shot = previousShot[y_axis];
                 int x_shot = previousShot[x_axis];
-                if (edgeCaseSituation2)
+                if (edgeCaseSituation1)
                 {
                     y_shot = cpuPlayer._knownHitLocations[0][y_axis];
                     x_shot = cpuPlayer._knownHitLocations[0][x_axis];
                 }
 
-                if (cpuPlayer._invalidDirections.Count == 4)                    // occurs if two ships are right next to each other (flush, but not level),
-                {                                                               //  it hit the latter ship in a middle section,
-                                                                                //  and the last hit is at a corner
+                if (cpuPlayer._invalidDirections.Count == 4)                            // occurs if two ships are right next to each other,
+                {                                                                       //  it hit the latter ship in a middle section,
+                                                                                        //  and the last hit is at a corner, resulting in all four directions being invalid
                     y_shot = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[y_axis];
                     x_shot = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer)[x_axis];
                     cpuPlayer._invalidDirections.Clear();
-                    edgeCaseSituation1 = true;
+                    edgeCaseSituation2 = true;
                 }
 
                 if (cpuPlayer._invalidDirections.Contains((DirectionList)chosenDirection))      // if the chosenDirection is invalid
@@ -263,10 +263,10 @@
                     bool isCoordinatesOutOfBounds = checkCoordinates[y_axis] > 9 || checkCoordinates[y_axis] < 0 ||
                                                     checkCoordinates[x_axis] > 9 || checkCoordinates[x_axis] < 0;
 
-                    if (isCoordinatesOutOfBounds && cpuPlayer._validDirection != null && cpuPlayer._switchDirection == 0)   // if two ships are right next to each other and the latter is at a border
-                    {                                                                                                       // going in the chosenDirection will result in out of bounds
-                                                                                                                            // so, go in the opposite direction from the first hit coordinates
-                        edgeCaseSituation2 = true;
+                    if (isCoordinatesOutOfBounds && cpuPlayer._validDirection != null && cpuPlayer._switchDirection < 2)   // if two ships are right next to each other and the latter is at a border
+                    {                                                                                                      // going in the chosenDirection will result in out of bounds
+                                                                                                                           // so, go in the opposite direction from the first hit coordinates
+                        edgeCaseSituation1 = true;                                                                         // this will probably result in a miss,
                         cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                         chosenDirection = (int)GoInOppositeDirection((DirectionList)cpuPlayer._validDirection);
                         cpuPlayer._switchDirection++;
@@ -279,11 +279,11 @@
                     {
                         cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
-                    else if (edgeCaseSituation1 && opponentPlayer.oceanGrid[checkCoordinates[y_axis], checkCoordinates[x_axis]] == '~')    // technically cheating, if cpu won't hit a ship
+                    else if (edgeCaseSituation2 && opponentPlayer.oceanGrid[checkCoordinates[y_axis], checkCoordinates[x_axis]] == '~')    // technically cheating, if cpu won't hit a ship
                     {
                         // edgeCaseSituation reset cpu._invalidDirections
-                        // edge case occurs at a corner so first two out of bounds if else statements will result in an invalid direction
-                        //      and the last two directions will either be a ship or the ocean, so...
+                        // edge case occurs at a corner so first two out of bounds, if else statements will result in an invalid direction
+                        // and the last two directions will either be a ship or the ocean, so...
                         cpuPlayer._invalidDirections.Add((DirectionList)chosenDirection);
                     }
                     else

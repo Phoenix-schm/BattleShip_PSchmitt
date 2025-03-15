@@ -1,6 +1,6 @@
 ﻿namespace BattleShip_PSchmitt
 {
-    class OceanGrid : BaseGrid
+    class OceanGrid
     {
         static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
         {
@@ -92,6 +92,7 @@
 
             return player.oceanGrid;
         }
+
         /// <summary>
         /// Updates the currentOceanGrid with the chosenShip.Display at [y,x]
         /// </summary>
@@ -139,6 +140,7 @@
 
                     break;
             }
+
             return currentOceanGrid;
         }
 
@@ -157,8 +159,7 @@
             int canShipFitHere = 0;
             switch (direction)
             {
-                case BasePlayer.DirectionList.Down:
-                case BasePlayer.DirectionList.Right:
+                case BasePlayer.DirectionList.Down: case BasePlayer.DirectionList.Right:
                     while (x != currentOceanGrid.GetLength(1) && currentOceanGrid[y, x] == '~') // If x hasn't hit the edge of the grid and another ship
                     {
                         if (canShipFitHere < chosenShip.ShipLength)
@@ -173,8 +174,7 @@
                         x++;
                     }
                     break;
-                case BasePlayer.DirectionList.Up:
-                case BasePlayer.DirectionList.Left:
+                case BasePlayer.DirectionList.Up: case BasePlayer.DirectionList.Left:
                     while (x != currentOceanGrid.GetLowerBound(1) - 1 && currentOceanGrid[y, x] == '~') // If x hasn't hit the edge of the grid and another ship
                     {
                         if (canShipFitHere < chosenShip.ShipLength)

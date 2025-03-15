@@ -96,7 +96,7 @@
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public static int CheckInputNumIsOnGrid(string message)
+        public static int InputValidNumOnGrid(string message)
         {
             bool isValidNumber = false;
             int ValidNumber = -1;
@@ -195,8 +195,8 @@
             int x_axis = -1;
             while (!isValidCoordinates)
             {
-                y_axis = CheckInputNumIsOnGrid("Choose a y coordinate to shoot");
-                x_axis = CheckInputNumIsOnGrid("Choose an x coordinate to shoot");
+                y_axis = InputValidNumOnGrid("Choose a y coordinate to shoot");
+                x_axis = InputValidNumOnGrid("Choose an x coordinate to shoot");
                 char charAtIndex = currentPlayer.targetGrid[y_axis, x_axis];
 
                 if (charAtIndex != '~')
