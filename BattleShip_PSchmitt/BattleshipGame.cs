@@ -153,6 +153,12 @@
             return PlayerInput.PlayAgainInput();
         }
 
+        enum PlayerOrder
+        {
+            FirstPlayer = 0,
+            SecondPlayer = 1,
+        }
+
         /// <summary>
         /// Plays the battleship game with each player taking turns
         /// </summary>
@@ -165,8 +171,8 @@
             string shotMessage = "";
 
             // initializes the player order 
-            int currentPlayer = 0;
-            int nextPlayer = 1;
+            int currentPlayer = (int)PlayerOrder.FirstPlayer;
+            int nextPlayer = (int)PlayerOrder.SecondPlayer;
 
             while (playerOrder[currentPlayer].IsAlive && playerOrder[nextPlayer].IsAlive)
             {
@@ -189,13 +195,13 @@
 
                 if (currentPlayer == playerOrder.GetUpperBound(0))    // Switch between who the current player is and next player is
                 {
-                    currentPlayer = nextPlayer;     // = 0
-                    nextPlayer++;                   // = 1
+                    currentPlayer = (int)PlayerOrder.FirstPlayer;
+                    nextPlayer = (int)PlayerOrder.SecondPlayer;
                 }
                 else
                 {
-                    currentPlayer = nextPlayer;    // = 1
-                    nextPlayer--;                  // = 0
+                    currentPlayer = (int)PlayerOrder.SecondPlayer;
+                    nextPlayer = (int)PlayerOrder.FirstPlayer;
                 }
             }
 
