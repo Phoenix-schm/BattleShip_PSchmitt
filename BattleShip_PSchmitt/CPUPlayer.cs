@@ -55,7 +55,7 @@
         /// Randomaly shoots somewhere on the target grid. If it hits, then run through hunting down the hit ship and shooting in a valid direction.
         /// </summary>
         /// <param name="cpuPlayer">The computer player.</param>
-        /// <param name="opponentPlayer">The human player.</param>
+        /// <param name="opponentPlayer">The opponent player. Usually a HumanPlayer</param>
         /// <param name="rand">Random variable</param>
         /// <returns>The "shoot" message that will be displayed, whether the cpu successfully shot a player ship.</returns>
         public static string CPUPlayerTurn(CPUPlayer cpuPlayer, BasePlayer opponentPlayer, Random rand)
@@ -355,7 +355,7 @@
             Battleship? lastHitShip = null;
             foreach (Battleship ship in shipList)                                           // Going through ship list
             {
-                if (ship.DisplayWhenHit == oceanGrid[lastHitLocation[0], lastHitLocation[1]])     // return the Battlship that was last hit
+                if (ship.DisplayWhenHit == oceanGrid[lastHitLocation[0], lastHitLocation[1]])     // return the Battleship that was last hit
                 {
                     lastHitShip = ship;
                     break;
@@ -413,44 +413,35 @@
         /// Returns false if all directions have already been hit</returns>
         static bool IsLogicalCoordinates(CPUPlayer cpuPlayer, int y_shot, int x_shot)
         {
-            int targetGridMin = cpuPlayer.targetGrid.GetLowerBound(0);
-            int targetGridMax = cpuPlayer.targetGrid.GetUpperBound(0);
+            // target grid is the same dimension both ways. 
+            int targetGridMin_y_axis = cpuPlayer.targetGrid.GetLowerBound(0);
+            int targetGridMax_y_axis = cpuPlayer.targetGrid.GetUpperBound(0);
+            int targetGridMin_x_axis = cpuPlayer.targetGrid.GetLowerBound(1);
+            int targetGridMax_x_axis = cpuPlayer.targetGrid.GetUpperBound(1);
+
             int[] upCoordinates = ModifyCoordinatesBasedOnDirection((int)DirectionList.Up, y_shot, x_shot);
             int[] downCoordinates = ModifyCoordinatesBasedOnDirection((int)DirectionList.Down, y_shot, x_shot);
             int[] leftCoordinates = ModifyCoordinatesBasedOnDirection((int)DirectionList.Left, y_shot, x_shot);
             int[] rightCoordinates = ModifyCoordinatesBasedOnDirection((int)DirectionList.Right, y_shot, x_shot);
 
             Array[] potentialCoordinates = { upCoordinates, downCoordinates, leftCoordinates, rightCoordinates };
-            Dictionary<int[], bool> checkedCoordinates = new Dictionary<int[], bool>();
-
-            foreach (int[] coordinates in potentialCoordinates)
-            {
-                bool isOutOfBounds = coordinates[0] < targetGridMin|| coordinates[1] < targetGridMin ||
-                                     coordinates[1] > targetGridMax || coordinates[0] > targetGridMax;
-                if (isOutOfBounds)
-                {
-                    checkedCoordinates.Add(coordinates, false);
-                }
-                else if (cpuPlayer.targetGrid[coordinates[0], coordinates[1]] != '~')     // if the next coordinate has already been hit
-                {
-                    checkedCoordinates.Add(coordinates, false);
-                }
-                else
-                {
-                    checkedCoordinates.Add(coordinates, true);
-                }
-            }
 
             int isLogicalCoordinates = 0;
-            foreach (bool values in checkedCoordinates.Values)
+            foreach (int[] coordinates in potentialCoordinates)
             {
-                if (values)                     // If all values are false, then every potential next shot has already been hit and it wouldn't make sense to shoot
+                bool isOutOfBounds = coordinates[0] < targetGridMin_y_axis|| coordinates[1] < targetGridMin_x_axis ||
+                                     coordinates[1] > targetGridMax_x_axis || coordinates[0] > targetGridMax_y_axis;
+                if (isOutOfBounds)
+                {
+                    continue;
+                }
+                else if (cpuPlayer.targetGrid[coordinates[0], coordinates[1]] == '~')     // if the next coordinate has not been hit
                 {
                     isLogicalCoordinates++;
                 }
             }
 
-            return isLogicalCoordinates > 0;
+            return isLogicalCoordinates > 0;        
         }
     }
 }

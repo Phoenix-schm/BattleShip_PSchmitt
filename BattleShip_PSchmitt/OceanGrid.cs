@@ -2,26 +2,12 @@
 {
     class OceanGrid
     {
-        static Dictionary<char, ConsoleColor> oceanGridColors = new Dictionary<char, ConsoleColor>()
-        {
-            {'~', ConsoleColor.DarkBlue},                           // ocean
-            // Non-hit ship spaces          Hit ship spaces
-            {'d', ConsoleColor.Green}, {'Z', ConsoleColor.Red},
-            {'s', ConsoleColor.Green}, {'Y', ConsoleColor.Red},
-            {'c', ConsoleColor.Green}, {'X', ConsoleColor.Red},
-            {'B', ConsoleColor.Green}, {'W', ConsoleColor.Red},
-            {'C', ConsoleColor.Green}, {'V', ConsoleColor.Red},
-
-            {'N', ConsoleColor.DarkRed},                            // Color of a fully sunk ship
-            {'M', ConsoleColor.White}                               // an opponent missed target
-        };
-
         /// <summary>
         /// Displays the inputed grid with numbered axises 
         /// Meant for showing player ships
         /// </summary>
         /// <param name="player">The player grid being displayed.</param>
-        public static void DisplayOceanGrid(BasePlayer player)
+        public static void DisplayOceanGrid(HumanPlayer player)
         {
             char[,] displayOceanGrid = player.oceanGrid;
             List<Battleship> playerShipList = player.shipList;
@@ -38,7 +24,7 @@
                 for (int x_axis = 0; x_axis < displayOceanGrid.GetLength(1); x_axis++)
                 {
                     char charAtIndex = displayOceanGrid[y_axis, x_axis];
-                    Console.ForegroundColor = oceanGridColors[charAtIndex];                 // Changes color based on char at [y,x]
+                    Console.ForegroundColor = player.oceanGridColors[charAtIndex];
 
                     if (charAtIndex == '~')                                                 // Displays ocean
                     {

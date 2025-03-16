@@ -2,20 +2,12 @@
 {
     class TargetGrid
     {
-        public static Dictionary<char, ConsoleColor> targetGridColors = new Dictionary<char, ConsoleColor>()
-        {
-            {'~', ConsoleColor.DarkBlue},
-            {'M', ConsoleColor.White},      // Missed targets
-            {'H', ConsoleColor.Red},        // Hit ships
-            {'N', ConsoleColor.DarkRed}     // Color of a fully sunk ship 
-        };
-
         /// <summary>
         /// Displays the inputed grid with numbered axises
         /// Meant for showing player shots
         /// </summary>
         /// <param name="player">The player that's target grid will be displayed</param>
-        public static void DisplayTargetGrid(BasePlayer player)
+        public static void DisplayTargetGrid(HumanPlayer player)
         {
             char[,] displayTargetGrid = player.targetGrid;
             string[] numberedAxis = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
@@ -31,13 +23,13 @@
                 for (int x_axis = 0; x_axis < displayTargetGrid.GetLength(1); x_axis++)
                 {
                     char charAtIndex = displayTargetGrid[y_axis, x_axis];
-                    Console.ForegroundColor = targetGridColors[charAtIndex];
+                    Console.ForegroundColor = player.targetGridColors[charAtIndex];
 
                     if (charAtIndex == player.targetSunkDisplay)
                     {
                         Console.Write(player.targetHitDisplay + "  ");
                     }
-                    else    // Displays hit, miss and ocean displays
+                    else    // Displays hit, miss and '~' displays
                     {
                         Console.Write(charAtIndex + "  ");
                     }
@@ -77,12 +69,12 @@
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if the ships length is now 0).
                 {
                     shotMessage += "\n" + opponentPlayer.name + ": You sunk my battleship!";
-                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)    // Replace ship index positions with the "Sunk Ship" display
+                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)    // Replace ship index positions with the "Sunk Ship" display for both current and opponent player
                     {
                         int y = hitShip.EachIndexOnOceanGrid[index][0];
                         int x = hitShip.EachIndexOnOceanGrid[index][1];
                         playerTargetGrid[y, x] = currentPlayer.targetSunkDisplay;
-                        opponentOceanGrid[y, x] = currentPlayer.targetSunkDisplay;
+                        opponentOceanGrid[y, x] = opponentPlayer.targetSunkDisplay;
                     }
                     opponentShips.Remove(hitShip);
                 }
@@ -91,7 +83,7 @@
             {
                 shotMessage = opponentName + ": That's a miss.";
                 playerTargetGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetMissDisplay;
-                opponentOceanGrid[chosenShot_y, chosenShot_x] = currentPlayer.targetMissDisplay;
+                opponentOceanGrid[chosenShot_y, chosenShot_x] = opponentPlayer.targetMissDisplay;
             }
             return shotMessage;
         }

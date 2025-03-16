@@ -21,10 +21,10 @@
         }
 
         /// <summary>
-        /// Displays the inputed player grids.
+        /// Displays the inputed player grids. Will only display HumanPlayers
         /// </summary>
         /// <param name="currentPlayer">The current player being displayed.</param>
-        public static void DisplayPlayerGrids(BasePlayer currentPlayer)
+        public static void DisplayPlayerGrids(HumanPlayer currentPlayer)
         {
             Console.WriteLine(currentPlayer.name + " Grids:");
             TargetGrid.DisplayTargetGrid(currentPlayer);

@@ -2,9 +2,15 @@
 {
     class HumanPlayer : BasePlayer
     {
+        // for color displays
+        public Dictionary<char, ConsoleColor> oceanGridColors;
+        public Dictionary<char, ConsoleColor> targetGridColors;
+
         public HumanPlayer(string newName)
         {
             name = newName;
+            oceanGridColors = CreateOceanGridColors();
+            targetGridColors = CreateTargetGridColors();
         }
 
         /// <summary>
@@ -32,6 +38,7 @@
                     }
                     else                                                                    // Shows the grid at least once
                     {
+                        Console.WriteLine("Place your ships.");
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(player);
                     }
@@ -110,11 +117,11 @@
         /// The entire encapsulation of a player turn. Display player grids, Display shot message (if there is one), get player coordinates,
         /// Shoot at player coordinates and create shotMessage, Display modified player grids and shot message
         /// </summary>
-        /// <param name="currentPlayer">The current player that is playing</param>
-        /// <param name="opponentPlayer">The opposing player</param>
+        /// <param name="currentPlayer">The current player that is playing. Only HumanPlayers can make a turn</param>
+        /// <param name="opponentPlayer">The opposing player. Can either be HumanPlayer or CPUPlayer without issue</param>
         /// <param name="shotMessage">The current shot message</param>
         /// <returns>The shotMessage of the current player.</returns>
-        public static string PlayerTurn(BasePlayer currentPlayer, BasePlayer opponentPlayer, string shotMessage)
+        public static string PlayerTurn(HumanPlayer currentPlayer, BasePlayer opponentPlayer, string shotMessage)
         {
             BaseGrid.DisplayPlayerGrids(currentPlayer);
             DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
@@ -136,7 +143,7 @@
         /// <param name="displayPlayer"></param>
         /// <param name="shotMessage">The shot message that was returned by TargetGrid.PlaceShotsOnTargetGrid()</param>
         /// <param name="color">The color the whole thing will display as</param>
-        static void DisplayShotTakenMessage(BasePlayer displayPlayer, string shotMessage, ConsoleColor color)
+        public static void DisplayShotTakenMessage(BasePlayer displayPlayer, string shotMessage, ConsoleColor color)
         {
             if (displayPlayer.previousShot != null)
             {
@@ -148,6 +155,47 @@
                 Console.WriteLine();
             }
             Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Creates the ocean grid colors 
+        /// </summary>
+        /// <returns>A dictionary of colors as referenced by an associated character</returns>
+        static Dictionary<char, ConsoleColor> CreateOceanGridColors()
+        {
+            BasePlayer tempPlayer = new BasePlayer();
+            Dictionary<char, ConsoleColor> colorDictionary = new Dictionary<char, ConsoleColor>()
+            {
+                { '~', ConsoleColor.DarkBlue },
+                { tempPlayer.targetMissDisplay, ConsoleColor.White },
+                { tempPlayer.targetSunkDisplay, ConsoleColor.DarkRed }
+            };
+
+            foreach (Battleship ship in tempPlayer.shipList)                    // Adds colors of each ship state
+            {
+                colorDictionary.Add(ship.DisplayNuetral, ConsoleColor.Green);
+                colorDictionary.Add(ship.DisplayWhenHit, ConsoleColor.Red);
+            }
+
+            return colorDictionary;
+        }
+
+        /// <summary>
+        /// Creates the target grid colors. Does not referece ship displays for hits
+        /// </summary>
+        /// <returns>Creates a dictionary of colors as referenced by an associated character.</returns>
+        static Dictionary<char, ConsoleColor> CreateTargetGridColors()
+        {
+            BasePlayer tempPlayer = new BasePlayer();
+            Dictionary<char, ConsoleColor> colorDictionary = new Dictionary<char, ConsoleColor>()
+            {
+                { '~', ConsoleColor.DarkBlue },
+                { tempPlayer.targetHitDisplay, ConsoleColor.Red },
+                { tempPlayer.targetMissDisplay, ConsoleColor.White },
+                { tempPlayer.targetSunkDisplay, ConsoleColor.DarkRed }
+            };
+
+            return colorDictionary;
         }
     }
 }

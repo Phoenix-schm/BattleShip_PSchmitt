@@ -97,8 +97,9 @@
             HumanPlayer player = new HumanPlayer("Player");
             CPUPlayer cpuPlayer = new CPUPlayer("CPU");
 
-            Console.WriteLine("Howdy! Time to make your grid.");
-            HumanPlayer.CreateOceanGrid(player);
+            // Create player grids
+            //HumanPlayer.CreateOceanGrid(player);
+            CPUPlayer.CreateCPUoceanGrid(player);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
@@ -137,8 +138,10 @@
             DisplayMessageAndClear(player2.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
             HumanPlayer.CreateOceanGrid(player2);
 
+            // Initialize play order
             BasePlayer[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
+            // Play battleship
             DisplayMessageAndClear("Have " + playerOrder[0].name + " take command of the computer. \nPress any key when you're ready to begin...");
             playerOrder = Play_BattleshipGame(playerOrder);
 
@@ -155,7 +158,7 @@
         /// </summary>
         /// <param name="playerOrder">The order of who goes first and second when playing</param>
         /// <returns>An array of who won, in order of winner then loser.</returns>
-        static BasePlayer[] Play_BattleshipGame(BasePlayer[] playerOrder) //add battleshipgame seed
+        static BasePlayer[] Play_BattleshipGame(BasePlayer[] playerOrder)
         {
             BattleshipGame game = new BattleshipGame();
             Random random = new Random();
@@ -169,7 +172,7 @@
             {
                 if (playerOrder[currentPlayer] is HumanPlayer)
                 {
-                    shotMessage = HumanPlayer.PlayerTurn(playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
+                    shotMessage = HumanPlayer.PlayerTurn((HumanPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
                     if (playerOrder[nextPlayer].IsAlive)
                     {
                         DisplayMessageAndClear("Press any key to continue...");     // offers a buffer to see the results of their shot
@@ -184,15 +187,15 @@
                     shotMessage = CPUPlayer.CPUPlayerTurn((CPUPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], random);     // CPU shoots, returns the shot message
                 }
 
-                if (currentPlayer == playerOrder.Length - 1)    // Switch between who the current player is and next player is
+                if (currentPlayer == playerOrder.GetUpperBound(0))    // Switch between who the current player is and next player is
                 {
-                    currentPlayer = 0;
-                    nextPlayer = 1;
+                    currentPlayer = nextPlayer;     // = 0
+                    nextPlayer++;                   // = 1
                 }
                 else
                 {
-                    currentPlayer = 1;
-                    nextPlayer = 0;
+                    currentPlayer = nextPlayer;    // = 1
+                    nextPlayer--;                  // = 0
                 }
             }
 
