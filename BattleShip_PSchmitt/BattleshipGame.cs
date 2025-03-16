@@ -99,7 +99,6 @@
 
             Console.WriteLine("Howdy! Time to make your grid.");
             HumanPlayer.CreateOceanGrid(player);
-            //CPU.CreateCPUoceanGrid(player, rand);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
@@ -133,12 +132,10 @@
 
             // Initialize Player grids, one at a time.
             DisplayMessageAndClear("Alright " + player1.name + ", make your grid. \nTake your place at the computer and press any key to continue...");
-            //HumanPlayer.CreateOceanGrid(player1);
-            CPUPlayer.CreateCPUoceanGrid(player1);
+            HumanPlayer.CreateOceanGrid(player1);
 
             DisplayMessageAndClear(player2.name + ", it's your turn to make a grid. \nTake your place at the computer and press any key to continue...");
-            //HumanPlayer.CreateOceanGrid(player2);
-            CPUPlayer.CreateCPUoceanGrid(player2);
+            HumanPlayer.CreateOceanGrid(player2);
 
             BasePlayer[] playerOrder = PlayerInput.ChooseWhoGoesFirstInput(player1, player2);
 
