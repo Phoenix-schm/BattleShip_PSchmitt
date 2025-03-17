@@ -160,7 +160,7 @@
         }
 
         /// <summary>
-        /// Plays the battleship game with each player taking turns
+        /// Plays the battleship game with each player taking turns \
         /// </summary>
         /// <param name="playerOrder">The order of who goes first and second when playing</param>
         /// <returns>An array of who won, in order of winner then loser.</returns>
@@ -179,6 +179,7 @@
                 if (playerOrder[currentPlayer] is HumanPlayer)
                 {
                     shotMessage = HumanPlayer.PlayerTurn((HumanPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
+
                     if (playerOrder[nextPlayer].IsAlive)
                     {
                         DisplayMessageAndClear("Press any key to continue...");     // offers a buffer to see the results of their shot
@@ -193,15 +194,15 @@
                     shotMessage = CPUPlayer.CPUPlayerTurn((CPUPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], random);     // CPU shoots, returns the shot message
                 }
 
-                if (currentPlayer == playerOrder.GetUpperBound(0))    // Switch between who the current player is and next player is
-                {
-                    currentPlayer = (int)PlayerOrder.FirstPlayer;
-                    nextPlayer = (int)PlayerOrder.SecondPlayer;
-                }
-                else
+                if (currentPlayer == (int)PlayerOrder.FirstPlayer)    // Switch between who the current player and next player is
                 {
                     currentPlayer = (int)PlayerOrder.SecondPlayer;
                     nextPlayer = (int)PlayerOrder.FirstPlayer;
+                }
+                else
+                {
+                    currentPlayer = (int)PlayerOrder.FirstPlayer;
+                    nextPlayer = (int)PlayerOrder.SecondPlayer;
                 }
             }
 

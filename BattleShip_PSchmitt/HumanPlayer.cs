@@ -143,7 +143,7 @@
         /// <param name="displayPlayer"></param>
         /// <param name="shotMessage">The shot message that was returned by TargetGrid.PlaceShotsOnTargetGrid()</param>
         /// <param name="color">The color the whole thing will display as</param>
-        public static void DisplayShotTakenMessage(BasePlayer displayPlayer, string shotMessage, ConsoleColor color)
+        static void DisplayShotTakenMessage(BasePlayer displayPlayer, string shotMessage, ConsoleColor color)
         {
             if (displayPlayer.previousShot != null)
             {

@@ -14,6 +14,7 @@
         {
             name = newName;
         }
+
         /// <summary>
         /// Creates an Ocean grid with random ship placements
         /// </summary>
@@ -68,17 +69,17 @@
             string message = "";
             char charAtTargetIndex;
 
-            if (IsAnOpponoentShipHit(opponentPlayer))               // if a ship was hit and it hasn't been sunk, we know that previousShot cannot be null
+            if (IsOpponoentShipHit(opponentPlayer))               // if a ship was hit and it hasn't been sunk, we know that previousShot cannot be null
             {
                 charAtTargetIndex = targetGrid[previousShot[0], previousShot[1]];
                 bool isCharAtIndexHitShip = charAtTargetIndex == cpuPlayer.targetHitDisplay;
 
-                if (isCharAtIndexHitShip)                                               // if previous shot was a hit
+                if (isCharAtIndexHitShip)                                                       // if previous shot was a hit
                 {
-                    cpuPlayer._knownHitLocations.Add([previousShot[0], previousShot[1]]);     // Add to the list of known hit locations
+                    cpuPlayer._knownHitLocations.Add([previousShot[0], previousShot[1]]);       // Add to the list of known hit locations
                 }
 
-                if (charAtTargetIndex == cpuPlayer.targetSunkDisplay)                         // if there is a sunk ship and a hit ship at the same time
+                if (charAtTargetIndex == cpuPlayer.targetSunkDisplay)                           // if there is a sunk ship and a hit ship at the same time
                 {
                     cpuPlayer._knownHitLocations = RemoveSunkShipCoordinates(cpuPlayer);
                     cpuPlayer._switchDirection = 0;
@@ -157,7 +158,7 @@
         /// </summary>
         /// <param name="opponentPlayer">opponent player being checked</param>
         /// <returns>True if there is a hit ship, false if there is no hit ship</returns>
-        static bool IsAnOpponoentShipHit(BasePlayer opponentPlayer)
+        static bool IsOpponoentShipHit(BasePlayer opponentPlayer)
         {
             bool isShipHitNotSunk = false;
             foreach (Battleship ship in opponentPlayer.shipList)
@@ -304,6 +305,7 @@
 
             return checkCoordinates;
         }
+
         /// <summary>
         /// Modifies inputed coordinates based on direction
         /// </summary>
