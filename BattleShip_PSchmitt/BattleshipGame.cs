@@ -98,8 +98,7 @@
             CPUPlayer cpuPlayer = new CPUPlayer("CPU");
 
             // Create player grids
-            //HumanPlayer.CreateOceanGrid(player);
-            CPUPlayer.CreateCPUoceanGrid(player);
+            HumanPlayer.CreateOceanGrid(player);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
