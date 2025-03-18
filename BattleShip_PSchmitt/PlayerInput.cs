@@ -76,10 +76,9 @@
                             InvalidMessage("You have already chosen that ship.");
                         }
                     }
-
-                    if (chosenShip == null)
+                    else
                     {
-                        InvalidMessage("That is not a ship you can choose.");
+                        InvalidMessage("That is not a valid ship.");
                     }
                 }
                 else
@@ -120,6 +119,7 @@
                             break;
                         }
                     }
+
                     if (!isValidNumber)
                     {
                         InvalidMessage("That is not a coordinate on the grid.");
@@ -156,13 +156,7 @@
                         {
                             continue;
                         }
-                        else if (playerInput.ToLower() == directionString.ToLower())
-                        {
-                            isValidDirection = true;
-                            chosenDirection = direction;
-                            break;
-                        }
-                        else if (playerInput == directionIndex.ToString())
+                        else if (playerInput.ToLower() == directionString.ToLower() || playerInput == directionIndex.ToString())
                         {
                             isValidDirection = true;
                             chosenDirection = direction;
@@ -274,23 +268,22 @@
             Console.WriteLine("2) No");
 
             bool isValidInput = false;
-            string? userInput;
-            bool outputValue = false;
+            bool outputBoolean = false;
 
             while (!isValidInput)
             {
-                userInput = Console.ReadLine();
+                string? userInput = Console.ReadLine();
                 if (userInput != null && userInput != "")
                 {
                     if (userInput.ToLower() == "yes" || userInput == "1")
                     {
                         isValidInput = true;
-                        outputValue = true;
+                        outputBoolean = true;
                     }
                     else if (userInput.ToLower() == "no" || userInput == "2")
                     {
                         isValidInput = true;
-                        outputValue = false;
+                        outputBoolean = false;
                     }
                     else
                     {
@@ -302,7 +295,7 @@
                     InvalidMessage("Cannot input nothing");
                 }
             }
-            return outputValue;
+            return outputBoolean;
         }
 
         /// <summary>

@@ -406,7 +406,7 @@
 
         /// <summary>
         /// Creates a list of modified [y,x] coordinates based on direction and checks if each potential direction will result in an unshot char on targetGrid
-        /// if at least one direction will result in one unshot targetGrid char, then its valid.
+        /// if at least one direction will result in an unshot targetGrid char, then its valid.
         /// </summary>
         /// <param name="cpuPlayer">the cpu player having it's target grid checked</param>
         /// <param name="y_shot">the potential y coordinate being modified</param>
