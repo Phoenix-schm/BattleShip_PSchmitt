@@ -98,6 +98,7 @@
             CPUPlayer cpuPlayer = new CPUPlayer("CPU");
 
             // Create player grids
+            Console.WriteLine("Time to place your ships.");
             HumanPlayer.CreateOceanGrid(player);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 

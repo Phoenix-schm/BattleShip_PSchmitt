@@ -38,7 +38,6 @@
                     }
                     else                                                                    // Shows the grid at least once
                     {
-                        Console.WriteLine("Place your ships.");
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(player);
                     }

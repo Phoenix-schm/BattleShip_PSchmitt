@@ -50,9 +50,9 @@
         /// <returns>Battleship that is being placed onto the grid.</returns>
         public static Battleship ChooseShipToPlace(BasePlayer player)
         {
-            bool isValidShip = false;
-            Battleship chosenShip = null;
-            while (!isValidShip)                                                // Should always break when the ship is no longer null.
+            Battleship? chosenShip = null;
+
+            while (chosenShip == null)                                                // Should always break when the ship is no longer null.
             {
                 Console.Write("Choose a ship to place: ");
                 string? playerInput = Console.ReadLine();
@@ -63,17 +63,16 @@
                     {
                         if (playerInput.ToLower() == player.shipList[index - 1].name.ToLower() || playerInput == index.ToString())  // if player picked the correct a listed ship
                         {
-                            isValidShip = true;
                             chosenShip = player.shipList[index - 1];                             // minus 1 index for off-by-one
                             break;
                         }
                     }
 
-                    if (isValidShip)
+                    if (chosenShip != null)
                     {
                         if (chosenShip.EachIndexOnOceanGrid.Count > 0)                           // if the ship has been chosen previously
                         {
-                            isValidShip = false;
+                            chosenShip = null;
                             InvalidMessage("You have already chosen that ship.");
                         }
                     }
@@ -113,6 +112,7 @@
                         {
                             playerInput = playerInput.Replace('0', ' ').Trim();
                         }
+
                         if (playerInput == index.ToString())
                         {
                             isValidNumber = true;
@@ -226,10 +226,9 @@
             Console.WriteLine("2) No");
 
             bool isValidChoice = false;
-            string? userInput;
             while (!isValidChoice)
             {
-                userInput = Console.ReadLine();
+                string? userInput = Console.ReadLine();
                 if (userInput != null && userInput != "")
                 {
                     if (userInput.ToLower() == "no" || userInput == "2")
@@ -313,29 +312,26 @@
         /// <param name="player2"></param>
         public static BasePlayer[] ChooseWhoGoesFirstInput(BasePlayer player1, BasePlayer player2)
         {
-            bool isValidName = false;
             BasePlayer[]? playerOrder = null;
-            string? userinput;
 
             Console.WriteLine("Time to choose who goes first.");
             Console.WriteLine("Player names:");
             Console.WriteLine(player1.name);
             Console.WriteLine(player2.name);
 
-            while (!isValidName)
+            while (playerOrder == null)
             {
                 Console.Write("Write the name of the player that goes first: ");
-                userinput = Console.ReadLine();
+                string? userinput = Console.ReadLine();
+
                 if (userinput != null && userinput != "")
                 {
                     if (userinput.ToLower() == player1.name.ToLower())
                     {
-                        isValidName = true;
                         playerOrder = [player1, player2];
                     }
                     else if (userinput.ToLower() == player2.name.ToLower())
                     {
-                        isValidName = true;
                         playerOrder = [player2, player1];
                     }
                     else
