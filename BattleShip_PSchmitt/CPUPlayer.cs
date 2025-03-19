@@ -65,13 +65,11 @@
             char[,] opponentOceanGrid = opponentPlayer.oceanGrid;
             int[]? previousShot = cpuPlayer.previousShot;
 
-            bool isValidCoordinates = false;
-            string message = "";
-            char charAtTargetIndex;
+            string shotMessage = "";
 
             if (IsOpponoentShipHit(opponentPlayer))               // if a ship was hit and it hasn't been sunk, we know that previousShot cannot be null
             {
-                charAtTargetIndex = targetGrid[previousShot[0], previousShot[1]];
+                char charAtTargetIndex = targetGrid[previousShot[0], previousShot[1]];
                 bool isCharAtIndexHitShip = charAtTargetIndex == cpuPlayer.targetHitDisplay;
 
                 if (isCharAtIndexHitShip)                                                       // if previous shot was a hit
@@ -90,12 +88,12 @@
                 if (isCharAtIndexHitShip && cpuPlayer._validDirection == null)
                 {
                     int randomDirection = rand.Next(cpuPlayer._directionListMin, cpuPlayer._directionListMax);
-                    message = ShootAtDirection(cpuPlayer, opponentPlayer, previousShot[0], previousShot[1], randomDirection, rand);
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, previousShot[0], previousShot[1], randomDirection, rand);
                 }
                 // if the previous shot was a hit, and we have a valid direction
                 else if (isCharAtIndexHitShip && cpuPlayer._validDirection != null)
                 {
-                    message = ShootAtDirection(cpuPlayer, opponentPlayer, previousShot[0], previousShot[1], (int)cpuPlayer._validDirection, rand);
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, previousShot[0], previousShot[1], (int)cpuPlayer._validDirection, rand);
                 }
                 // if the previous shot missed, and we have a valid direction, and that valid direction has led to hits. and we haven't switch directions yet
                 //      Note: switching directions needs breathing room for edge cases (such as ships being right next to each other right next to a border)
@@ -106,14 +104,16 @@
                     int[] firstHit = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer);
                     cpuPlayer._switchDirection++;
 
-                    message = ShootAtDirection(cpuPlayer, opponentPlayer, firstHit[0], firstHit[1], (int)cpuPlayer._validDirection, rand);
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, firstHit[0], firstHit[1], (int)cpuPlayer._validDirection, rand);
                 }
-                else // previous shot missed and we "don't" have a valid direction, but there is still a hit ship
-                {    //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
+                // previous shot missed and we "don't" have a valid direction, but there is still a hit ship
+                //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
+                else
+                {
                     int[] firstHit = GetFirstHitOfLastShip(cpuPlayer, opponentPlayer);
 
                     int randomDirection = rand.Next(cpuPlayer._directionListMin, cpuPlayer._directionListMax);
-                    message = ShootAtDirection(cpuPlayer, opponentPlayer, firstHit[0], firstHit[1], randomDirection, rand);
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, firstHit[0], firstHit[1], randomDirection, rand);
                 }
 
             }
@@ -130,6 +130,8 @@
                         cpuPlayer._switchDirection = 0;
                     }
                 }
+
+                bool isValidCoordinates = false;
                 while (!isValidCoordinates)
                 {
                     int y = rand.Next(0, targetGrid.GetLength(0));
@@ -145,12 +147,12 @@
                     }
                     else
                     {
-                        message = TargetGrid.PlaceShotsOnTargetGrid(cpuPlayer, opponentPlayer, y, x);
+                        shotMessage = TargetGrid.PlaceShotsOnTargetGrid(cpuPlayer, opponentPlayer, y, x);
                         isValidCoordinates = true;
                     }
                 }
             }
-            return message;
+            return shotMessage;
         }
 
         /// <summary>
@@ -372,9 +374,9 @@
                 {
                     firstHitLocationOfLastShip = [lastHitLocation[0], lastHitLocation[1]];      // Repeatidly change firstHitLocation...
                 }
-                else                                                                            // until it hits a new ship
+                else                                                                            // until it hits a new ship, there are cases where a hitShip coordinates are not placed all together
                 {
-                    break;
+                    continue;
                 }
             }
 

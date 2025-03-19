@@ -178,7 +178,7 @@
             {
                 if (playerOrder[currentPlayer] is HumanPlayer)
                 {
-                    shotMessage = HumanPlayer.PlayerTurn((HumanPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
+                    shotMessage = HumanPlayer.HumanPlayerTurn((HumanPlayer)playerOrder[currentPlayer], playerOrder[nextPlayer], shotMessage);
 
                     if (playerOrder[nextPlayer].IsAlive)
                     {
