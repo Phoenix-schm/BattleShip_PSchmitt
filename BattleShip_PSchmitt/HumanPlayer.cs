@@ -21,31 +21,19 @@
         public static char[,] CreateOceanGrid(HumanPlayer player)
         {
             List<Battleship> playerShipList = player.shipList;
-            Battleship? chosenShip = null;
-
             bool isValidCoordinates = false;
-            int doneOnce = 0;
 
             for (int shipCountIndex = 0; shipCountIndex < playerShipList.Count; shipCountIndex++)     // Going through the number of ships in the ship list
             {
                 do
                 {
-                    if (doneOnce == 1 && !isValidCoordinates)                               // If the previous coordinates weren't valid
-                    {
-                        PlayerInput.InvalidMessage("That was not a valid coordinate.");
-                        Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(player);
-                    }
-                    else                                                                    // Shows the grid at least once
-                    {
-                        Console.WriteLine("Current Player Grid:");
-                        OceanGrid.DisplayOceanGrid(player);
-                    }
+                    Console.WriteLine("Current Player Grid:");
+                    OceanGrid.DisplayOceanGrid(player);
 
                     Console.WriteLine("You have " + (playerShipList.Count - shipCountIndex) + " ships left to place.");
                     DisplayShipsForPlacement(playerShipList);
                     Console.WriteLine();
-                    chosenShip = PlayerInput.ChooseShipToPlace(player);
+                    Battleship chosenShip = PlayerInput.ChooseShipToPlace(player);
 
                     int userY = PlayerInput.InputValidNumOnGrid("Choose a y coordinate to place the ship");
                     int userX = PlayerInput.InputValidNumOnGrid("Choose an x coodrinate to place the ship");
@@ -56,7 +44,6 @@
 
                     OceanGrid.PlaceShipOnOceanGrid(player, chosenShip, chosenDirection, [userY, userX], ref isValidCoordinates);
 
-                    doneOnce = 1;
                     BattleshipGame.FullyClearConsole();
 
                     if (isValidCoordinates)                         // If the player correctly placed the ship, check if they want to undo
@@ -64,6 +51,10 @@
                         Console.WriteLine("Current Player Grid:");
                         OceanGrid.DisplayOceanGrid(player);
                         PlayerInput.CheckRedoGridInput(ref chosenShip, ref shipCountIndex, player.oceanGrid);
+                    }
+                    else
+                    {
+                        PlayerInput.InvalidMessage("That was not a valid coordinate.");
                     }
                 } while (!isValidCoordinates);
             }
@@ -120,10 +111,10 @@
         /// <param name="opponentPlayer">The opposing player. Can either be HumanPlayer or CPUPlayer without issue</param>
         /// <param name="shotMessage">The current shot message</param>
         /// <returns>The shotMessage of the current player.</returns>
-        public static string PlayerTurn(HumanPlayer currentPlayer, BasePlayer opponentPlayer, string shotMessage)
+        public static string HumanPlayerTurn(HumanPlayer currentPlayer, BasePlayer opponentPlayer, string shotMessage)
         {
             BaseGrid.DisplayPlayerGrids(currentPlayer);
-            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous previous player shot
+            DisplayShotTakenMessage(opponentPlayer, shotMessage, ConsoleColor.Red);   // Displays the shot message of the previous opponent player shot
 
             int[] playerCoordinates = PlayerInput.ReturnValidUserCoordinates(currentPlayer);                             // askss for [y,x] coordinates from player
             shotMessage = TargetGrid.PlaceShotsOnTargetGrid(currentPlayer, opponentPlayer, playerCoordinates[0], playerCoordinates[1]); // shoots, creates a message from shot, clear console
