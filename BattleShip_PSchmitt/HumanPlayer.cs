@@ -70,7 +70,7 @@
         {
             for (int index = 0; index < shipList.Count; index++)            // going through each ship in the list
             {
-                if (shipList[index].EachIndexOnOceanGrid.Count > 0)         // if the ship has already been placed onto the grid
+                if (shipList[index].takesUpSpaces > 0)         // if the ship has already been placed onto the grid
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine(index + 1 + ") " + shipList[index].name + " = " + shipList[index].ShipLength + " spaces");
