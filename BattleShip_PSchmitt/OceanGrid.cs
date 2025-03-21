@@ -97,7 +97,14 @@
                     for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x++)
                     {
                         currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
-                        chosenShip.takesUpSpaces++;
+                        if (direction == DirectionList.Down)
+                        {
+                            chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
+                        }
+                        else
+                        {
+                            chosenShip.EachIndexOnOceanGrid.Add([y, x]);
+                        }
                     }
                     break;
                 case DirectionList.Up:
@@ -105,7 +112,14 @@
                     for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x--)
                     {
                         currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
-                        chosenShip.takesUpSpaces++;
+                        if (direction == DirectionList.Down)
+                        {
+                            chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
+                        }
+                        else
+                        {
+                            chosenShip.EachIndexOnOceanGrid.Add([y, x]);
+                        }
                     }
 
                     break;

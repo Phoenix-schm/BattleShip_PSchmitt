@@ -69,10 +69,10 @@
                 if (!hitShip.IsStillFloating)                               // if the ship has been sunk (if the ships length is now 0).
                 {
                     shotMessage += "\n" + opponentPlayer.name + ": You sunk my battleship!";
-                    for (int index = 0; index < hitShip.EachHitIndex.Count; index++)
+                    for (int index = 0; index < hitShip.EachIndexOnOceanGrid.Count; index++)    // Replace ship index positions with the "Sunk Ship" display for both current and opponent player
                     {
-                        int y = hitShip.EachHitIndex[index][0];
-                        int x = hitShip.EachHitIndex[index][1];
+                        int y = hitShip.EachIndexOnOceanGrid[index][0];
+                        int x = hitShip.EachIndexOnOceanGrid[index][1];
                         playerTargetGrid[y, x] = currentPlayer.targetSunkDisplay;
                         opponentOceanGrid[y, x] = opponentPlayer.targetSunkDisplay;
                     }

@@ -3,8 +3,7 @@
     class Battleship
     {
         private int _shipLength;
-        private int _takesUpSpaces;
-        private List<int[]> _eachHitIndex = [];
+        private List<int[]> _eachIndexSpace = [];
         public string name = "";
         private char _displayNuetral;
         private char _displayWhenHit;
@@ -12,7 +11,7 @@
         {
             get
             {
-                return ShipLength < _takesUpSpaces && IsStillFloating;
+                return ShipLength < _eachIndexSpace.Count && IsStillFloating;
             }
         }
         public bool IsStillFloating
@@ -27,17 +26,10 @@
             get { return _shipLength; }
             set { _shipLength = Math.Max(0, value); }
         }
-        public List<int[]> EachHitIndex
+        public List<int[]> EachIndexOnOceanGrid
         {
-            get { return _eachHitIndex; }
+            get { return _eachIndexSpace; }
         }
-
-        public int takesUpSpaces
-        {
-            get { return _takesUpSpaces; }
-            set { _takesUpSpaces = value; }
-        }
-
         public char DisplayNuetral
         {
             get { return _displayNuetral; }

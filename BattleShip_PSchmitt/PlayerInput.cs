@@ -70,7 +70,7 @@
 
                     if (chosenShip != null)
                     {
-                        if (chosenShip.takesUpSpaces > 0)                           // if the ship has been chosen previously
+                        if (chosenShip.EachIndexOnOceanGrid.Count > 0)                           // if the ship has been chosen previously
                         {
                             chosenShip = null;
                             InvalidMessage("You have already chosen that ship.");
@@ -240,7 +240,7 @@
                                 }
                             }
                         }
-                        chosenShip.takesUpSpaces = 0;   // restart takesUpSpaces
+                        chosenShip.EachIndexOnOceanGrid.Clear();                      // Clear out the chosenShip indexes
                     }
                     else if (userInput.ToLower() == "yes" || userInput == "1")
                     {

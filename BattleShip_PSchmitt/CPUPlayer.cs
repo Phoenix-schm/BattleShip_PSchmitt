@@ -175,41 +175,6 @@
             return isShipHitNotSunk;
         }
 
-        static List<int[]> GetSurroundingCells(int y, int x)
-        {
-            Dictionary<DirectionList, int[]> testDirections = new Dictionary<DirectionList, int[]>()
-            {
-                {DirectionList.Up, [-1, 0]},
-                {DirectionList.Left, [0, -1]},
-                {DirectionList.Right, [0, 1] },
-                {DirectionList.Down, [1, 0] }
-            };
-
-            List<int[]> surroundingCells = [];
-            int iterator = 0;
-            // offset coordinates by 1 to accomodate later adjustments
-            for (int y_axis = -1; y_axis < 2; y_axis++)
-            {
-                for (int  x_axis = -1; x_axis < 2; x_axis++)
-                {
-                    if (y_axis == 0 && x_axis == 0)   // middle cell
-                    {
-                        continue;
-                    }
-                    else if (testDirections.ContainsValue([y_axis, x_axis]))
-                    {
-                        DirectionList direction = testDirections.ElementAt(iterator).Key;
-                        testDirections.Remove(direction);
-                        testDirections[direction].SetValue(x_axis, y_axis);
-                        newDirections.Add(direction, [y + y_axis, x + x_axis]);
-                        surroundingCells.Add([y + x_axis, x + y_axis]);
-                    }
-                }
-            }
-
-            return surroundingCells;
-        }
-
         /// <summary>
         /// Removes sunk ship coordinates from _knownHitLocations list
         /// </summary>
@@ -273,14 +238,11 @@
             int y_axis = 0;
             int x_axis = 1;
 
-            Dictionary<DirectionList, int[]> validDirections = ValidDirections(y_axis, x_axis, cpuPlayer);
-
             int targetGridMin = cpuPlayer.targetGrid.GetLowerBound(0);
             int targetGridMax = cpuPlayer.targetGrid.GetUpperBound(0);
 
             int[] checkCoordinates = [];
             bool isValidDirection = false;
-
             while (!isValidDirection)
             {
                 int y_shot = lastValidHit[y_axis];
@@ -376,53 +338,6 @@
                     break;
             }
             return newCoordinates;
-        }
-
-        static Dictionary<DirectionList, int[]> ValidDirections(int userY, int userX, CPUPlayer cpuPlayer)
-        {
-            Dictionary<DirectionList, int[]> directionList = new Dictionary<DirectionList, int[]>();
-
-            foreach (DirectionList direction in Enum.GetValues(typeof(DirectionList)))
-            {
-                switch (direction)
-                {
-                    case DirectionList.Up:
-                        directionList.Add(direction, [--userY, userX]);
-                        break;
-                    case DirectionList.Down:
-                        directionList.Add(direction, [++userY, userX]);
-                        break;
-                    case DirectionList.Left:
-                        directionList.Add(direction, [userY, --userX]);
-                        break;
-                    case DirectionList.Right:
-                        directionList.Add(direction, [userY, ++userX]);
-                        break;
-                }
-            }
-
-            foreach (DirectionList direction in directionList.Keys)
-            {
-                char[,] targetGrid = cpuPlayer.targetGrid;
-                int y_axis = directionList[direction][0];
-                int x_axis = directionList[direction][1];
-
-                bool isYOutOfBounds = y_axis > targetGrid.GetUpperBound(0) || y_axis < targetGrid.GetLowerBound(0);
-                bool isXOutOfBounds = x_axis > targetGrid.GetUpperBound(1) || x_axis < targetGrid.GetLowerBound(1);
-
-                if (isYOutOfBounds || isXOutOfBounds)               // if that location is out of bounds
-                {
-                    directionList.Remove(direction);
-                    cpuPlayer._invalidDirections.Add(direction);
-                }
-                else if (targetGrid[y_axis, x_axis] != '~')         // if they've already hit that location
-                {
-                    directionList.Remove(direction);
-                    cpuPlayer._invalidDirections.Add(direction);
-                }
-            }
-
-            return directionList;
         }
 
         /// <summary>
