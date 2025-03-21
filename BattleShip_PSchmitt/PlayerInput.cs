@@ -70,7 +70,7 @@
 
                     if (chosenShip != null)
                     {
-                        if (chosenShip.EachIndexOnOceanGrid.Count > 0)                           // if the ship has been chosen previously
+                        if (chosenShip.takesUpSpaces > 0)                           // if the ship has been chosen previously
                         {
                             chosenShip = null;
                             InvalidMessage("You have already chosen that ship.");
@@ -229,15 +229,18 @@
                     {
                         isValidChoice = true;
                         totalShipIndex--;
-                        for (int index = chosenShip.EachIndexOnOceanGrid.Count - 1; index >= 0; index--)    // remove each index space from player grid
-                        {
-                            int[] shipSpaces = chosenShip.EachIndexOnOceanGrid[index];
-                            int y = shipSpaces[0];
-                            int x = shipSpaces[1];
 
-                            playerOceanGrid[y, x] = '~';
+                        for (int y = 0; y < playerOceanGrid.GetLength(0); y++)
+                        {
+                            for (int x = 0; x <  playerOceanGrid.GetLength(1); x++)
+                            {
+                                if (playerOceanGrid[y, x] == chosenShip.DisplayNuetral)
+                                {
+                                    playerOceanGrid[y, x] = '~';
+                                }
+                            }
                         }
-                        chosenShip.EachIndexOnOceanGrid.Clear();                                            // Clear out the chosenShip indexes
+                        chosenShip.takesUpSpaces = 0;   // restart takesUpSpaces
                     }
                     else if (userInput.ToLower() == "yes" || userInput == "1")
                     {
