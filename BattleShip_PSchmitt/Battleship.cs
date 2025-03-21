@@ -4,6 +4,7 @@
     {
         private int _shipLength;
         private int _takesUpSpaces;
+        private List<int[]> _eachHitIndex = [];
         public string name = "";
         private char _displayNuetral;
         private char _displayWhenHit;
@@ -25,6 +26,10 @@
         {
             get { return _shipLength; }
             set { _shipLength = Math.Max(0, value); }
+        }
+        public List<int[]> EachHitIndex
+        {
+            get { return _eachHitIndex; }
         }
 
         public int takesUpSpaces
