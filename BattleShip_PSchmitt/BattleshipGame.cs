@@ -99,7 +99,9 @@
 
             // Create player grids
             Console.WriteLine("Time to place your ships.");
-            HumanPlayer.CreateOceanGrid(player);
+            //HumanPlayer.CreateOceanGrid(player);
+
+            player.oceanGrid = TesterGrid(player);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
@@ -243,6 +245,39 @@
             Console.Clear();
             Console.WriteLine("\x1b[3J");       // Fully clears the console
             Console.Clear();                    // Previous line adds a WriteLine(), clear again
+        }
+
+        static char[,] TesterGrid(HumanPlayer player)
+        {
+            char[,] oceanGrid = BaseGrid.CreateDefaultGrid();
+            List<Battleship> shipList = player.shipList;
+            bool canshipBePlaced = false;
+
+            foreach (Battleship ship in shipList)
+            {
+                if (ship.name == "Carrier")
+                {
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [0, 4], ref canshipBePlaced);
+                }
+                else if (ship.name == "Battleship")
+                {
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Down, [4, 0], ref canshipBePlaced);
+                }
+                else if (ship.name == "Cruiser")
+                {
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Up, [6, 1], ref canshipBePlaced);
+                }
+                else if (ship.name == "Submarine")
+                {
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [2, 4], ref canshipBePlaced);
+                }
+                else if (ship.name == "Destroyer")
+                {
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [4, 4], ref canshipBePlaced);
+                }
+            }
+
+            return oceanGrid;
         }
     }
 }

@@ -107,9 +107,12 @@
                 {
                     for (int index = 1; index <= 10; index++)           // going through the numbers 1 - 10
                     {
-                        if (playerInput[0] == '0')                      // get rid of the zero, if the player inputs it as the first number
+                        if (playerInput.Length > 1)
                         {
-                            playerInput = playerInput.Replace('0', ' ').Trim();
+                            if (playerInput[0] == '0')                      // get rid of the zero, if the player inputs it as the first number
+                            {
+                                playerInput = playerInput.Replace('0', ' ').Trim();
+                            }
                         }
 
                         if (playerInput == index.ToString())

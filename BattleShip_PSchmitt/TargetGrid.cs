@@ -55,8 +55,8 @@
             string opponentName = opponentPlayer.name;
             string shotMessage;                                             // The message displayed to the player after a turn
 
-            Battleship? hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);  // Whether there is a ship being hit.
             currentPlayer.previousShot = [chosenShot_y, chosenShot_x];                                          // Initializes the players shot for display and cpu AI purposes
+            Battleship? hitShip = ReturnHitShip(chosenShot_y, chosenShot_x, opponentOceanGrid, opponentShips);  // Whether there is a ship being hit.
 
             if (hitShip != null)                                            // if a ship has been hit
             {
@@ -105,7 +105,6 @@
             {
                 if (opponentOceanGrid[y, x] == ship.DisplayNuetral)           // if the [y,x] coordinate hits a ship
                 {
-                    ship.EachHitIndex.Add([y, x]);
                     hitShip = ship;
                     break;
                 }
