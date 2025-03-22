@@ -112,7 +112,7 @@
                     for (int shipLength = 0; shipLength < chosenShip.ShipLength; shipLength++, x--)
                     {
                         currentOceanGrid[y, x] = chosenShip.DisplayNuetral;
-                        if (direction == DirectionList.Down)
+                        if (direction == DirectionList.Up)
                         {
                             chosenShip.EachIndexOnOceanGrid.Add([x, y]);                  // Inverse to [x,y] to its "proper" coordinates on the board 
                         }

@@ -40,11 +40,11 @@
         /// and its string name</returns>
         static List<Battleship> CreateShips()
         {
-            Battleship destroyerShip = new Battleship(2, "Destroyer", 'd', 'Z');
-            Battleship submarineShip = new Battleship(3, "Submarine", 's', 'Y');
+            Battleship destroyerShip = new Battleship(2, "Destroyer", 'a', 'Z');
+            Battleship submarineShip = new Battleship(3, "Submarine", 'b', 'Y');
             Battleship cruiserShip = new Battleship(3, "Cruiser", 'c', 'X');
-            Battleship battleShip = new Battleship(4, "Battleship", 'B', 'W');
-            Battleship carrierShip = new Battleship(5, "Carrier", 'C', 'V');
+            Battleship battleShip = new Battleship(4, "Battleship", 'd', 'W');
+            Battleship carrierShip = new Battleship(5, "Carrier", 'e', 'V');
 
             return [destroyerShip, submarineShip, cruiserShip, battleShip, carrierShip];
         }

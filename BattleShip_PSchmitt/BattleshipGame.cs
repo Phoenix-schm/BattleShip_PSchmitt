@@ -99,9 +99,7 @@
 
             // Create player grids
             Console.WriteLine("Time to place your ships.");
-            //HumanPlayer.CreateOceanGrid(player);
-
-            player.oceanGrid = TesterGrid(player);
+            HumanPlayer.CreateOceanGrid(player);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
@@ -247,21 +245,27 @@
             Console.Clear();                    // Previous line adds a WriteLine(), clear again
         }
 
+        /// <summary>
+        /// An ready made tester grid for debugging the CPU ai
+        /// </summary>
+        /// <param name="player">player being modified</param>
+        /// <returns>Grid filled with player ships</returns>
         static char[,] TesterGrid(HumanPlayer player)
         {
-            char[,] oceanGrid = BaseGrid.CreateDefaultGrid();
+            
+            char[,] oceanGrid = player.oceanGrid;
             List<Battleship> shipList = player.shipList;
             bool canshipBePlaced = false;
 
             foreach (Battleship ship in shipList)
             {
-                if (ship.name == "Carrier")
+                if (ship.name == "Battleship")
                 {
                     oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [0, 4], ref canshipBePlaced);
                 }
-                else if (ship.name == "Battleship")
+                else if (ship.name == "Carrier")
                 {
-                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Down, [4, 0], ref canshipBePlaced);
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Down, [5, 0], ref canshipBePlaced);
                 }
                 else if (ship.name == "Cruiser")
                 {

@@ -99,25 +99,44 @@
                 {
                     shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, previousShot[0], previousShot[1], (int)cpuPlayer._validDirection, rand);
                 }
-                // if cpu has switch directions twice already, meaning that the events of switchDirection == 1 has occured and ship is still floating
-                else if (cpuPlayer._switchDirection == 2 && cpuPlayer._validDirection != null)
+                // if previous shot missed, but current direction has led to hits and we haven't switched directions yet.
+                else if (!isCharAtIndexHitShip && cpuPlayer._knownHitLocations.Count > 1 && cpuPlayer._switchDirection < 1)
                 {
-                    int[] validHit = GetTargetShip(cpuPlayer._targetShip, cpuPlayer, opponentPlayer);
-
+                    // go in the opposite direction from the first hit coordinates
+                    cpuPlayer._invalidDirections.Clear();           // Must clear invalidDirection as opposite direction was invalid in previousShot
                     cpuPlayer._validDirection = GoInOppositeDirection((DirectionList)cpuPlayer._validDirection);
-                    cpuPlayer._invalidDirections.Clear();                       // must clear all invalid directions as the opposite direction was technically invalid in the previousShot
-
-                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, validHit[0], validHit[1], (int)cpuPlayer._validDirection, rand);
                     cpuPlayer._switchDirection++;
+
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, previousShot[0], previousShot[1], (int)cpuPlayer._validDirection, rand);
+                }
+                // if previous shot missed, but we've already switched directions, so we need to go in an perpendicular direction
+                else if (!isCharAtIndexHitShip && cpuPlayer._switchDirection == 2)
+                {
+                    int [] firstValidHit = GetTargetShip(cpuPlayer, opponentPlayer);
+                    GetRandomValidDirection(cpuPlayer, rand);
+                    cpuPlayer._switchDirection++;
+
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, firstValidHit[0], firstValidHit[1], (int)cpuPlayer._validDirection, rand);
+                }
+                // we've already switched directions and gone in a perpendicular direction but the previousShot missed
+                // we go in the oppsoite direction of perpendicular direction
+                else if (!isCharAtIndexHitShip && cpuPlayer._switchDirection == 3 && cpuPlayer._validDirection != null)
+                {
+                    cpuPlayer._invalidDirections.Clear();                           // must clear all invalid directions as the opposite direction was invalid in the previousShot
+                    int[] firstValidHit = GetTargetShip(cpuPlayer, opponentPlayer);
+                    cpuPlayer._validDirection = GoInOppositeDirection((DirectionList)cpuPlayer._validDirection);
+                    cpuPlayer._switchDirection++;
+
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, firstValidHit[0], firstValidHit[1], (int)cpuPlayer._validDirection, rand);
                 }
                 // previous shot missed and we "don't" have a valid direction, but there is still a hit ship. Shoot in random directions
                 //  Note: _validDirection is never made null after the first assignment (For practical use in the above else if)
                 else
                 {
-                    int[] validHit = GetTargetShip(cpuPlayer._targetShip, cpuPlayer, opponentPlayer);
+                    int[] firstValidHit = GetTargetShip(cpuPlayer, opponentPlayer);
                     int randomDirection = rand.Next(cpuPlayer._directionListMin, cpuPlayer._directionListMax);
 
-                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, validHit[0], validHit[1], randomDirection, rand);
+                    shotMessage = ShootAtDirection(cpuPlayer, opponentPlayer, firstValidHit[0], firstValidHit[1], randomDirection, rand);
                 }
             }
             else     // there is no ship that has been hit
@@ -206,20 +225,26 @@
                 Dictionary<DirectionList, int[]> DirectionCoordinatesDict = GetCoordinatesAtDirection(lastValidHit[y_axis], lastValidHit[x_axis], cpuPlayer);
 
                 // If _invalidDirections doesn't have chosenDirection
-                if (!cpuPlayer._invalidDirections.Contains(direction))
+                if (!cpuPlayer._invalidDirections.Contains(direction) || cpuPlayer._invalidDirections.Count == 0)
                 {
                     shootAtCoordinates = DirectionCoordinatesDict[direction];
                     cpuPlayer._validDirection = direction;
                 }
-                // if current direction is invalid, but it has led to hits, and we haven't switched directions yet
+                // if we have a valid direction, but that direction is leading to out of bounds, but that direction has led to hits. 
+                // when the direction would lead to out of bounds
                 else if (cpuPlayer._invalidDirections.Contains(direction) && cpuPlayer._knownHitLocations.Count > 1 && cpuPlayer._switchDirection < 1)
                 {
-                    // go in the opposite direction from the first hit coordinates
-                    cpuPlayer._invalidDirections.Clear();           // Must clear invalidDirection as opposite direction was invalid in previousShot
+                    // go in the opposite direction
                     direction = GoInOppositeDirection(direction);
+                    cpuPlayer._switchDirection++;
+                }
+                // we've switched directions and now have to verify which ship will lead to a valid direction
+                else if (cpuPlayer._switchDirection == 1)
+                {
+                    cpuPlayer._invalidDirections.Clear();
                     lastValidHit = cpuPlayer._knownHitLocations[0];
                     DirectionCoordinatesDict = GetCoordinatesAtDirection(lastValidHit[y_axis], lastValidHit[x_axis], cpuPlayer);
-                    
+
                     cpuPlayer._targetShip = 0;          // the ship being targeted is the first hit ship, number does not matter as long as its consistently referenced
 
                     if (cpuPlayer._invalidDirections.Contains(direction))                   // if oppositeDirection is invalid at original ship coordinates
@@ -232,15 +257,21 @@
 
                     cpuPlayer._switchDirection++;
                 }
-                // current direction is invalid, but we've already switched directions
-                else if (cpuPlayer._invalidDirections.Contains(direction) && cpuPlayer._switchDirection == 1)
+                // current direction is invalid, but we've already switched directions, so we need to go in an perpendicular direction
+                // when direction leads to out of bounds
+                else if (cpuPlayer._invalidDirections.Contains(direction) && cpuPlayer._switchDirection == 2)
                 {
-                    // occurs when two ships are next to each other, next to a boundary, and the latter ship gets hit in the middle
-                    // the order of events being: hit ship1, hit ship2, no valid direction going back and forth, so need a new direction from the first hit of the targetted ship
-                    // continuously rechoose random direction until its valid (will be the adjacent directions of the current invalid ones.
-
-                    lastValidHit = GetTargetShip(cpuPlayer._targetShip, cpuPlayer, opponentPlayer);
-                    cpuPlayer._invalidDirections.Clear();       // Must clear invalidDirection as all directions were invalid in previousShot
+                    lastValidHit = GetTargetShip(cpuPlayer, opponentPlayer);                            // lastValidHit is acutally first valid hit
+                    GetRandomValidDirection(cpuPlayer, rand);
+                    cpuPlayer._switchDirection++;
+                }
+                // we've switched directions, gone in a perpendicular direction, and now that perpendicular direction leads to out of bounds
+                // so we go in the oppsite direction of perpendicular direction
+                else if (cpuPlayer._invalidDirections.Contains(direction) && cpuPlayer._switchDirection == 3)
+                {
+                    cpuPlayer._invalidDirections.Clear();                                               // Must clear as opposite direction was invalid
+                    lastValidHit = GetTargetShip(cpuPlayer, opponentPlayer);                            // lastValidHit is actually the first valid hit
+                    direction = GoInOppositeDirection(direction);
                     cpuPlayer._switchDirection++;
                 }
                 else // choose a random direction
@@ -285,6 +316,7 @@
                 }
             }
 
+            // Modifies invalidDirections with each direction that leads to invalid coordinates
             foreach (DirectionList direction in directionList.Keys)
             {
                 char[,] targetGrid = cpuPlayer.targetGrid;
@@ -308,6 +340,36 @@
             }
 
             return directionList;
+        }
+
+        /// <summary>
+        /// Gets a random valid direction.
+        /// Mostly in use to get a perpendicular direction from two invalid directions
+        /// </summary>
+        /// <param name="cpuPlayer"> cpuPlayer being modified</param>
+        /// <param name="rand">random variable</param>
+        static void GetRandomValidDirection(CPUPlayer cpuPlayer, Random rand)
+        {
+            List<DirectionList> validDirectionList = new List<DirectionList>();
+            foreach (DirectionList direction in Enum.GetValues(typeof(DirectionList)))
+            {
+                if (direction == DirectionList.Invalid)
+                {
+                    continue;
+                }
+                else if (cpuPlayer._invalidDirections.Contains(direction))
+                {
+                    continue;
+                }
+                else
+                {
+                    validDirectionList.Add(direction);
+                }
+            }
+
+            int index = rand.Next(validDirectionList.Count);        // choose a random valid direction
+
+            cpuPlayer._validDirection = validDirectionList[index];
         }
 
         /// <summary>
@@ -426,9 +488,17 @@
             return firstHitLocationOfLastShip;
         }
 
-        static int[] GetTargetShip(int targetShip, CPUPlayer cpuPlayer, BasePlayer opponentPlayer)
+        /// <summary>
+        /// Gets the current targeted ship
+        /// </summary>
+        /// <param name="cpuPlayer">cpuPlayer being checked for targeted ship</param>
+        /// <param name="opponentPlayer">opponent player being checked for their last hit ship</param>
+        /// <returns>valid coordinates of a targeted hit ship</returns>
+        static int[] GetTargetShip(CPUPlayer cpuPlayer, BasePlayer opponentPlayer)
         {
             int[] validHit = [];            // get the first hit of the targetted ship, defaults is the first known ship
+            int targetShip = cpuPlayer._targetShip;
+
             if (targetShip == 0)
             {
                 validHit = cpuPlayer._knownHitLocations[0];
