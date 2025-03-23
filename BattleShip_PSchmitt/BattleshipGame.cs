@@ -11,7 +11,7 @@
     class BattleshipGame
     {
         // used in PlayerVsPlayer()
-        int winningPlayer = 0;
+        public int winningPlayer = 0;
         int losingPlayer = 1;
 
         static void Main(string[] args)
@@ -99,7 +99,8 @@
 
             // Create player grids
             Console.WriteLine("Time to place your ships.");
-            HumanPlayer.CreateOceanGrid(player);
+            player.oceanGrid = TesterGrid(player);
+            //HumanPlayer.CreateOceanGrid(player);
             CPUPlayer.CreateCPUoceanGrid(cpuPlayer);
 
             BasePlayer[] playerOrder = [player, cpuPlayer];
@@ -259,7 +260,7 @@
 
             foreach (Battleship ship in shipList)
             {
-                if (ship.name == "Battleship")
+                if (ship.name == "Submarine")
                 {
                     oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [0, 4], ref canshipBePlaced);
                 }
@@ -269,11 +270,11 @@
                 }
                 else if (ship.name == "Cruiser")
                 {
-                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Up, [6, 1], ref canshipBePlaced);
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [9, 4], ref canshipBePlaced);
                 }
-                else if (ship.name == "Submarine")
+                else if (ship.name == "Battleship")
                 {
-                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Right, [2, 4], ref canshipBePlaced);
+                    oceanGrid = OceanGrid.PlaceShipOnOceanGrid(player, ship, DirectionList.Up, [5, 9], ref canshipBePlaced);
                 }
                 else if (ship.name == "Destroyer")
                 {

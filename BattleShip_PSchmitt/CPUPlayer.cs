@@ -279,6 +279,11 @@
                     chosenDirection = rand.Next(cpuPlayer._directionListMin, cpuPlayer._directionListMax);
                     direction = (DirectionList)chosenDirection;
                 }
+
+                if (cpuPlayer._invalidDirections.Count == 4)
+                {
+                    cpuPlayer._invalidDirections.Clear();
+                }
             }
 
             return shootAtCoordinates;
